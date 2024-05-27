@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.commons.response;
 
+import com.ikservices.oficinamecanica.users.infra.controller.requests.LoginUserResponse;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -9,33 +10,16 @@ import java.util.Map;
 @Getter
 public class ResponseIKS<T> {
 
-    private Integer httpCode;
-    private String httpMessage;
     private T obj;
     private List<T> objList;
     private Map<MessageType, String> messages;
 
-    public ResponseIKS<T> ok(T obj){
-        this.httpCode = 200;
-        this.httpMessage = "";
-        this.obj = obj;
+    private ResponseIKS() {
         this.messages = new HashMap<>();
-        return this;
     }
 
-    public ResponseIKS<T> ok(List<T> objList){
-        this.httpCode = 200;
-        this.httpMessage = "";
-        this.objList = objList;
-        this.messages = new HashMap<>();
-        return this;
-    }
-
-    public ResponseIKS<T> status(Integer httpCode, String httpMessage) {
-        this.httpCode = httpCode;
-        this.httpMessage = httpMessage;
-        this.messages = new HashMap<>();
-        return this;
+    public static <T> ResponseIKS<T> build() {
+        return new ResponseIKS<T>();
     }
 
     public ResponseIKS<T> body(T obj) {

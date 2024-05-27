@@ -5,6 +5,10 @@ import com.ikservices.oficinamecanica.users.infra.persistence.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @Getter
 @AllArgsConstructor
 public class UserResponse {
@@ -29,5 +33,15 @@ public class UserResponse {
                 userEntity.getEmail(),
                 userEntity.isAtivo()
         );
+    }
+
+    public static List<UserResponse> parse(List<User> userList) {
+        List<UserResponse> list = new ArrayList<>();
+        if (Objects.nonNull(userList) && !userList.isEmpty()) {
+            for (User user : userList) {
+                list.add(parse(user));
+            }
+        }
+        return list;
     }
 }

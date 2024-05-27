@@ -1,6 +1,5 @@
 package com.ikservices.oficinamecanica.users.infra.controller;
 
-import com.ikservices.oficinamecanica.commons.response.MessageType;
 import com.ikservices.oficinamecanica.commons.response.ResponseIKS;
 import com.ikservices.oficinamecanica.users.application.UserException;
 import com.ikservices.oficinamecanica.users.application.gateways.PasswordHandler;
@@ -33,7 +32,6 @@ public class UserController {
     private final CadastrarUsusario cadastrarUsusario;
     private final UserConverter converter;
     private final ListarUsuarios listarUsuarios;
-    private final LogarUsuario logarUsuario;
     private final ObterUsuario obterUsuario;
     private final RemoverUsuario removerUsuario;
     private final AtualizarUsuario atualizarUsuario;
@@ -54,7 +52,6 @@ public class UserController {
         this.cadastrarUsusario = cadastrarUsusario;
         this.converter = converter;
         this.listarUsuarios = listarUsuarios;
-        this.logarUsuario = logarUsuario;
         this.obterUsuario = obterUsuario;
         this.atualizarUsuario = atualizarUsuario;
         this.removerUsuario = removerUsuario;
@@ -83,29 +80,24 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseIKS<UserResponse> listarUsuarios() {
+    public ResponseEntity<List<UserResponse>> listarUsuarios() {
         List<User> userList = listarUsuarios.execute();
-        return new ResponseIKS<UserResponse>().ok(converter.toUserDTOList(userList));
+        return ResponseEntity.ok(UserResponse.parse(userList));
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<ResponseIKS<UserResponse>> obterUsuario(@PathVariable("cpf") Long cpf) {
+    public ResponseEntity<UserResponse> obterUsuario(@PathVariable("cpf") Long cpf) {
         User user;
         try {
             user = obterUsuario.execute(cpf);
         } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
-                    new ResponseIKS<UserResponse>().status(HttpStatus.NO_CONTENT.value(), HttpStatus.NO_CONTENT.getReasonPhrase())
-                    .addMessage(MessageType.WARNING, e.getMessage())
-            );
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
         }
-
-        return ResponseEntity.ok(new ResponseIKS<UserResponse>().ok(UserResponse.parse(user)));
+        return ResponseEntity.ok(UserResponse.parse(user));
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("login")
-    public ResponseEntity<LoginUserResponse> logarUsuario(@RequestBody LoginUserRequest request) {
+    public ResponseEntity<ResponseIKS<LoginUserResponse>> logarUsuario(@RequestBody LoginUserRequest request) {
         User user = null;
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha());
@@ -115,7 +107,7 @@ public class UserController {
 
         LoginUserResponse loginUserResponse = LoginUserResponse.toLoginUserResponse((UserEntity) authenticate.getPrincipal()).setToken(jwtToken);
 
-        return ResponseEntity.ok(loginUserResponse);
+        return ResponseEntity.ok(ResponseIKS.<LoginUserResponse>build().body(loginUserResponse));
     }
 
     @DeleteMapping("/{cpf}")
