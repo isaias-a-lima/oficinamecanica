@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.users.infra.controller;
 
+import com.ikservices.oficinamecanica.commons.response.MessageType;
 import com.ikservices.oficinamecanica.commons.response.ResponseIKS;
 import com.ikservices.oficinamecanica.users.application.UserException;
 import com.ikservices.oficinamecanica.users.application.gateways.PasswordHandler;
@@ -60,40 +61,41 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> cadastrarUsuario(@RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<ResponseIKS<UserResponse>> cadastrarUsuario(@RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
 
         User newUser = new User(request.getCpf(), request.getNome(), request.getEmail(),
-                passwordHandler.encode(request.getSenha()));
+                passwordHandler.encode(request.getSenha()), request.getAtivo());
 
         User userSaved = cadastrarUsusario.execute(newUser);
 
         URI uri = uriBuilder.path("/user/{cpf}").buildAndExpand(userSaved.getCpf()).toUri();
 
-        return ResponseEntity.created(uri).body(converter.toUserDTO(userSaved));
+        return ResponseEntity.created(uri).body(ResponseIKS.<UserResponse>build().body(UserResponse.parse(userSaved)));
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity<UserResponse> atualizarUsuario(@RequestBody CadastroUserRequest request) {
+    public ResponseEntity<ResponseIKS<UserResponse>> atualizarUsuario(@RequestBody CadastroUserRequest request) {
         User updatedUser = atualizarUsuario.execute(request.toUser());
-        return  ResponseEntity.ok(converter.toUserDTO(updatedUser));
+        return  ResponseEntity.ok(ResponseIKS.<UserResponse>build().body(UserResponse.parse(updatedUser)));
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> listarUsuarios() {
+    public ResponseEntity<ResponseIKS<UserResponse>> listarUsuarios() {
         List<User> userList = listarUsuarios.execute();
-        return ResponseEntity.ok(UserResponse.parse(userList));
+        return ResponseEntity.ok(ResponseIKS.<UserResponse>build().body(UserResponse.parse(userList)));
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<UserResponse> obterUsuario(@PathVariable("cpf") Long cpf) {
+    public ResponseEntity<ResponseIKS<UserResponse>> obterUsuario(@PathVariable("cpf") Long cpf) {
         User user;
         try {
             user = obterUsuario.execute(cpf);
         } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+                    ResponseIKS.<UserResponse>build().addMessage(MessageType.ERROR, HttpStatus.EXPECTATION_FAILED.getReasonPhrase()));
         }
-        return ResponseEntity.ok(UserResponse.parse(user));
+        return ResponseEntity.ok(ResponseIKS.<UserResponse>build().body(UserResponse.parse(user)));
     }
 
     @PostMapping("login")
@@ -112,7 +114,8 @@ public class UserController {
 
     @DeleteMapping("/{cpf}")
     @Transactional
-    public ResponseEntity<String> removerUsuario(@PathVariable("cpf") Long cpf) {
-        return ResponseEntity.ok(removerUsuario.execute(cpf));
+    public ResponseEntity<ResponseIKS<String>> removerUsuario(@PathVariable("cpf") Long cpf) {
+        String message = removerUsuario.execute(cpf);
+        return ResponseEntity.ok(ResponseIKS.<String>build().body(message).addMessage(MessageType.SUCCESS, message));
     }
 }
