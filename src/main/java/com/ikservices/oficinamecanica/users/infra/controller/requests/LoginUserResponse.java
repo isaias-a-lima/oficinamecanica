@@ -8,17 +8,17 @@ import lombok.Getter;
 @AllArgsConstructor
 public class LoginUserResponse {
     private Long cpf;
-    private String nome;
+    private String name;
     private String email;
-    private boolean ativo;
+    private boolean active;
     private String token;
 
     public static LoginUserResponse toLoginUserResponse(UserEntity userEntity) {
         return new LoginUserResponse(
                 userEntity.getCpf(),
-                userEntity.getNome(),
-                userEntity.getEmail(),
-                userEntity.isAtivo(),
+                userEntity.getName(),
+                userEntity.getUsername(),
+                userEntity.isActive(),
                 ""
         );
     }

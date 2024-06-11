@@ -25,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/user")
@@ -61,10 +62,10 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseIKS<UserResponse>> cadastrarUsuario(@RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<ResponseIKS<UserResponse>> save(@RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
 
-        User newUser = new User(request.getCpf(), request.getNome(), request.getEmail(),
-                passwordHandler.encode(request.getSenha()), request.getAtivo());
+        User newUser = new User(request.getCpf(), request.getName(), request.getEmail(),
+                passwordHandler.encode(request.getPassword()), request.getActive());
 
         User userSaved = cadastrarUsusario.execute(newUser);
 
@@ -75,19 +76,22 @@ public class UserController {
 
     @PutMapping
     @Transactional
-    public ResponseEntity<ResponseIKS<UserResponse>> atualizarUsuario(@RequestBody CadastroUserRequest request) {
+    public ResponseEntity<ResponseIKS<UserResponse>> update(@RequestBody CadastroUserRequest request) {
+        if (Objects.nonNull(request.getPassword()) && !request.getPassword().isEmpty()) {
+            request.setPassword(passwordHandler.encode(request.getPassword()));
+        }
         User updatedUser = atualizarUsuario.execute(request.toUser());
         return  ResponseEntity.ok(ResponseIKS.<UserResponse>build().body(UserResponse.parse(updatedUser)));
     }
 
     @GetMapping
-    public ResponseEntity<ResponseIKS<UserResponse>> listarUsuarios() {
+    public ResponseEntity<ResponseIKS<UserResponse>> userList() {
         List<User> userList = listarUsuarios.execute();
         return ResponseEntity.ok(ResponseIKS.<UserResponse>build().body(UserResponse.parse(userList)));
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<ResponseIKS<UserResponse>> obterUsuario(@PathVariable("cpf") Long cpf) {
+    public ResponseEntity<ResponseIKS<UserResponse>> getUser(@PathVariable("cpf") Long cpf) {
         User user;
         try {
             user = obterUsuario.execute(cpf);
@@ -99,10 +103,10 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<ResponseIKS<LoginUserResponse>> logarUsuario(@RequestBody LoginUserRequest request) {
+    public ResponseEntity<ResponseIKS<LoginUserResponse>> login(@RequestBody LoginUserRequest request) {
         User user = null;
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha());
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         Authentication authenticate = authenticationManager.authenticate(authToken);
 
         String jwtToken = tokenService.gerarToken((UserEntity) authenticate.getPrincipal());
@@ -114,7 +118,7 @@ public class UserController {
 
     @DeleteMapping("/{cpf}")
     @Transactional
-    public ResponseEntity<ResponseIKS<String>> removerUsuario(@PathVariable("cpf") Long cpf) {
+    public ResponseEntity<ResponseIKS<String>> delete(@PathVariable("cpf") Long cpf) {
         String message = removerUsuario.execute(cpf);
         return ResponseEntity.ok(ResponseIKS.<String>build().body(message).addMessage(MessageType.SUCCESS, message));
     }

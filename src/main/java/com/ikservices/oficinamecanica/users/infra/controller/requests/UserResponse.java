@@ -13,9 +13,9 @@ import java.util.Objects;
 @AllArgsConstructor
 public class UserResponse {
     private Long cpf;
-    private String nome;
+    private String name;
     private String email;
-    private boolean ativo;
+    private boolean active;
 
     public static UserResponse parse(User user) {
         return new UserResponse(
@@ -29,9 +29,9 @@ public class UserResponse {
     public static UserResponse parse(UserEntity userEntity) {
         return new UserResponse(
                 userEntity.getCpf(),
-                userEntity.getNome(),
-                userEntity.getEmail(),
-                userEntity.isAtivo()
+                userEntity.getName(),
+                userEntity.getUsername(),
+                userEntity.isActive()
         );
     }
 

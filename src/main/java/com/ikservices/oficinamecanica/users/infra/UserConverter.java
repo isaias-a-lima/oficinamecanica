@@ -16,8 +16,8 @@ public class UserConverter {
     }
 
     public User toModel(UserEntity entity) {
-        return new User(entity.getCpf(), entity.getNome(), entity.getEmail(),
-                entity.getSenha(), entity.isAtivo());
+        return new User(entity.getCpf(), entity.getName(), entity.getUsername(),
+                entity.getPassword(), entity.isActive());
     }
 
     public UserResponse toUserDTO(User user) {
@@ -52,9 +52,9 @@ public class UserConverter {
     public UserResponse toUserDTO(UserEntity principal) {
         return new UserResponse(
                 principal.getCpf(),
-                principal.getNome(),
-                principal.getEmail(),
-                principal.isAtivo()
+                principal.getName(),
+                principal.getUsername(),
+                principal.isActive()
         );
     }
 }

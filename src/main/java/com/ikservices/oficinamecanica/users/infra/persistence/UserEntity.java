@@ -6,14 +6,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.*;
 
 @Entity
-@Table(name = "USUARIOS")
-@Getter
+@Table(name = "USERS")
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,26 +21,38 @@ import java.util.*;
 public class UserEntity implements UserDetails {
 
     @Id
+    @Column(name = "cpf")
+    @Getter
     private Long cpf;
-    private String nome;
-    private String email;
-    private String senha;
-    private boolean ativo;
+
+    @Column(name = "name")
+    @Getter
+    private String name;
+
+    @Column(name = "email")
+    private String username;
+
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "active")
+    @Getter
+    private boolean active;
 
     public void atualizar(UserEntity entity) {
-        if (Objects.nonNull(entity.getNome()) && !entity.getNome().isEmpty()) {
-            this.nome = entity.getNome();
+        if (Objects.nonNull(entity.getName()) && !entity.getName().isEmpty()) {
+            this.name = entity.getName();
         }
-        if (Objects.nonNull(entity.getEmail()) && !entity.getEmail().isEmpty()) {
-            this.email = entity.getEmail();
+        if (Objects.nonNull(entity.getUsername()) && !entity.getUsername().isEmpty()) {
+            this.username = entity.getUsername();
         }
-        if (Objects.nonNull(entity.getSenha()) && !entity.getSenha().isEmpty()) {
-            this.senha = entity.getSenha();
+        if (Objects.nonNull(entity.getPassword()) && !entity.getPassword().isEmpty()) {
+            this.password = entity.getPassword();
         }
     }
 
     public void inativar() {
-        this.ativo = false;
+        this.active = false;
     }
 
     @Override
@@ -50,12 +62,12 @@ public class UserEntity implements UserDetails {
 
     @Override
     public String getPassword() {
-        return senha;
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

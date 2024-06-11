@@ -18,5 +18,5 @@ public interface UserRepository {
 
     Boolean removeUser(Long cpf);
 
-    UserEntity loginUser(String email) throws UserException;
+    UserEntity loginUser(String username) throws UserException;
 }

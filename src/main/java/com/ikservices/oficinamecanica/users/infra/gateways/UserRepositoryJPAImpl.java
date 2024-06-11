@@ -49,7 +49,7 @@ public class UserRepositoryJPAImpl implements UserRepository {
 
     @Override
     public List<User> getUserList() {
-        List<UserEntity> userEntityList = repository.findAllByAtivoTrue();
+        List<UserEntity> userEntityList = repository.findAllByActiveTrue();
         if (Objects.isNull(userEntityList)) {
             throw new UserException(properties.getErrorNotFoundDatas());
         }
@@ -64,7 +64,7 @@ public class UserRepositoryJPAImpl implements UserRepository {
     }
 
     @Override
-    public UserEntity loginUser(String email) throws UserException {
-        return repository.findByEmail(email);
+    public UserEntity loginUser(String username) throws UserException {
+        return repository.findByUsername(username);
     }
 }
