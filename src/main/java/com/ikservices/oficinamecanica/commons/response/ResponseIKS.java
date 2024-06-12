@@ -12,7 +12,7 @@ public class ResponseIKS<T> {
 
     private T obj;
     private List<T> objList;
-    private Map<MessageType, String> messages;
+    private final Map<MessageType, String> messages;
 
     private ResponseIKS() {
         this.messages = new HashMap<>();

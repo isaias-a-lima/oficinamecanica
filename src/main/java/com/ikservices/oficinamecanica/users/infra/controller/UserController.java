@@ -13,6 +13,8 @@ import com.ikservices.oficinamecanica.users.infra.controller.requests.LoginUserR
 import com.ikservices.oficinamecanica.users.infra.controller.requests.LoginUserResponse;
 import com.ikservices.oficinamecanica.users.infra.controller.requests.UserResponse;
 import com.ikservices.oficinamecanica.users.infra.persistence.UserEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,8 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getName());
 
     private final CadastrarUsusario cadastrarUsusario;
     private final UserConverter converter;
@@ -105,13 +109,20 @@ public class UserController {
     @PostMapping("login")
     public ResponseEntity<ResponseIKS<LoginUserResponse>> login(@RequestBody LoginUserRequest request) {
         User user = null;
+        LoginUserResponse loginUserResponse = null;
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
-        Authentication authenticate = authenticationManager.authenticate(authToken);
+        try {
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+            Authentication authenticate = authenticationManager.authenticate(authToken);
 
-        String jwtToken = tokenService.gerarToken((UserEntity) authenticate.getPrincipal());
+            String jwtToken = tokenService.gerarToken((UserEntity) authenticate.getPrincipal());
 
-        LoginUserResponse loginUserResponse = LoginUserResponse.toLoginUserResponse((UserEntity) authenticate.getPrincipal()).setToken(jwtToken);
+            loginUserResponse = LoginUserResponse.toLoginUserResponse((UserEntity) authenticate.getPrincipal()).setToken(jwtToken);
+
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return ResponseEntity.ok(ResponseIKS.<LoginUserResponse>build().addMessage(MessageType.ERROR, "IKERRO: " + e.getMessage()));
+        }
 
         return ResponseEntity.ok(ResponseIKS.<LoginUserResponse>build().body(loginUserResponse));
     }
