@@ -44,3 +44,6 @@ PRIMARY KEY(customerid),
 CONSTRAINT fk_workshops_customers FOREIGN KEY (workshopid)
 REFERENCES workshops(workshopid)
 )COMMENT = 'Customers registration';
+
+--2024-06-14 00:12 - Portugal - Isaias Lima - Populate customers table
+INSERT INTO customers VALUES(1, 1, 55566677788, 'Marcio Brigido', '+55 11 2222-3333', '+55 11 93333-4444', 'mb@teste.com', 'F');
