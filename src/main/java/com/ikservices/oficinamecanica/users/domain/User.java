@@ -1,7 +1,8 @@
 package com.ikservices.oficinamecanica.users.domain;
 
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(of = "cpf")
 public class User {
     private Long cpf;
     private String nome;
