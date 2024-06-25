@@ -1,13 +1,13 @@
 package com.ikservices.oficinamecanica.services.application.gateways;
 
-import java.util.List;
+import java.util.Map;
 
 import com.ikservices.oficinamecanica.services.domain.Service;
 
 public interface ServiceRepository {
-	Service saveService(Service service);
-	Service updateService(Service service);
-	Service getService(Long id);
-	List<Service> getServiceList(Long workshopId);
+	Map<Long, Service> saveService(Service service);
+	Map<Long, Service> updateService(Long id, Service service);
+	Map<Long, Service> getService(Long id);
+	Map<Long, Service> getServiceList(Long workshopId);
 	void deleteService(Long id);
 }
