@@ -1,0 +1,46 @@
+package com.ikservices.oficinamecanica.services.infra.persistence;
+
+import java.math.BigDecimal;
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "SERVICES")
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+public class ServiceEntity {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "SERVICEID")
+	private Long id;
+	@Column(name = "WORKSHOPID")
+	private Long workshopId;
+	@Column(name = "DESCRIPTION")
+	private String description;
+	@Column(name = "COST")
+	private BigDecimal cost;
+	
+	public void update(ServiceEntity entity) {
+		if(Objects.nonNull(entity.getDescription())) {
+			this.description = entity.getDescription();
+		}
+		if(Objects.nonNull(entity.getCost())) {
+			this.cost = entity.getCost();
+		}
+	}
+}
