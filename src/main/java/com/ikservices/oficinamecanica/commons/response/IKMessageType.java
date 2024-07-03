@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MessageType {
+public enum IKMessageType {
     NONE(0),
     SUCCESS(1),
     WARNING(2),
@@ -13,13 +13,13 @@ public enum MessageType {
 
     private final Integer code;
 
-    public MessageType getByCode(Integer code) {
-        MessageType[] values = MessageType.values();
-        for (MessageType value : values) {
+    public static IKMessageType getByCode(Integer code) {
+        IKMessageType[] values = IKMessageType.values();
+        for (IKMessageType value : values) {
             if (value.code.equals(code)) {
                 return value;
             }
         }
-        return MessageType.NONE;
+        return IKMessageType.NONE;
     }
 }
