@@ -18,7 +18,8 @@ public class CustomerFactory {
         return new CustomerFactory();
     }
 
-    public CustomerSetPhone setCustomerDatas(Long DocId, String name, CustomerType type) {
+    public CustomerSetPhone setCustomerDatas(Long workshopId, Long DocId, String name, CustomerType type) {
+        this.customer.setWorkshopId(workshopId);
         this.customer.setIdDoc(DocId);
         this.customer.setName(name);
         this.customer.setType(type);
