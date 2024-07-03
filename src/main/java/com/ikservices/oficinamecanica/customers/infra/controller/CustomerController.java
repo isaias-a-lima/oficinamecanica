@@ -1,10 +1,12 @@
 package com.ikservices.oficinamecanica.customers.infra.controller;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
-import com.ikservices.oficinamecanica.commons.response.MessageType;
-import com.ikservices.oficinamecanica.commons.response.ResponseIKS;
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
+import com.ikservices.oficinamecanica.commons.response.IKResponse;
+import com.ikservices.oficinamecanica.customers.application.usecases.GetCustomer;
 import com.ikservices.oficinamecanica.customers.application.usecases.ListCustomers;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
+import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,20 +23,31 @@ public class CustomerController {
 
     private final ListCustomers listCustomers;
 
-    public CustomerController(ListCustomers listCustomers) {
+    private final GetCustomer getCustomer;
+    private final CustomerConverter converter;
+
+    public CustomerController(ListCustomers listCustomers, CustomerConverter converter,
+                              GetCustomer getCustomer) {
         this.listCustomers = listCustomers;
+        this.converter = converter;
+        this.getCustomer = getCustomer;
+    }
+
+    @GetMapping("/workshop/{id}")
+    public ResponseEntity<IKResponse<CustomerResponse>> listCustomers(@PathVariable("id") Long workshopId) {
+
+        List<CustomerResponse> customerList = null;
+        try {
+            customerList = converter.customerResponseList(listCustomers.execute(workshopId));
+        } catch (IKException ike) {
+            return ResponseEntity.status(ike.getCode()).body(IKResponse.<CustomerResponse>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+        }
+        return ResponseEntity.ok(IKResponse.<CustomerResponse>build().body(customerList));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseIKS<Customer>> listCustomers(@PathVariable("id") Long id) {
-
-        List<Customer> customerList = null;
-        try {
-            customerList = listCustomers.execute(id);
-        } catch (IKException ike) {
-            int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : HttpStatus.INTERNAL_SERVER_ERROR.value();
-            return ResponseEntity.status(code).body(ResponseIKS.<Customer>build().addMessage(MessageType.WARNING, ike.getMessage()));
-        }
-        return ResponseEntity.ok(ResponseIKS.<Customer>build().body(customerList));
+    public ResponseEntity<IKResponse<CustomerResponse>> getCustomer(@PathVariable("id") Long id) {
+        Customer customer = getCustomer.execute(id);
+        return ResponseEntity.ok(IKResponse.<CustomerResponse>build().body(new CustomerResponse(id, customer)));
     }
 }
