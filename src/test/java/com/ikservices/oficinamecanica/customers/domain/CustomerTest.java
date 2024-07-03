@@ -11,7 +11,7 @@ public class CustomerTest {
     @BeforeEach
     public void setup() {
         subject = CustomerFactory.begin()
-                .setCustomerDatas(1L, "John", CustomerType.PHYSICAL_PERSON)
+                .setCustomerDatas(1L,1L, "John", CustomerType.PHYSICAL_PERSON)
                 .setLandline(55, 11, 11112222)
                 .setMobilePhone(55, 11, 933334444)
                 .setEmail(new EmailVO("john@teste.com"))
@@ -27,7 +27,7 @@ public class CustomerTest {
 
     public static Customer getCustomer() {
         return CustomerFactory.begin()
-                .setCustomerDatas(1L, "John", CustomerType.PHYSICAL_PERSON)
+                .setCustomerDatas(1L,1L, "John", CustomerType.PHYSICAL_PERSON)
                 .setLandline(55, 11, 11112222)
                 .setMobilePhone(55, 11, 933334444)
                 .setEmail(new EmailVO("john@teste.com"))

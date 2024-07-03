@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 public class CustomerFactoryTest {
 
     private CustomerFactory subject;
+
+    private Long workshopId;
     private Long customerIdDoc;
     private String customerName;
     private CustomerType customerType;
@@ -17,6 +19,7 @@ public class CustomerFactoryTest {
     @BeforeEach
     public void setup() {
         subject = CustomerFactory.begin();
+        workshopId = 1L;
         customerIdDoc = 77L;
         customerName = "Messiah";
         customerType = CustomerType.PHYSICAL_PERSON;
@@ -25,7 +28,7 @@ public class CustomerFactoryTest {
     @Test
     public void testCustomerFactory() {
 
-        Customer customer = subject.setCustomerDatas(customerIdDoc, customerName, customerType)
+        Customer customer = subject.setCustomerDatas(workshopId, customerIdDoc, customerName, customerType)
                 .setLandline(getLandline().getCountryCode(), getLandline().getStateCode(), getLandline().getPhoneNumber())
                 .setMobilePhone(getMobilePhone().getCountryCode(), getMobilePhone().getStateCode(), getMobilePhone().getPhoneNumber())
                 .setEmail(getEmail())
