@@ -10,6 +10,7 @@ import lombok.*;
 @Getter
 @EqualsAndHashCode(of = "idDoc")
 public class Customer {
+    private Long workshopId;
     private Long idDoc;
     private String name;
     private PhoneVO landline;

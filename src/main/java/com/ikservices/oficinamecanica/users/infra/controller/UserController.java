@@ -1,7 +1,7 @@
 package com.ikservices.oficinamecanica.users.infra.controller;
 
-import com.ikservices.oficinamecanica.commons.response.MessageType;
-import com.ikservices.oficinamecanica.commons.response.ResponseIKS;
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
+import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.users.application.UserException;
 import com.ikservices.oficinamecanica.users.application.gateways.PasswordHandler;
 import com.ikservices.oficinamecanica.users.application.usecases.*;
@@ -66,7 +66,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseIKS<UserResponse>> save(@RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<IKResponse<UserResponse>> save(@RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
 
         User newUser = new User(request.getCpf(), request.getName(), request.getEmail(),
                 passwordHandler.encode(request.getPassword()), request.getActive());
@@ -75,39 +75,39 @@ public class UserController {
 
         URI uri = uriBuilder.path("/user/{cpf}").buildAndExpand(userSaved.getCpf()).toUri();
 
-        return ResponseEntity.created(uri).body(ResponseIKS.<UserResponse>build().body(UserResponse.parse(userSaved)));
+        return ResponseEntity.created(uri).body(IKResponse.<UserResponse>build().body(UserResponse.parse(userSaved)));
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity<ResponseIKS<UserResponse>> update(@RequestBody CadastroUserRequest request) {
+    public ResponseEntity<IKResponse<UserResponse>> update(@RequestBody CadastroUserRequest request) {
         if (Objects.nonNull(request.getPassword()) && !request.getPassword().isEmpty()) {
             request.setPassword(passwordHandler.encode(request.getPassword()));
         }
         User updatedUser = atualizarUsuario.execute(request.toUser());
-        return  ResponseEntity.ok(ResponseIKS.<UserResponse>build().body(UserResponse.parse(updatedUser)));
+        return  ResponseEntity.ok(IKResponse.<UserResponse>build().body(UserResponse.parse(updatedUser)));
     }
 
     @GetMapping
-    public ResponseEntity<ResponseIKS<UserResponse>> userList() {
+    public ResponseEntity<IKResponse<UserResponse>> userList() {
         List<User> userList = listarUsuarios.execute();
-        return ResponseEntity.ok(ResponseIKS.<UserResponse>build().body(UserResponse.parse(userList)));
+        return ResponseEntity.ok(IKResponse.<UserResponse>build().body(UserResponse.parse(userList)));
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<ResponseIKS<UserResponse>> getUser(@PathVariable("cpf") Long cpf) {
+    public ResponseEntity<IKResponse<UserResponse>> getUser(@PathVariable("cpf") Long cpf) {
         User user;
         try {
             user = obterUsuario.execute(cpf);
         } catch (UserException e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
-                    ResponseIKS.<UserResponse>build().addMessage(MessageType.ERROR, HttpStatus.EXPECTATION_FAILED.getReasonPhrase()));
+                    IKResponse.<UserResponse>build().addMessage(IKMessageType.ERROR, HttpStatus.EXPECTATION_FAILED.getReasonPhrase()));
         }
-        return ResponseEntity.ok(ResponseIKS.<UserResponse>build().body(UserResponse.parse(user)));
+        return ResponseEntity.ok(IKResponse.<UserResponse>build().body(UserResponse.parse(user)));
     }
 
     @PostMapping("login")
-    public ResponseEntity<ResponseIKS<LoginUserResponse>> login(@RequestBody LoginUserRequest request) {
+    public ResponseEntity<IKResponse<LoginUserResponse>> login(@RequestBody LoginUserRequest request) {
         User user = null;
         LoginUserResponse loginUserResponse = null;
 
@@ -121,16 +121,16 @@ public class UserController {
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return ResponseEntity.ok(ResponseIKS.<LoginUserResponse>build().addMessage(MessageType.ERROR, "IKERRO: " + e.getMessage()));
+            return ResponseEntity.ok(IKResponse.<LoginUserResponse>build().addMessage(IKMessageType.ERROR, "IKERRO: " + e.getMessage()));
         }
 
-        return ResponseEntity.ok(ResponseIKS.<LoginUserResponse>build().body(loginUserResponse));
+        return ResponseEntity.ok(IKResponse.<LoginUserResponse>build().body(loginUserResponse));
     }
 
     @DeleteMapping("/{cpf}")
     @Transactional
-    public ResponseEntity<ResponseIKS<String>> delete(@PathVariable("cpf") Long cpf) {
+    public ResponseEntity<IKResponse<String>> delete(@PathVariable("cpf") Long cpf) {
         String message = removerUsuario.execute(cpf);
-        return ResponseEntity.ok(ResponseIKS.<String>build().body(message).addMessage(MessageType.SUCCESS, message));
+        return ResponseEntity.ok(IKResponse.<String>build().body(message).addMessage(IKMessageType.SUCCESS, message));
     }
 }

@@ -6,6 +6,7 @@ import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerRepositoryJPA;
 
 import java.util.List;
+import java.util.Map;
 
 public class CustomerRepositoryImpl implements CustomerRepository {
 
@@ -30,11 +31,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public Customer getCustomer(Long id) {
-        return null;
+        return converter.parseCustomer(repository.getById(id));
     }
 
     @Override
-    public List<Customer> getCustomerList(Long workshopId) {
+    public Map<Long, Customer> getCustomerList(Long workshopId) {
         return converter.parseCustomerList(repository.findAllByWorkshopId(workshopId));
     }
 

@@ -5,11 +5,10 @@ import com.ikservices.oficinamecanica.commons.vo.EmailVO;
 import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.domain.CustomerType;
+import com.ikservices.oficinamecanica.customers.infra.controller.CustomerResponse;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class CustomerConverter {
 
@@ -19,6 +18,7 @@ public class CustomerConverter {
         }
 
         Customer customer = new Customer();
+        customer.setWorkshopId(customerEntity.getWorkshopId());
         customer.setIdDoc(customerEntity.getDocId());
         customer.setName(customerEntity.getName());
         customer.setLandline(PhoneVO.parsePhoneVO(customerEntity.getLandline()));
@@ -29,13 +29,23 @@ public class CustomerConverter {
         return customer;
     }
 
-    public List<Customer> parseCustomerList(List<CustomerEntity> customerEntityList) {
-        List<Customer> customerList = new ArrayList<>();
+    public Map<Long, Customer> parseCustomerList(List<CustomerEntity> customerEntityList) {
+        Map<Long, Customer> customerList = new HashMap<>();
         if (Objects.nonNull(customerEntityList) && !customerEntityList.isEmpty()) {
             for (CustomerEntity customerEntity : customerEntityList) {
-                customerList.add(this.parseCustomer(customerEntity));
+                customerList.put(customerEntity.getId(), this.parseCustomer(customerEntity));
             }
         }
         return customerList;
+    }
+
+    public List<CustomerResponse> customerResponseList(Map<Long, Customer> customerMap) {
+        List<CustomerResponse> responseList = new ArrayList<>();
+        if (Objects.nonNull(customerMap) && !customerMap.isEmpty()) {
+            for (Long id : customerMap.keySet()) {
+                responseList.add(new CustomerResponse(id, customerMap.get(id)));
+            }
+        }
+        return responseList;
     }
 }

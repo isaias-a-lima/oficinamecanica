@@ -11,7 +11,7 @@ public class GetCustomer {
         this.repository = repository;
     }
 
-    public Customer getCustomer(Long id) {
+    public Customer execute(Long id) {
         return repository.getCustomer(id);
     }
 }
