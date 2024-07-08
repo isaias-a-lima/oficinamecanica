@@ -1,5 +1,7 @@
 package com.ikservices.oficinamecanica.workshops.infra.persistense;
 
+import com.ikservices.oficinamecanica.users.domain.User;
+import com.ikservices.oficinamecanica.users.infra.persistence.UserEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,8 +21,9 @@ public class WorkshopEntity {
     @Column(name = "WORKSHOPID")
     private Long id;
 
-    @Column(name = "CPF")
-    private Long cpf;
+    @OneToOne(optional = false)
+    @JoinColumn(name = "CPF")
+    private UserEntity user;
 
     @Column(name = "NAME")
     private String name;
@@ -35,8 +38,8 @@ public class WorkshopEntity {
     private Boolean active;
 
     public void update(WorkshopEntity entity) {
-        if (Objects.nonNull(entity.getCpf())) {
-            this.cpf = entity.getCpf();
+        if (Objects.nonNull(entity.getUser())) {
+            this.user = entity.getUser();
         }
         if (Objects.nonNull(entity.getName())) {
             this.name = entity.getName();
