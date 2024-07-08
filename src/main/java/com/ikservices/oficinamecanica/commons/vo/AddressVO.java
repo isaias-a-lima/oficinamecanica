@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @EqualsAndHashCode
 public class AddressVO {
+    //TODO Must be created a class to represent the postal code
     private String postalCode;
     private String street;
     private Integer number;
