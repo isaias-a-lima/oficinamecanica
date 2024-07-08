@@ -2,6 +2,7 @@ package com.ikservices.oficinamecanica.customers.application.usecases;
 
 import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRepository;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
+import com.ikservices.oficinamecanica.customers.domain.CustomerId;
 
 public class GetCustomer {
 
@@ -11,7 +12,7 @@ public class GetCustomer {
         this.repository = repository;
     }
 
-    public Customer execute(Long id) {
+    public Customer execute(CustomerId id) {
         return repository.getCustomer(id);
     }
 }

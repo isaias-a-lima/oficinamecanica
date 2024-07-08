@@ -7,8 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class Workshop {
+    private Long docId;
     private User user;
     private String name;
-    private Long cnpj;
     private byte[] image;
 }

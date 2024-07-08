@@ -8,6 +8,8 @@ import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerMessages;
 import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerRepositoryImpl;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerRepositoryJPA;
+import com.ikservices.oficinamecanica.users.infra.UserConverter;
+import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,8 +28,8 @@ public class CustomerConfig {
     }
 
     @Bean
-    public CustomerConverter customerConverter() {
-        return new CustomerConverter();
+    public CustomerConverter customerConverter(WorkshopConverter workshopConverter) {
+        return new CustomerConverter(workshopConverter);
     }
 
     @Bean
@@ -43,5 +45,10 @@ public class CustomerConfig {
     @Bean
     public CustomerMessages customerMessages() {
         return new CustomerMessages(environment);
+    }
+    //TODO Maybe this Bean can moved to WorkshopConfig. Please verify.
+    @Bean
+    public WorkshopConverter workshopConverter(UserConverter userConverter) {
+        return new WorkshopConverter(userConverter);
     }
 }

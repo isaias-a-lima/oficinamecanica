@@ -2,7 +2,9 @@ package com.ikservices.oficinamecanica.customers.infra.gateway;
 
 import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRepository;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
+import com.ikservices.oficinamecanica.customers.domain.CustomerId;
 import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
+import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerRepositoryJPA;
 
 import java.util.List;
@@ -30,12 +32,12 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public Customer getCustomer(Long id) {
-        return converter.parseCustomer(repository.getById(id));
+    public Customer getCustomer(CustomerId id) {
+        return converter.parseCustomer(repository.getById(new CustomerEntityId(id.getWorkshopId(), id.getDocId())));
     }
 
     @Override
-    public Map<Long, Customer> getCustomerList(Long workshopId) {
+    public List<Customer> getCustomerList(Long workshopId) {
         return converter.parseCustomerList(repository.findAllByWorkshopId(workshopId));
     }
 

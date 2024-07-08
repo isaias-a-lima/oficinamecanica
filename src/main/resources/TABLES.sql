@@ -58,3 +58,24 @@ PRIMARY KEY(serviceid),
 CONSTRAINT fk_workshops_services FOREIGN KEY (workshopid)
 REFERENCES workshops(workshopid)
 )COMMENT = 'Services registration';
+
+--2024-07-05 01:13 - Portugal - Isaias Lima - Recreate customers table.
+DROP TABLE customers;
+
+--2024-07-05 01:13 - Portugal - Isaias Lima - Recreate customers table.
+CREATE TABLE customers(
+workshopid BIGINT NOT NULL COMMENT 'Workshop identification number',
+docid VARCHAR(14) NOT NULL COMMENT 'Customer personal identification tax document',
+name VARCHAR(100) NOT NULL COMMENT 'Customer full name',
+landline VARCHAR(30) NULL COMMENT 'Landline number',
+mobilephone VARCHAR(30) NULL COMMENT 'Mobile phone number',
+email VARCHAR(100) COMMENT 'Customer email address',
+type CHAR(1) COMMENT 'Kind of customer. Available values: F for physical person, or J for company',
+PRIMARY KEY(workshopid, docid),
+CONSTRAINT fk_workshops_customers FOREIGN KEY (workshopid)
+REFERENCES workshops(workshopid)
+)COMMENT = 'Customers registration';
+
+--2024-07-05 01:13 - Portugal - Isaias Lima - Recreate customers table.
+INSERT INTO customers VALUES(1, '55566677788', 'Marcio Brigido', '+55 11 2222-3333', '+55 11 93333-4444', 'mb@teste.com', 'F');
+INSERT INTO customers VALUES(1, '22233344455', 'Leandro Silva', '+55 11 3333-4444', '+55 11 93333-4444', 'ls@teste.com', 'F');

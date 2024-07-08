@@ -3,6 +3,8 @@ package com.ikservices.oficinamecanica.customers.domain;
 import com.ikservices.oficinamecanica.commons.vo.AddressVO;
 import com.ikservices.oficinamecanica.commons.vo.EmailVO;
 import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
+import com.ikservices.oficinamecanica.users.domain.User;
+import com.ikservices.oficinamecanica.workshops.domain.Workshop;
 
 import java.util.Objects;
 
@@ -10,28 +12,23 @@ public class CustomerFactory {
 
     private final Customer customer;
 
-    private CustomerFactory() {
+    private CustomerFactory(Long workshopId, String docId, String name, CustomerType type) {
         this.customer = new Customer();
-    }
-
-    public static CustomerFactory begin() {
-        return new CustomerFactory();
-    }
-
-    public CustomerSetPhone setCustomerDatas(Long workshopId, Long DocId, String name, CustomerType type) {
-        this.customer.setWorkshopId(workshopId);
-        this.customer.setIdDoc(DocId);
+        this.customer.setId(new CustomerId(workshopId, docId));
         this.customer.setName(name);
         this.customer.setType(type);
+    }
+
+    public static CustomerFactory startBuild(Long workshopId, String docId, String name, CustomerType type) {
+        return new CustomerFactory(workshopId, docId, name, type);
+    }
+
+    public CustomerSetPhone setLandline(Integer countryCode, Integer stateCode, Integer phoneNumber) {
+        customer.setLandline(new PhoneVO(countryCode, stateCode, phoneNumber));
         return new CustomerSetPhone();
     }
 
     public class CustomerSetPhone {
-        public CustomerSetPhone setLandline(Integer countryCode, Integer stateCode, Integer phoneNumber) {
-            customer.setLandline(new PhoneVO(countryCode, stateCode, phoneNumber));
-            return this;
-        }
-
         public CustomerSetEmail setMobilePhone(Integer countryCode, Integer stateCode, Integer phoneNumber) {
             customer.setMobilePhone(new PhoneVO(countryCode, stateCode, phoneNumber));
             return new CustomerSetEmail();

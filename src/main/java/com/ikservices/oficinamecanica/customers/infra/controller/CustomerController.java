@@ -6,7 +6,9 @@ import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.customers.application.usecases.GetCustomer;
 import com.ikservices.oficinamecanica.customers.application.usecases.ListCustomers;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
+import com.ikservices.oficinamecanica.customers.domain.CustomerId;
 import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
+import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,9 +47,9 @@ public class CustomerController {
         return ResponseEntity.ok(IKResponse.<CustomerResponse>build().body(customerList));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<IKResponse<CustomerResponse>> getCustomer(@PathVariable("id") Long id) {
-        Customer customer = getCustomer.execute(id);
-        return ResponseEntity.ok(IKResponse.<CustomerResponse>build().body(new CustomerResponse(id, customer)));
+    @GetMapping("/{workshopId}/{docId}")
+    public ResponseEntity<IKResponse<CustomerResponse>> getCustomer(@PathVariable("workshopId") Long workshopId, @PathVariable("docId") String docId) {
+        Customer customer = getCustomer.execute(new CustomerId(workshopId, docId));
+        return ResponseEntity.ok(IKResponse.<CustomerResponse>build().body(new CustomerResponse(customer)));
     }
 }
