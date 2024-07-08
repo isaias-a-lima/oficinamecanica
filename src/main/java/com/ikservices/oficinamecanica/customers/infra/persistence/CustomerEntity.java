@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.customers.infra.persistence;
 
+import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,14 +14,11 @@ import java.util.Objects;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class CustomerEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CUSTOMERID")
-    private Long id;
-    @Column(name = "WORKSHOPID")
-    private Long workshopId;
-    @Column(name = "DOCID")
-    private Long docId;
+    @EmbeddedId
+    private CustomerEntityId id;
+    @ManyToOne
+    @JoinColumn(name = "WORKSHOPID", insertable = false , updatable = false)
+    private WorkshopEntity workshopEntity;
     @Column(name = "NAME")
     private String name;
     @Column(name = "LANDLINE")
@@ -33,8 +31,8 @@ public class CustomerEntity {
     private Character type;
 
     public void update(CustomerEntity customerEntity) {
-        if (Objects.nonNull(customerEntity.getDocId())) {
-            this.docId = customerEntity.getDocId();
+        if (Objects.nonNull(customerEntity.getId().getDocId())) {
+            this.getId().setDocId(customerEntity.getId().getDocId());
         }
         if (Objects.nonNull(customerEntity.getName())) {
             this.name = customerEntity.getName();

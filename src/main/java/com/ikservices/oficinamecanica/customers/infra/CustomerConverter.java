@@ -4,13 +4,22 @@ import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.vo.EmailVO;
 import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
+import com.ikservices.oficinamecanica.customers.domain.CustomerId;
 import com.ikservices.oficinamecanica.customers.domain.CustomerType;
 import com.ikservices.oficinamecanica.customers.infra.controller.CustomerResponse;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
+import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
+import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
 
 import java.util.*;
 
 public class CustomerConverter {
+
+    private final WorkshopConverter workshopConverter;
+
+    public CustomerConverter(WorkshopConverter workshopConverter) {
+        this.workshopConverter = workshopConverter;
+    }
 
     public Customer parseCustomer(CustomerEntity customerEntity) {
         if (Objects.isNull(customerEntity)) {
@@ -18,8 +27,8 @@ public class CustomerConverter {
         }
 
         Customer customer = new Customer();
-        customer.setWorkshopId(customerEntity.getWorkshopId());
-        customer.setIdDoc(customerEntity.getDocId());
+        customer.setWorkshop(workshopConverter.parseWorkshop(customerEntity.getWorkshopEntity()));
+        customer.setId(new CustomerId(customerEntity.getId().getWorkshopId(), customerEntity.getId().getDocId()));
         customer.setName(customerEntity.getName());
         customer.setLandline(PhoneVO.parsePhoneVO(customerEntity.getLandline()));
         customer.setMobilePhone(PhoneVO.parsePhoneVO(customerEntity.getMobilePhone()));
@@ -29,21 +38,21 @@ public class CustomerConverter {
         return customer;
     }
 
-    public Map<Long, Customer> parseCustomerList(List<CustomerEntity> customerEntityList) {
-        Map<Long, Customer> customerList = new HashMap<>();
+    public List<Customer> parseCustomerList(List<CustomerEntity> customerEntityList) {
+        List<Customer> customerList = new ArrayList<>();
         if (Objects.nonNull(customerEntityList) && !customerEntityList.isEmpty()) {
             for (CustomerEntity customerEntity : customerEntityList) {
-                customerList.put(customerEntity.getId(), this.parseCustomer(customerEntity));
+                customerList.add(this.parseCustomer(customerEntity));
             }
         }
         return customerList;
     }
 
-    public List<CustomerResponse> customerResponseList(Map<Long, Customer> customerMap) {
+    public List<CustomerResponse> customerResponseList(List<Customer> customerMap) {
         List<CustomerResponse> responseList = new ArrayList<>();
         if (Objects.nonNull(customerMap) && !customerMap.isEmpty()) {
-            for (Long id : customerMap.keySet()) {
-                responseList.add(new CustomerResponse(id, customerMap.get(id)));
+            for (Customer customer : customerMap) {
+                responseList.add(new CustomerResponse(customer));
             }
         }
         return responseList;

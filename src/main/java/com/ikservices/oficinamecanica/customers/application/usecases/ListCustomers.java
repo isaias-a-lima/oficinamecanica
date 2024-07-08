@@ -7,8 +7,10 @@ import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRepository;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.infra.constants.CustomerConstants;
+import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import org.slf4j.Logger;
 
+import java.util.List;
 import java.util.Map;
 
 public class ListCustomers {
@@ -24,8 +26,8 @@ public class ListCustomers {
         this.ikMessages = ikMessages;
     }
 
-    public Map<Long, Customer> execute(Long workshopId) {
-        Map<Long, Customer> customerList = null;
+    public List<Customer> execute(Long workshopId) {
+        List<Customer> customerList = null;
         String loggerID = IKLoggerUtil.getLoggerID();
 
         try {

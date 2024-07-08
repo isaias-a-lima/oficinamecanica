@@ -3,15 +3,16 @@ package com.ikservices.oficinamecanica.customers.domain;
 import com.ikservices.oficinamecanica.commons.vo.AddressVO;
 import com.ikservices.oficinamecanica.commons.vo.EmailVO;
 import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
+import com.ikservices.oficinamecanica.workshops.domain.Workshop;
 import lombok.*;
 
 @NoArgsConstructor
 @Setter
 @Getter
-@EqualsAndHashCode(of = "idDoc")
+@EqualsAndHashCode(of = "id")
 public class Customer {
-    private Long workshopId;
-    private Long idDoc;
+    private CustomerId id;
+    private Workshop workshop;
     private String name;
     private PhoneVO landline;
     private PhoneVO mobilePhone;
