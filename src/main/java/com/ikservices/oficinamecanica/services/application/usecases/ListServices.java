@@ -1,6 +1,6 @@
 package com.ikservices.oficinamecanica.services.application.usecases;
 
-import java.util.Map;
+import java.util.List;
 
 import com.ikservices.oficinamecanica.services.application.gateways.ServiceRepository;
 import com.ikservices.oficinamecanica.services.domain.Service;
@@ -12,7 +12,7 @@ public class ListServices {
 		this.repository = repository;
 	}
 	
-	public Map<Long, Service> execute(Long workshopId){
+	public List<Service> execute(Long workshopId){
 		return repository.getServiceList(workshopId);
 	}
 }
