@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.workshops.infra.persistense;
 
+import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.users.infra.UserConverter;
 import com.ikservices.oficinamecanica.workshops.domain.Workshop;
 
@@ -28,5 +29,23 @@ public class WorkshopConverter {
         }
         return workshopList;
     }
+
+	public WorkshopEntity parseWorkshopEntity(Workshop workshop) {
+		if(Objects.isNull(workshop)) {
+			throw new IKException("Null Object");
+		}
+		WorkshopEntity entity = new WorkshopEntity();
+		//TODO
+		entity.setId(null);
+		entity.setDocId(workshop.getDocId());
+		entity.setName(workshop.getName());
+		entity.setImage(workshop.getImage());
+		//TODO
+		entity.setUser(null);
+		//TODO
+		entity.setActive(null);
+		
+		return entity;
+	}
 
 }

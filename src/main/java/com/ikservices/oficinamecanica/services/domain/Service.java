@@ -16,6 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Service {
+	private ServiceId id;
 	private Workshop workshop;
 	private String description;
 	private BigDecimal cost;

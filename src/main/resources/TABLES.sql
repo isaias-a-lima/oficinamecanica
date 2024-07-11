@@ -48,7 +48,7 @@ REFERENCES workshops(workshopid)
 --2024-06-14 00:12 - Portugal - Isaias Lima - Populate customers table
 INSERT INTO customers VALUES(1, 1, 55566677788, 'Marcio Brigido', '+55 11 2222-3333', '+55 11 93333-4444', 'mb@teste.com', 'F');
 
---2024-06-18 16:13 - Brazil - Mateus Lima -
+--2024-06-18 16:13 - Brazil - Mateus Lima - create services table
 CREATE TABLE services(
 serviceid BIGINT NOT NULL AUTO_INCREMENT COMMENT 'Service identification number',
 workshopid BIGINT NOT NULL COMMENT 'Workshop Identification number',
@@ -79,3 +79,18 @@ REFERENCES workshops(workshopid)
 --2024-07-05 01:13 - Portugal - Isaias Lima - Recreate customers table.
 INSERT INTO customers VALUES(1, '55566677788', 'Marcio Brigido', '+55 11 2222-3333', '+55 11 93333-4444', 'mb@teste.com', 'F');
 INSERT INTO customers VALUES(1, '22233344455', 'Leandro Silva', '+55 11 3333-4444', '+55 11 93333-4444', 'ls@teste.com', 'F');
+
+--2024-07-12 16:08 - Brazil - Mateus Lima - Recreate services table.
+DROP TABLE services;
+
+CREATE TABLE services(
+serviceid INT NOT NULL COMMENT 'Service identification number',
+workshopid BIGINT NOT NULL COMMENT 'Workshop Identification number',
+description VARCHAR(255) NOT NULL COMMENT 'Service description',
+cost DECIMAL(7,2) NOT NULL COMMENT 'Service cost',
+PRIMARY KEY(serviceid, workshopid),
+CONSTRAINT fk_workshops_services FOREIGN KEY (workshopid)
+REFERENCES workshops(workshopid)
+)COMMENT = 'Services registration';
+
+

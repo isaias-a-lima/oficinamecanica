@@ -31,18 +31,22 @@ public class ServiceConverter {
 		return service;
 	}
 	
-	/*public ServiceEntity parseEntity(Service service) {
+	public ServiceEntity parseEntity(Service service) {
 		if(Objects.isNull(service)) {
 			throw new ServiceException("Null object");
 		}
 		
 		ServiceEntity entity = new ServiceEntity();
+		
+		//TODO
+		entity.setId(null);
 		entity.setCost(service.getCost());
 		entity.setDescription(service.getDescription());
-		entity.setWorkshop(service.getWorkshop());
+		entity.setWorkshop(Objects.nonNull(service.getWorkshop()) ?
+				workshopConverter.parseWorkshopEntity(service.getWorkshop()) : null);
 		
 		return entity;
-	}*/
+	}
 	
 	public List<Service> parseServiceList(List<ServiceEntity> serviceEntityList) {
 		List<Service> serviceList = new ArrayList<>();
