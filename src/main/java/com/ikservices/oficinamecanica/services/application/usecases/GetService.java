@@ -10,7 +10,7 @@ public class GetService {
 		this.repository = repository;
 	}
 	
-	public Service getService(Long id) {
+	public Service execute(Long id) {
 		return repository.getService(id);
 	}
 }

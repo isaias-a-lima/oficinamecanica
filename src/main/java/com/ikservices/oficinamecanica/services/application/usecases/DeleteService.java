@@ -9,7 +9,7 @@ public class DeleteService {
 		this.repository = repository;
 	}
 	
-	public void deleteService(Long id) {
+	public void execute(Long id) {
 		repository.deleteService(id);
 	}
 }

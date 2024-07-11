@@ -10,7 +10,7 @@ public class SaveService {
 		this.repository = repository;
 	}
 	
-	public Service saveService(Service service) {
+	public Service execute(Service service) {
 		return repository.saveService(service);
 	}
 }
