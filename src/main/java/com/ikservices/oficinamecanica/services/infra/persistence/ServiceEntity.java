@@ -8,7 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.ikservices.oficinamecanica.workshops.domain.Workshop;
+import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -28,8 +33,9 @@ public class ServiceEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "SERVICEID")
 	private Long id;
-	@Column(name = "WORKSHOPID")
-	private Long workshopId;
+	@ManyToOne
+	@JoinColumn(name = "WORKSHOPID")
+	private WorkshopEntity workshop;
 	@Column(name = "DESCRIPTION")
 	private String description;
 	@Column(name = "COST")
