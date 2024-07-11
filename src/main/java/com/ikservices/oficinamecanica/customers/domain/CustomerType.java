@@ -18,7 +18,16 @@ public enum CustomerType {
 
     public static CustomerType getByType(Character type) {
         for (CustomerType value : CustomerType.values()) {
-            if (Objects.nonNull(value.getType()) && value.getType().equals(type)) {
+            if (Objects.nonNull(type) && Objects.nonNull(value.getType()) && value.getType().equals(type)) {
+                return value;
+            }
+        }
+        return CustomerType.NONE;
+    }
+
+    public static CustomerType getByDescription(String description) {
+        for (CustomerType value : CustomerType.values()) {
+            if (Objects.nonNull(description) && Objects.nonNull(value.getType()) && value.getDescription().equals(description)) {
                 return value;
             }
         }

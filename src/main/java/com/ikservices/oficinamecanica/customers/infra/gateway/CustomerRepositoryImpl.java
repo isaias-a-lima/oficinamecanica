@@ -4,11 +4,11 @@ import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRep
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.domain.CustomerId;
 import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
+import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerRepositoryJPA;
 
 import java.util.List;
-import java.util.Map;
 
 public class CustomerRepositoryImpl implements CustomerRepository {
 
@@ -23,7 +23,8 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public Customer saveCustomer(Customer customer) {
-        return null;
+        CustomerEntity entitySaved = repository.save(converter.parseEntity(customer));
+        return converter.parseCustomer(entitySaved);
     }
 
     @Override
@@ -39,10 +40,5 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public List<Customer> getCustomerList(Long workshopId) {
         return converter.parseCustomerList(repository.findAllByWorkshopId(workshopId));
-    }
-
-    @Override
-    public void deleteCustomer(Long id) {
-
     }
 }

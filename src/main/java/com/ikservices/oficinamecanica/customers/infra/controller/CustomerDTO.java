@@ -1,24 +1,28 @@
 package com.ikservices.oficinamecanica.customers.infra.controller;
 
 import com.ikservices.oficinamecanica.customers.domain.Customer;
-import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Getter
+@Setter
 @EqualsAndHashCode
-public class CustomerResponse {
-    private final Long workshopId;
-    private final String docId;
-    private final String name;
-    private final String landline;
-    private final String mobilePhone;
-    private final String email;
-    private final String type;
+@NoArgsConstructor
+public class CustomerDTO implements Serializable {
+    private Long workshopId;
+    private String docId;
+    private String name;
+    private String landline;
+    private String mobilePhone;
+    private String email;
+    private String type;
 
-    public CustomerResponse(Customer customer) {
+    public CustomerDTO(Customer customer) {
         this.workshopId = customer.getId().getWorkshopId();
         this.docId = customer.getId().getDocId();
         this.name = customer.getName();
