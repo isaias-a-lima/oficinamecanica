@@ -11,7 +11,7 @@ public class SaveCustomer {
         this.repository = repository;
     }
 
-    public Customer saveCustomer(Customer customer) {
+    public Customer execute(Customer customer) {
         return repository.saveCustomer(customer);
     }
 }

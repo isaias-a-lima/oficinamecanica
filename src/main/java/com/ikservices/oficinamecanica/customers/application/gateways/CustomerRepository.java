@@ -12,5 +12,4 @@ public interface CustomerRepository {
     Customer updateCustomer(Customer customer);
     Customer getCustomer(CustomerId id);
     List<Customer> getCustomerList(Long workshopId);
-    void deleteCustomer(Long id);
 }

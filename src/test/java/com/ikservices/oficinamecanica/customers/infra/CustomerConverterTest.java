@@ -4,7 +4,7 @@
 //import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
 //import com.ikservices.oficinamecanica.customers.domain.Customer;
 //import com.ikservices.oficinamecanica.customers.domain.CustomerType;
-//import com.ikservices.oficinamecanica.customers.infra.controller.CustomerResponse;
+//import com.ikservices.oficinamecanica.customers.infra.controller.CustomerDTO;
 //import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.BeforeEach;
@@ -51,9 +51,9 @@
 //        Map<Long, Customer> customerMap = new HashMap<>();
 //        customerMap.put(customerId, customer);
 //
-//        CustomerResponse customerResponse = new CustomerResponse(customerId, customer);
+//        CustomerDTO customerResponse = new CustomerDTO(customerId, customer);
 //
-//        List<CustomerResponse> responseList = subject.customerResponseList(customerMap);
+//        List<CustomerDTO> responseList = subject.customerResponseList(customerMap);
 //
 //        Assertions.assertEquals(customerResponse, responseList.get(0));
 //    }
