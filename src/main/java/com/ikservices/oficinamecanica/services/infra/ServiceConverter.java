@@ -8,6 +8,7 @@ import org.hibernate.service.spi.ServiceException;
 
 import com.ikservices.oficinamecanica.services.domain.Service;
 import com.ikservices.oficinamecanica.services.infra.persistence.ServiceEntity;
+import com.ikservices.oficinamecanica.services.infra.persistence.ServiceEntityId;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
 
 public class ServiceConverter {
@@ -38,12 +39,13 @@ public class ServiceConverter {
 		
 		ServiceEntity entity = new ServiceEntity();
 		
-		//TODO
-		entity.setId(null);
+		entity.setId(new ServiceEntityId(service.getId().getId(), 
+				service.getId().getWorkshopId()));
 		entity.setCost(service.getCost());
 		entity.setDescription(service.getDescription());
 		entity.setWorkshop(Objects.nonNull(service.getWorkshop()) ?
-				workshopConverter.parseWorkshopEntity(service.getWorkshop()) : null);
+				workshopConverter.parseWorkshopEntity(service.getWorkshop(), service.getId()
+						.getWorkshopId()) : null);
 		
 		return entity;
 	}

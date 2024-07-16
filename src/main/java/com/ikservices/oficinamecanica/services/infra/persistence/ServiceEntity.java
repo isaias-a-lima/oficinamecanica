@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,10 +30,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class ServiceEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "SERVICEID")
-	private Long id;
+	@EmbeddedId
+	private ServiceEntityId id;
 	@ManyToOne
 	@JoinColumn(name = "WORKSHOPID")
 	private WorkshopEntity workshop;
