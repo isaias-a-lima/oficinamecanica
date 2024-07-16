@@ -30,20 +30,16 @@ public class WorkshopConverter {
         return workshopList;
     }
 
-	public WorkshopEntity parseWorkshopEntity(Workshop workshop) {
+	public WorkshopEntity parseWorkshopEntity(Workshop workshop, Long id) {
 		if(Objects.isNull(workshop)) {
 			throw new IKException("Null Object");
 		}
 		WorkshopEntity entity = new WorkshopEntity();
-		//TODO
-		entity.setId(null);
+		entity.setId(id);
 		entity.setDocId(workshop.getDocId());
 		entity.setName(workshop.getName());
 		entity.setImage(workshop.getImage());
-		//TODO
-		entity.setUser(null);
-		//TODO
-		entity.setActive(null);
+		entity.setUser(userConverter.toEntity(workshop.getUser()));
 		
 		return entity;
 	}
