@@ -9,6 +9,8 @@ import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerRepositoryJPA;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class CustomerRepositoryImpl implements CustomerRepository {
 
@@ -29,7 +31,12 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public Customer updateCustomer(Customer customer) {
-        return null;
+        Optional<CustomerEntity> optional = repository.findById(new CustomerEntityId(customer.getId().getWorkshopId(), customer.getId().getDocId()));
+        CustomerEntity entity = optional.orElse(null);
+        if (Objects.nonNull(entity)) {
+            entity.update(converter.parseEntity(customer));
+        }
+        return converter.parseCustomer(entity);
     }
 
     @Override
