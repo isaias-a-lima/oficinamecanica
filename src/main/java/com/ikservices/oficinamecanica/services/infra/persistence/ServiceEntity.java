@@ -33,7 +33,7 @@ public class ServiceEntity {
 	@EmbeddedId
 	private ServiceEntityId id;
 	@ManyToOne
-	@JoinColumn(name = "WORKSHOPID")
+	@JoinColumn(name = "WORKSHOPID", insertable = false, updatable = false)
 	private WorkshopEntity workshop;
 	@Column(name = "DESCRIPTION")
 	private String description;

@@ -5,6 +5,7 @@ import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRep
 import com.ikservices.oficinamecanica.customers.application.usecases.GetCustomer;
 import com.ikservices.oficinamecanica.customers.application.usecases.ListCustomers;
 import com.ikservices.oficinamecanica.customers.application.usecases.SaveCustomer;
+import com.ikservices.oficinamecanica.customers.application.usecases.UpdateCustomer;
 import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerMessages;
 import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerRepositoryImpl;
@@ -53,7 +54,11 @@ public class CustomerConfig {
         return new SaveCustomer(repository);
     }
 
-
+    @Bean
+    public UpdateCustomer updateCustomer(CustomerRepository repository) {
+    	return new UpdateCustomer(repository);
+    }
+    
     //TODO Maybe this Bean can moved to WorkshopConfig. Please verify.
     @Bean
     public WorkshopConverter workshopConverter(UserConverter userConverter) {
