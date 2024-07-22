@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/customer")
@@ -56,7 +57,13 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<IKResponse<CustomerDTO>> saveCustomer(@RequestBody CustomerDTO customerDTO, UriComponentsBuilder uriBuilder) {
-        Customer customerSaved = saveCustomer.execute(converter.parseCustomer(customerDTO));
+        Customer customerSaved = null;
+        try {
+            customerSaved = saveCustomer.execute(converter.parseCustomer(customerDTO));
+        } catch (IKException ike) {
+            int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
+            return ResponseEntity.status(code).body(IKResponse.<CustomerDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+        }
         URI uri = uriBuilder.path("/customer/{workshopId}/{docId}").buildAndExpand(customerSaved.getId().getWorkshopId(), customerSaved.getId().getDocId()).toUri();
         return ResponseEntity.created(uri).body(IKResponse.<CustomerDTO>build().body(new CustomerDTO(customerSaved)));
     }

@@ -1,5 +1,7 @@
 package com.ikservices.oficinamecanica.customers.infra.gateway;
 
+import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRepository;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.domain.CustomerId;
@@ -7,6 +9,7 @@ import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerRepositoryJPA;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +28,10 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public Customer saveCustomer(Customer customer) {
+        Optional<CustomerEntity> optional = repository.findById(new CustomerEntityId(customer.getId().getWorkshopId(), customer.getId().getDocId()));
+        if (optional.isPresent()) {
+            throw new IKException(HttpStatus.FOUND.value(), IKMessageType.WARNING, "Cliente já cadastrado.");
+        }
         CustomerEntity entitySaved = repository.save(converter.parseEntity(customer));
         return converter.parseCustomer(entitySaved);
     }
