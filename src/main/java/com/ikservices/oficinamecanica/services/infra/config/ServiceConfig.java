@@ -8,10 +8,10 @@ import org.springframework.core.env.Environment;
 
 import com.ikservices.oficinamecanica.services.application.gateways.ServiceRepository;
 import com.ikservices.oficinamecanica.services.application.usecases.GetService;
+import com.ikservices.oficinamecanica.services.application.usecases.ListServices;
 import com.ikservices.oficinamecanica.services.infra.ServiceConverter;
 import com.ikservices.oficinamecanica.services.infra.gateway.ServiceRepositoryImpl;
 import com.ikservices.oficinamecanica.services.infra.persistence.ServiceRepositoryJPA;
-import com.ikservices.oficinamecanica.users.infra.UserConverter;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
 
 @Configuration
@@ -33,6 +33,11 @@ public class ServiceConfig {
 	@Bean
 	public ServiceConverter serviceConverter(WorkshopConverter workshopConverter) {
 		return new ServiceConverter(workshopConverter);
+	}
+	
+	@Bean
+	public ListServices listServices(ServiceRepository repository) {
+		return new ListServices(repository);
 	}
 	
 //	@Bean

@@ -39,8 +39,7 @@ public class ServiceRepositoryImpl implements ServiceRepository{
 
 	@Override
 	public List<Service> getServiceList(Long workshopId) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.converter.parseServiceList(repository.findAllByWorkshopId(workshopId));
 	}
 
 	@Override
