@@ -100,7 +100,8 @@ public class UserController {
         try {
             user = obterUsuario.execute(cpf);
         } catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+            int code = Objects.nonNull(e.getCode()) ? Integer.parseInt(e.getCode()) : 500;
+            return ResponseEntity.status(HttpStatus.valueOf(code)).body(
                     IKResponse.<UserResponse>build().addMessage(IKMessageType.ERROR, HttpStatus.EXPECTATION_FAILED.getReasonPhrase()));
         }
         return ResponseEntity.ok(IKResponse.<UserResponse>build().body(UserResponse.parse(user)));
@@ -130,7 +131,14 @@ public class UserController {
     @DeleteMapping("/{cpf}")
     @Transactional
     public ResponseEntity<IKResponse<String>> delete(@PathVariable("cpf") Long cpf) {
-        String message = removerUsuario.execute(cpf);
+        String message = null;
+        try {
+            message = removerUsuario.execute(cpf);
+        } catch (UserException e) {
+            int code = Objects.nonNull(e.getCode()) ? Integer.parseInt(e.getCode()) : 500;
+            return ResponseEntity.status(HttpStatus.valueOf(code)).body(
+                    IKResponse.<String>build().addMessage(IKMessageType.ERROR, e.getMessage()));
+        }
         return ResponseEntity.ok(IKResponse.<String>build().body(message).addMessage(IKMessageType.SUCCESS, message));
     }
 }

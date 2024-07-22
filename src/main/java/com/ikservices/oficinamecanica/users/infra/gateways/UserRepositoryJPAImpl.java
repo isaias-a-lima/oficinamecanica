@@ -7,6 +7,7 @@ import com.ikservices.oficinamecanica.users.domain.User;
 import com.ikservices.oficinamecanica.users.infra.UserConverter;
 import com.ikservices.oficinamecanica.users.infra.persistence.UserEntity;
 import com.ikservices.oficinamecanica.users.infra.persistence.UserRepositoryJPA;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Objects;
@@ -59,6 +60,9 @@ public class UserRepositoryJPAImpl implements UserRepository {
     @Override
     public Boolean removeUser(Long cpf) {
         UserEntity userEntity = repository.findByCpf(cpf);
+        if (Objects.isNull(userEntity)) {
+            throw new UserException(properties.getErrorNotFoundDatas(), String.valueOf(HttpStatus.NOT_FOUND.value()));
+        }
         userEntity.inativar();
         return true;
     }
