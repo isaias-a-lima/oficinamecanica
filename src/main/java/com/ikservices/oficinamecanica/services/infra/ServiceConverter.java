@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import org.hibernate.service.spi.ServiceException;
 
+import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.services.domain.Service;
 import com.ikservices.oficinamecanica.services.domain.ServiceId;
 import com.ikservices.oficinamecanica.services.infra.controller.ServiceDTO;
@@ -28,7 +29,8 @@ public class ServiceConverter {
 		
 		Service service = new Service();
 		service.setId(new ServiceId(entity.getId().getId(), entity.getId().getWorkshopId()));
-		service.setWorkshop(workshopConverter.parseWorkshop(entity.getWorkshopEntity()));
+		service.setWorkshop(Objects.nonNull(entity.getWorkshopEntity()) ? 
+				workshopConverter.parseWorkshop(entity.getWorkshopEntity()) : null);
 		service.setCost(entity.getCost());
 		service.setDescription(entity.getDescription());
 		
@@ -99,5 +101,18 @@ public class ServiceConverter {
 		}
 		
 		return serviceDTOList;
+	}
+
+	public Service parseService(ServiceDTO serviceDTO) {
+		if(Objects.isNull(serviceDTO)) {
+			throw new IKException("Null object.");
+		}
+		
+		Service service = new Service();
+		service.setId(new ServiceId(serviceDTO.getServiceId(), serviceDTO.getWorkshopId()));
+		service.setDescription(serviceDTO.getDescription());
+		service.setCost(serviceDTO.getCost());
+		
+		return service;
 	}
 }

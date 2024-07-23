@@ -11,4 +11,5 @@ public interface ServiceRepository {
 	Service getService(ServiceId id);
 	List<Service> getServiceList(Long workshopId);
 	void deleteService(Long id);
+	Long getNextServiceId(Long workshopId);
 }

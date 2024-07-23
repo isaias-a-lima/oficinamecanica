@@ -14,10 +14,10 @@ import lombok.Setter;
 @EqualsAndHashCode
 @NoArgsConstructor
 public class ServiceDTO {
-	Long serviceId;
-	Long workshopId;
-	String description;
-	BigDecimal cost;
+	private Long serviceId;
+	private Long workshopId;
+	private String description;
+	private BigDecimal cost;
 	
 	public ServiceDTO(Service service) {
 		this.serviceId = service.getId().getId();
