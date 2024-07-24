@@ -1,6 +1,7 @@
 package com.ikservices.oficinamecanica.services.infra.gateway;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -38,8 +39,14 @@ public class ServiceRepositoryImpl implements ServiceRepository{
 
 	@Override
 	public Service updateService(Service service) {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<ServiceEntity> optional = repository.findById(new ServiceEntityId(service.getId().getId(), service.getId().getWorkshopId()));
+		ServiceEntity entity = optional.orElse(null);
+		
+		if(Objects.nonNull(entity)) {
+			entity.update(converter.parseEntity(service));
+		}
+		
+		return converter.parseService(entity);
 	}
 
 	@Override
@@ -63,4 +70,5 @@ public class ServiceRepositoryImpl implements ServiceRepository{
 		return this.repository.getNextServiceId(workshopId);
 	}
 
+	
 }

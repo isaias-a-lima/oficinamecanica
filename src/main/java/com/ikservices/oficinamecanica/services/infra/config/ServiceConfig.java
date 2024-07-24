@@ -11,6 +11,7 @@ import com.ikservices.oficinamecanica.services.application.usecases.GetNextServi
 import com.ikservices.oficinamecanica.services.application.usecases.GetService;
 import com.ikservices.oficinamecanica.services.application.usecases.ListServices;
 import com.ikservices.oficinamecanica.services.application.usecases.SaveService;
+import com.ikservices.oficinamecanica.services.application.usecases.UpdateService;
 import com.ikservices.oficinamecanica.services.infra.ServiceConverter;
 import com.ikservices.oficinamecanica.services.infra.gateway.ServiceRepositoryImpl;
 import com.ikservices.oficinamecanica.services.infra.persistence.ServiceRepositoryJPA;
@@ -50,6 +51,11 @@ public class ServiceConfig {
 	@Bean
 	public GetNextServiceId getNextServiceId(ServiceRepository repository) {
 		return new GetNextServiceId(repository);
+	}
+	
+	@Bean
+	public UpdateService updateService(ServiceRepository repository) {
+		return new UpdateService(repository);
 	}
 	
 //	@Bean

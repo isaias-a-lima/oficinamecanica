@@ -6,11 +6,13 @@ import java.util.Objects;
 
 import javax.persistence.Convert;
 import javax.persistence.Converter;
+import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +24,7 @@ import com.ikservices.oficinamecanica.services.application.usecases.GetNextServi
 import com.ikservices.oficinamecanica.services.application.usecases.GetService;
 import com.ikservices.oficinamecanica.services.application.usecases.ListServices;
 import com.ikservices.oficinamecanica.services.application.usecases.SaveService;
+import com.ikservices.oficinamecanica.services.application.usecases.UpdateService;
 import com.ikservices.oficinamecanica.services.domain.Service;
 import com.ikservices.oficinamecanica.services.domain.ServiceId;
 import com.ikservices.oficinamecanica.services.infra.ServiceConverter;
@@ -37,14 +40,16 @@ public class ServiceController {
 	private final ListServices listServices;
 	private final SaveService saveService;
 	private final GetNextServiceId getNextServiceId;
+	private final UpdateService updateService;
 	
 	public ServiceController(ServiceConverter converter, GetService getService, ListServices listServices,
-			SaveService saveService, GetNextServiceId getNextServiceId) {
+			SaveService saveService, GetNextServiceId getNextServiceId, UpdateService updateService) {
 		this.getService = getService;
 		this.listServices = listServices;
 		this.converter = converter;
 		this.saveService = saveService;
 		this.getNextServiceId = getNextServiceId;
+		this.updateService = updateService;
 	}
 	
 	@GetMapping("/{workshopId}/{id}")
@@ -78,5 +83,12 @@ public class ServiceController {
 		URI uri = uriBuilder.path("/services/{workshopId}/{id}").buildAndExpand(savedService.getId().getWorkshopId(),
 				savedService.getId().getId()).toUri();
 		return ResponseEntity.created(uri).body(IKResponse.<ServiceDTO>build().body(new ServiceDTO(savedService)));		
+	}
+	
+	@PutMapping
+	@Transactional
+	public ResponseEntity<IKResponse<ServiceDTO>> updateService(@RequestBody	 ServiceDTO serviceDTO){
+		Service service = updateService.execute(converter.parseService(serviceDTO));
+		return ResponseEntity.ok(IKResponse.<ServiceDTO>build().body(new ServiceDTO(service)));
 	}
 }
