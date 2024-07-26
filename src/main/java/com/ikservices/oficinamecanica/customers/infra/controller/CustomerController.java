@@ -1,7 +1,9 @@
 package com.ikservices.oficinamecanica.customers.infra.controller;
 
+import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
+import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.customers.application.usecases.GetCustomer;
 import com.ikservices.oficinamecanica.customers.application.usecases.ListCustomers;
 import com.ikservices.oficinamecanica.customers.application.usecases.SaveCustomer;
@@ -50,8 +52,8 @@ public class CustomerController {
     }
 
     @GetMapping("/{workshopId}/{docId}")
-    public ResponseEntity<IKResponse<CustomerDTO>> getCustomer(@PathVariable("workshopId") Long workshopId, @PathVariable("docId") String docId) {
-        Customer customer = getCustomer.execute(new CustomerId(workshopId, docId));
+    public ResponseEntity<IKResponse<CustomerDTO>> getCustomer(@PathVariable("workshopId") Long workshopId, @PathVariable("docId") String docId, @RequestParam(name = "type", defaultValue = "F") Character type) {
+        Customer customer = getCustomer.execute(new CustomerId(workshopId, new IdentificationDocumentVO(TaxPayerEnum.getByType(type), docId)));
         return ResponseEntity.ok(IKResponse.<CustomerDTO>build().body(new CustomerDTO(customer)));
     }
 

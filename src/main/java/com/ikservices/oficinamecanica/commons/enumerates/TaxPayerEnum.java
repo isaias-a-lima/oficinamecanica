@@ -1,13 +1,13 @@
-package com.ikservices.oficinamecanica.customers.domain;
+package com.ikservices.oficinamecanica.commons.enumerates;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Objects;
 
-@Getter
 @AllArgsConstructor
-public enum CustomerType {
+@Getter
+public enum TaxPayerEnum {
     NONE(null, "Nenhum"),
     PHYSICAL_PERSON('F', "Pessoa Física"),
     COMPANY_PERSON('J', "Pessoa Jurídica");
@@ -16,21 +16,21 @@ public enum CustomerType {
 
     private final String description;
 
-    public static CustomerType getByType(Character type) {
-        for (CustomerType value : CustomerType.values()) {
+    public static TaxPayerEnum getByType(Character type) {
+        for (TaxPayerEnum value : TaxPayerEnum.values()) {
             if (Objects.nonNull(type) && Objects.nonNull(value.getType()) && value.getType().equals(type)) {
                 return value;
             }
         }
-        return CustomerType.NONE;
+        return TaxPayerEnum.NONE;
     }
 
-    public static CustomerType getByDescription(String description) {
-        for (CustomerType value : CustomerType.values()) {
+    public static TaxPayerEnum getByDescription(String description) {
+        for (TaxPayerEnum value : TaxPayerEnum.values()) {
             if (Objects.nonNull(description) && Objects.nonNull(value.getType()) && value.getDescription().equals(description)) {
                 return value;
             }
         }
-        return CustomerType.NONE;
+        return TaxPayerEnum.NONE;
     }
 }

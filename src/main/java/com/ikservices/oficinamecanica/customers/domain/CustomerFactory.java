@@ -1,10 +1,10 @@
 package com.ikservices.oficinamecanica.customers.domain;
 
+import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
 import com.ikservices.oficinamecanica.commons.vo.AddressVO;
 import com.ikservices.oficinamecanica.commons.vo.EmailVO;
+import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
-import com.ikservices.oficinamecanica.users.domain.User;
-import com.ikservices.oficinamecanica.workshops.domain.Workshop;
 
 import java.util.Objects;
 
@@ -12,14 +12,14 @@ public class CustomerFactory {
 
     private final Customer customer;
 
-    private CustomerFactory(Long workshopId, String docId, String name, CustomerType type) {
+    private CustomerFactory(Long workshopId, IdentificationDocumentVO docId, String name, TaxPayerEnum type) {
         this.customer = new Customer();
         this.customer.setId(new CustomerId(workshopId, docId));
         this.customer.setName(name);
         this.customer.setType(type);
     }
 
-    public static CustomerFactory startBuild(Long workshopId, String docId, String name, CustomerType type) {
+    public static CustomerFactory startBuild(Long workshopId, IdentificationDocumentVO docId, String name, TaxPayerEnum type) {
         return new CustomerFactory(workshopId, docId, name, type);
     }
 
