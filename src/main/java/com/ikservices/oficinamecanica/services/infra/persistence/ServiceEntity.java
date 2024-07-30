@@ -34,7 +34,7 @@ public class ServiceEntity {
 	private ServiceEntityId id;
 	@ManyToOne
 	@JoinColumn(name = "WORKSHOPID", insertable = false, updatable = false)
-	private WorkshopEntity workshop;
+	private WorkshopEntity workshopEntity;
 	@Column(name = "DESCRIPTION")
 	private String description;
 	@Column(name = "COST")

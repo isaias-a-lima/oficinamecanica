@@ -24,7 +24,7 @@ public class CustomerDTO implements Serializable {
 
     public CustomerDTO(Customer customer) {
         this.workshopId = customer.getId().getWorkshopId();
-        this.docId = customer.getId().getDocId();
+        this.docId = customer.getId().getDocId().getFullDocument();
         this.name = customer.getName();
         this.landline = Objects.nonNull(customer.getLandline()) ? customer.getLandline().getFullPhone() : null;
         this.mobilePhone = Objects.nonNull(customer.getMobilePhone()) ? customer.getMobilePhone().getFullPhone() : null;

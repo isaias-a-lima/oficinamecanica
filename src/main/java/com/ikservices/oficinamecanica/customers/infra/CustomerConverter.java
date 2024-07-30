@@ -1,17 +1,20 @@
 package com.ikservices.oficinamecanica.customers.infra;
 
+import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.vo.EmailVO;
+import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.domain.CustomerId;
-import com.ikservices.oficinamecanica.customers.domain.CustomerType;
 import com.ikservices.oficinamecanica.customers.infra.controller.CustomerDTO;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class CustomerConverter {
 
@@ -28,12 +31,13 @@ public class CustomerConverter {
 
         Customer customer = new Customer();
         customer.setWorkshop(Objects.nonNull(customerEntity.getWorkshopEntity()) ? workshopConverter.parseWorkshop(customerEntity.getWorkshopEntity()) : null);
-        customer.setId(new CustomerId(customerEntity.getId().getWorkshopId(), customerEntity.getId().getDocId()));
+        customer.setId(new CustomerId(customerEntity.getId().getWorkshopId(),
+                new IdentificationDocumentVO(TaxPayerEnum.getByType(customerEntity.getType()) ,customerEntity.getId().getDocId())));
         customer.setName(customerEntity.getName());
         customer.setLandline(PhoneVO.parsePhoneVO(customerEntity.getLandline()));
         customer.setMobilePhone(PhoneVO.parsePhoneVO(customerEntity.getMobilePhone()));
         customer.setEmail(new EmailVO(customerEntity.getEmail()));
-        customer.setType(CustomerType.getByType(customerEntity.getType()));
+        customer.setType(TaxPayerEnum.getByType(customerEntity.getType()));
 
         return customer;
     }
@@ -54,7 +58,7 @@ public class CustomerConverter {
         }
 
         CustomerEntity entity = new CustomerEntity();
-        entity.setId(new CustomerEntityId(customer.getId().getWorkshopId(), customer.getId().getDocId()));
+        entity.setId(new CustomerEntityId(customer.getId().getWorkshopId(), customer.getId().getDocId().getDocument()));
         entity.setName(customer.getName());
         entity.setEmail(customer.getEmail().getMailAddress());
         entity.setLandline(customer.getLandline().getFullPhone());
@@ -80,12 +84,13 @@ public class CustomerConverter {
         }
 
         Customer customer = new Customer();
-        customer.setId(new CustomerId(customerDTO.getWorkshopId(), customerDTO.getDocId()));
+        customer.setId(new CustomerId(customerDTO.getWorkshopId(),
+                new IdentificationDocumentVO(TaxPayerEnum.getByDescription(customerDTO.getType()) ,customerDTO.getDocId())));
         customer.setName(customerDTO.getName());
         customer.setLandline(Objects.nonNull(customerDTO.getLandline()) ? PhoneVO.parsePhoneVO(customerDTO.getLandline()) : null);
         customer.setMobilePhone(Objects.nonNull(customerDTO.getMobilePhone()) ? PhoneVO.parsePhoneVO(customerDTO.getMobilePhone()) : null);
         customer.setEmail(Objects.nonNull(customerDTO.getEmail()) ? new EmailVO(customerDTO.getEmail()) : null);
-        customer.setType(CustomerType.getByDescription(customerDTO.getType()));
+        customer.setType(TaxPayerEnum.getByDescription(customerDTO.getType()));
 
         return customer;
     }

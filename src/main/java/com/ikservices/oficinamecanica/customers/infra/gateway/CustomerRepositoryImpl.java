@@ -28,7 +28,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public Customer saveCustomer(Customer customer) {
-        Optional<CustomerEntity> optional = repository.findById(new CustomerEntityId(customer.getId().getWorkshopId(), customer.getId().getDocId()));
+        Optional<CustomerEntity> optional = repository.findById(new CustomerEntityId(customer.getId().getWorkshopId(), customer.getId().getDocId().getDocument()));
         if (optional.isPresent()) {
             throw new IKException(HttpStatus.FOUND.value(), IKMessageType.WARNING, "Cliente já cadastrado.");
         }
@@ -38,7 +38,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public Customer updateCustomer(Customer customer) {
-        Optional<CustomerEntity> optional = repository.findById(new CustomerEntityId(customer.getId().getWorkshopId(), customer.getId().getDocId()));
+        Optional<CustomerEntity> optional = repository.findById(new CustomerEntityId(customer.getId().getWorkshopId(), customer.getId().getDocId().getDocument()));
         CustomerEntity entity = optional.orElse(null);
         if (Objects.nonNull(entity)) {
             entity.update(converter.parseEntity(customer));
@@ -48,7 +48,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
     @Override
     public Customer getCustomer(CustomerId id) {
-        return converter.parseCustomer(repository.getById(new CustomerEntityId(id.getWorkshopId(), id.getDocId())));
+        return converter.parseCustomer(repository.getById(new CustomerEntityId(id.getWorkshopId(), id.getDocId().getDocument())));
     }
 
     @Override
