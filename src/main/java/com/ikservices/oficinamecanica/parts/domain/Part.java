@@ -17,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Part {
 	private PartId partId;
-	private Workshop workshopId;
+	private Workshop workshop;
 	private String description;
 	private BigDecimal cost;
 	private BigDecimal profit;

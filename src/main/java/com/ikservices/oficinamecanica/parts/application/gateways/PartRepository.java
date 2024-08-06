@@ -10,4 +10,5 @@ public interface PartRepository {
 	Part updatePart(Part part);
 	Part getPart(PartId partId);
 	List<Part> getPartsList(Long workshopId);
+	Long getNextPartId(Long workshopId);
 }
