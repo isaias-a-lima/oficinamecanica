@@ -28,8 +28,6 @@ import com.ikservices.oficinamecanica.services.application.usecases.UpdateServic
 import com.ikservices.oficinamecanica.services.domain.Service;
 import com.ikservices.oficinamecanica.services.domain.ServiceId;
 import com.ikservices.oficinamecanica.services.infra.ServiceConverter;
-import com.ikservices.oficinamecanica.services.infra.persistence.ServiceEntity;
-import com.sun.xml.bind.v2.TODO;
 
 @RestController
 @RequestMapping("/services")

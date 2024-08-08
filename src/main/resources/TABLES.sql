@@ -106,4 +106,5 @@ CONSTRAINT fk_workshops_parts FOREIGN KEY (workshopid)
 REFERENCES workshops(workshopid)
 )COMMENT = 'Parts registration';
 
-
+--2024-08-07 16:32 - Brazil - Mateus Lima - Alter parts table.
+ALTER TABLE parts ADD COLUMN brand VARCHAR(100) NOT NULL COMMENT 'Part brand';
