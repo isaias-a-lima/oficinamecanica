@@ -21,6 +21,6 @@ public class Part {
 	private String description;
 	private BigDecimal cost;
 	private BigDecimal profit;
-	private int balance;
+	private Integer balance;
 	private String brand;
 }
