@@ -39,6 +39,8 @@ public class PartEntity {
 	private int balance;
 	@Column(name = "PROFIT")
 	private BigDecimal profit;
+	@Column(name = "BRAND")
+	private String brand;
 	
 	public void update(PartEntity entity) {
 		if(Objects.nonNull(entity.getDescription())) {
@@ -52,6 +54,9 @@ public class PartEntity {
 		}
 		if(Objects.nonNull(entity.getProfit())){
 			this.profit = entity.getProfit();
+		}
+		if(Objects.nonNull(entity.getBrand())) {
+			this.brand = entity.getBrand();
 		}
 	}
 }

@@ -32,6 +32,7 @@ public class PartConverter {
 		part.setCost(entity.getCost());
 		part.setBalance(entity.getBalance());
 		part.setProfit(entity.getProfit());
+		part.setBrand(entity.getBrand());
 		
 		return part;
 	}
@@ -49,6 +50,7 @@ public class PartConverter {
 		entity.setDescription(part.getDescription());
 		entity.setProfit(part.getProfit());
 		entity.setWorkshopEntity(Objects.nonNull(part.getWorkshop()) ? workshopConverter.parseWorkshopEntity(part.getWorkshop(), part.getPartId().getWorkshopId()): null);
+		entity.setBrand(part.getBrand());
 		
 		return entity;
 	}
@@ -89,6 +91,7 @@ public class PartConverter {
 		dto.setPartId(part.getPartId().getId());
 		dto.setWorkshopId(part.getPartId().getWorkshopId());
 		dto.setProfit(part.getProfit());
+		dto.setBrand(part.getBrand());
 		
 		return dto;
 	}
@@ -105,6 +108,7 @@ public class PartConverter {
 		part.setDescription(dto.getDescription());
 		part.setProfit(dto.getProfit());
 		part.setPartId(new PartId(dto.getPartId(), dto.getWorkshopId()));
+		part.setBrand(dto.getBrand());
 		
 		return part;
 	}

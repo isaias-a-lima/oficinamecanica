@@ -20,6 +20,7 @@ public class PartDTO {
 	private BigDecimal profit;
 	private String description;
 	private BigDecimal cost;
+	private String brand;
 	
 	public PartDTO(Part part) {
 		this.partId = part.getPartId().getId();
@@ -28,5 +29,6 @@ public class PartDTO {
 		this.profit = part.getProfit();
 		this.cost = part.getCost();
 		this.description = part.getDescription();
+		this.brand = part.getBrand();
 	}
 }

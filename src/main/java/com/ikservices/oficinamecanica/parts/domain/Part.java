@@ -22,4 +22,5 @@ public class Part {
 	private BigDecimal cost;
 	private BigDecimal profit;
 	private int balance;
+	private String brand;
 }

@@ -4,10 +4,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
+import javax.transaction.Transactional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +22,7 @@ import com.ikservices.oficinamecanica.parts.application.usecases.GetNextPartId;
 import com.ikservices.oficinamecanica.parts.application.usecases.GetPart;
 import com.ikservices.oficinamecanica.parts.application.usecases.GetPartsList;
 import com.ikservices.oficinamecanica.parts.application.usecases.SavePart;
+import com.ikservices.oficinamecanica.parts.application.usecases.UpdatePart;
 import com.ikservices.oficinamecanica.parts.domain.Part;
 import com.ikservices.oficinamecanica.parts.domain.PartId;
 import com.ikservices.oficinamecanica.parts.infra.PartConverter;
@@ -32,15 +36,17 @@ public class PartController {
 	private final GetPartsList getPartsList;
 	private final SavePart savePart;
 	private final GetNextPartId getNextPartId;
+	private final UpdatePart updatePart;
 	
 	public PartController(PartConverter converter, GetPart getPart, 
 			GetPartsList getPartsList, SavePart savePart,
-			GetNextPartId getNextPartId) {
+			GetNextPartId getNextPartId, UpdatePart updatePart) {
 		this.converter = converter;
 		this.getPart = getPart;
 		this.getPartsList = getPartsList;
 		this.savePart = savePart;
 		this.getNextPartId = getNextPartId;
+		this.updatePart = updatePart;
 	}
 	
 	@GetMapping("/{workshopId}/{id}")
@@ -77,5 +83,12 @@ public class PartController {
 				part.getPartId().getId()).toUri();
 		
 		return ResponseEntity.created(uri).body(IKResponse.<PartDTO>build().body(new PartDTO(part)));
+	}
+	
+	@PutMapping
+	@Transactional
+	public ResponseEntity<IKResponse<PartDTO>> updatePart(@RequestBody PartDTO dto) {
+		Part part = updatePart.execute(converter.parsePart(dto));
+		return ResponseEntity.ok(IKResponse.<PartDTO>build().body(new PartDTO(part)));
 	}
 }
