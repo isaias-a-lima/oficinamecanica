@@ -16,7 +16,7 @@ import lombok.Setter;
 public class PartDTO {
 	private Long partId;
 	private Long workshopId;
-	private int balance;
+	private Integer balance;
 	private BigDecimal profit;
 	private String description;
 	private BigDecimal cost;

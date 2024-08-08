@@ -73,16 +73,13 @@ public class PartController {
 			Long nextId = this.getNextPartId.execute(dto.getWorkshopId());
 			dto.setPartId(nextId);
 			part = savePart.execute(converter.parsePart(dto));		
+			URI uri = uriBuilder.path("parts/{workshopId}/{id}").buildAndExpand(part.getPartId().getWorkshopId(), 
+					part.getPartId().getId()).toUri();
+			return ResponseEntity.created(uri).body(IKResponse.<PartDTO>build().body(new PartDTO(part)));
 		}catch(IKException ike) {
-//			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
-//			return ResponseEntity.status(code).body(IKResponse.<PartDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
-			ike.printStackTrace();
-		}
-		
-		URI uri = uriBuilder.path("parts/{workshopId}/{id}").buildAndExpand(part.getPartId().getWorkshopId(), 
-				part.getPartId().getId()).toUri();
-		
-		return ResponseEntity.created(uri).body(IKResponse.<PartDTO>build().body(new PartDTO(part)));
+			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
+			return ResponseEntity.status(code).body(IKResponse.<PartDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+		}		
 	}
 	
 	@PutMapping

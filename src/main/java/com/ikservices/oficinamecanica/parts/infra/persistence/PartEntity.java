@@ -36,7 +36,7 @@ public class PartEntity {
 	@Column(name = "COST")
 	private BigDecimal cost;
 	@Column(name = "BALANCE")
-	private int balance;
+	private Integer balance;
 	@Column(name = "PROFIT")
 	private BigDecimal profit;
 	@Column(name = "BRAND")
