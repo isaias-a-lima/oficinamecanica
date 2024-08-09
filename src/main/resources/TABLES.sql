@@ -108,3 +108,31 @@ REFERENCES workshops(workshopid)
 
 --2024-08-07 16:32 - Brazil - Mateus Lima - Alter parts table.
 ALTER TABLE parts ADD COLUMN brand VARCHAR(100) NOT NULL COMMENT 'Part brand';
+
+--2024-08-09 11:42 - Brazil - Mateus Lima - Create suppliers table.
+CREATE TABLE suppliers(
+supplierid INT NOT NULL COMMENT 'Supplier identification number',
+workshopid BIGINT NOT NULL COMMENT 'Workshop Identification number',
+name VARCHAR(100) NOT NULL COMMENT 'Supplier name',
+landline VARCHAR(30) COMMENT 'Supplier landline number',
+mobilephone VARCHAR(30) NOT NULL COMMENT 'Supplier mobilephone number',
+email VARCHAR(100) NOT NULL COMMENT 'Supplier email',
+postalcode VARCHAR(8) NOT NULL COMMENT 'Supplier postal code',
+address VARCHAR(100) NOT NULL COMMENT 'Supplier address',
+city VARCHAR(100) NOT NULL COMMENT 'Supplier city',
+state VARCHAR(100) NOT NULL COMMENT 'Supplier state',
+PRIMARY KEY(supplierid, workshopid),
+CONSTRAINT fk_workshops_suppliers FOREIGN KEY (workshopid)
+REFERENCES workshops(workshopid)
+)COMMENT = 'Suppliers registration';
+
+--2024-08-09 14:00 - Brazil - Mateus Lima - Create suppliers table.
+CREATE TABLE suppliers_parts(
+workshopid BIGINT NOT NULL COMMENT 'Workshop identification number',
+supplierid INT NOT NULL COMMENT 'Supplier identification number',
+partid INT NOT NULL COMMENT 'Part identification number',
+PRIMARY KEY(workshopid, supplierid, partid),
+CONSTRAINT fk_workshops FOREIGN KEY (workshopid) REFERENCES workshops(workshopid),
+CONSTRAINT fk_suppliers FOREIGN KEY (supplierid) REFERENCES suppliers(supplierid),
+CONSTRAINT fk_parts FOREIGN KEY (partid) REFERENCES parts(partid)
+)COMMENT = 'Suppliers_parts registration';
