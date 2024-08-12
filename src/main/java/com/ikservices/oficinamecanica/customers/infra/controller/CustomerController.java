@@ -52,7 +52,10 @@ public class CustomerController {
     }
 
     @GetMapping("/{workshopId}/{docId}")
-    public ResponseEntity<IKResponse<CustomerDTO>> getCustomer(@PathVariable("workshopId") Long workshopId, @PathVariable("docId") String docId, @RequestParam(name = "type", defaultValue = "F") Character type) {
+    public ResponseEntity<IKResponse<CustomerDTO>> getCustomer(@PathVariable("workshopId") Long workshopId, @PathVariable("docId") String docId, @RequestParam(name = "type") Character type) {
+        if (Objects.isNull(type)) {
+            type = docId.length() == 14 ? TaxPayerEnum.COMPANY_PERSON.getType() : TaxPayerEnum.PHYSICAL_PERSON.getType();
+        }
         Customer customer = getCustomer.execute(new CustomerId(workshopId, new IdentificationDocumentVO(TaxPayerEnum.getByType(type), docId)));
         return ResponseEntity.ok(IKResponse.<CustomerDTO>build().body(new CustomerDTO(customer)));
     }

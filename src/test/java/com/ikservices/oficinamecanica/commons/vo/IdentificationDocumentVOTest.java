@@ -50,4 +50,24 @@ public class IdentificationDocumentVOTest {
 
     }
 
+    @Test
+    public void testCNPJDocumentWithOneParamInConstructor() {
+        String cnpj = "12345678000199";
+        String formattedCnpj = "12.345.678/0001-99";
+
+        subject = new IdentificationDocumentVO(cnpj);
+
+        Assertions.assertEquals(formattedCnpj, subject.getFullDocument());
+    }
+
+    @Test
+    public void testCPFDocumentWithOneParamInConstructor() {
+        String cpf = "12345678912";
+        String formattedCpf = "123.456.789-12";
+
+        subject = new IdentificationDocumentVO(cpf);
+
+        Assertions.assertEquals(formattedCpf, subject.getFullDocument());
+    }
+
 }
