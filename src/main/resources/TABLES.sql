@@ -144,3 +144,24 @@ ADD COLUMN address VARCHAR(100) NULL COMMENT 'Customer address',
 ADD COLUMN city VARCHAR(100) NULL COMMENT 'Customer city',
 ADD COLUMN state VARCHAR(100) NULL COMMENT 'Customer state';
 
+--2024-08-12 15:11 - Brazil - Mateus Lima - Alter suppliers table.
+ALTER TABLE suppliers
+ADD COLUMN iddoc VARCHAR(14) NOT NULL COMMENT 'Supplier identification document'
+AFTER workshopid;
+
+--2024-08-12 15:42 - Brazil - Mateus Lima - Alter suppliers table.
+ALTER TABLE suppliers
+ADD COLUMN type CHAR(1) NOT NULL COMMENT 'Tax payer type';
+
+--2024-08-12 16:50 - Brazil - Mateus Lima - Insert suppliers into suppliers table.
+INSERT INTO suppliers(supplierid, workshopid, iddoc, name, landline, mobilephone, email, postalcode,
+address, city, state, type)
+VALUES(1, 1, '12345678000199', 'Paulinho Auto Peças', '+55 11 2222-3333', 
+'+55 11 99999-4444', 'paulinhoap@teste.com', '02323-000', 'Rua do auto peças',
+'São Paulo', 'SP', 'J');
+
+INSERT INTO suppliers(supplierid, workshopid, iddoc, name, landline, mobilephone, email, postalcode,
+address, city, state, type)
+VALUES(2, 1, '12545678030188', 'Antonio Auto Peças', '+55 11 2222-3333', 
+'+55 11 99999-4444', 'antonio@teste.com', '02323-000', 'Rua do auto peças',
+'São Paulo', 'SP', 'J');

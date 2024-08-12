@@ -2,6 +2,7 @@ package com.ikservices.oficinamecanica.suppliers.application.usecases;
 
 import com.ikservices.oficinamecanica.suppliers.application.gateways.SupplierRepository;
 import com.ikservices.oficinamecanica.suppliers.domain.Supplier;
+import com.ikservices.oficinamecanica.suppliers.domain.SupplierId;
 
 public class GetSupplier {
 	private final SupplierRepository repository;
@@ -10,7 +11,7 @@ public class GetSupplier {
 		this.repository = repository;
 	}
 	
-	public Supplier execute(Long workshopId) {
-		return repository.getSupplier(workshopId);
+	public Supplier execute(SupplierId supplierId) {
+		return repository.getSupplier(supplierId);
 	}
 }

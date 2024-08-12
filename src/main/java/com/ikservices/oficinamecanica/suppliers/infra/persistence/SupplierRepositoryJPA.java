@@ -12,5 +12,5 @@ public interface SupplierRepositoryJPA extends JpaRepository<SupplierEntity, Sup
 	public List<SupplierEntity> findAllByWorkshopId(@Param("workshopId") Long workshopId);
 	
 	@Query("SELECT CASE WHEN MAX(s.id.id) IS NULL THEN 1 ELSE (MAX(s.id.id) + 1) END FROM SupplierEntity s WHERE s.workshopEntity.id = :workshopId")
-	public Long getNextPartId(@Param("workshopId") Long workshopId);
+	public Long getNextSupplierId(@Param("workshopId") Long workshopId);
 }

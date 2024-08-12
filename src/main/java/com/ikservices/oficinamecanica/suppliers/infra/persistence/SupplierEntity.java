@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopEntity;
 
 import lombok.AllArgsConstructor;
@@ -30,6 +31,8 @@ public class SupplierEntity {
 	@ManyToOne
 	@JoinColumn(name = "WORKSHOPID", insertable = false, updatable = false)
 	private WorkshopEntity workshopEntity;
+	@Column(name = "IDDOC")
+	private String idDoc;
 	@Column(name = "NAME")
 	private String name;
 	@Column(name = "LANDLINE")
@@ -46,8 +49,13 @@ public class SupplierEntity {
 	private String city;
 	@Column(name = "STATE")
 	private String state;
+	@Column(name = "TYPE")
+	private Character type;
 	
 	public void update(SupplierEntity entity) {
+		if(Objects.nonNull(entity.getIdDoc())) {
+			this.idDoc = entity.getIdDoc();
+		}
 		if(Objects.nonNull(entity.getName())) {
 			this.name = entity.getName();
 		}
@@ -71,6 +79,9 @@ public class SupplierEntity {
 		}
 		if(Objects.nonNull(entity.getState())) {
 			this.state = entity.getState();
+		}
+		if(Objects.nonNull(entity.getType())) {
+			this.type = entity.getType();
 		}
 	}
 }

@@ -14,6 +14,7 @@ import lombok.Setter;
 public class SupplierDTO {
 	private Long supplierId;
 	private Long workshopId;
+	private String idDoc;
 	private String name;
 	private String landLine;
 	private String mobilePhone;
@@ -22,17 +23,20 @@ public class SupplierDTO {
 	private String address;
 	private String city;
 	private String state;
+	private Character type;
 	
 	public SupplierDTO(Supplier supplier) {
 		this.supplierId = supplier.getSupplierId().getId();
 		this.workshopId = supplier.getSupplierId().getWorkshopid();
+		this.idDoc = supplier.getIdDoc().getFullDocument();
 		this.name = supplier.getName();
-		this.landLine = supplier.getLandline();
-		this.mobilePhone = supplier.getMobilePhone();
-		this.email = supplier.getEmail();
-		this.postalCode = supplier.getPostalCode();
-		this.address = supplier.getAddress();
-		this.city = supplier.getCity();
-		this.state = supplier.getState();
+		this.landLine = supplier.getLandline().getFullPhone();
+		this.mobilePhone = supplier.getMobilePhone().getFullPhone();
+		this.email = supplier.getEmail().getMailAddress();
+		this.postalCode = supplier.getAddress().getPostalCode();
+		this.address = supplier.getAddress().getStreet();
+		this.city = supplier.getAddress().getCity();
+		this.state = supplier.getAddress().getState();
+		this.type = supplier.getType().getType();
 	}
 }

@@ -1,5 +1,10 @@
 package com.ikservices.oficinamecanica.suppliers.domain;
 
+import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
+import com.ikservices.oficinamecanica.commons.vo.AddressVO;
+import com.ikservices.oficinamecanica.commons.vo.EmailVO;
+import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
+import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
 import com.ikservices.oficinamecanica.workshops.domain.Workshop;
 
 import lombok.AllArgsConstructor;
@@ -15,13 +20,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Supplier {
 	private SupplierId supplierId;
+	private IdentificationDocumentVO idDoc;
 	private Workshop workshop;
 	private String name;
-	private String landline;
-	private String mobilePhone;
-	private String email;
-	private String postalCode;
-	private String address;
-	private String city;
-	private String state;
+	private PhoneVO landline;
+	private PhoneVO mobilePhone;
+	private EmailVO email;
+	private AddressVO address;
+	private TaxPayerEnum type;
 }
