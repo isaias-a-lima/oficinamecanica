@@ -11,9 +11,9 @@ import java.util.Objects;
 @Getter
 public class IdentificationDocumentVO {
 
-    private final TaxPayerEnum taxPayerEnum;
+    private TaxPayerEnum taxPayerEnum;
 
-    private final String document;
+    private String document;
 
     public IdentificationDocumentVO(TaxPayerEnum taxPayerEnum, String document) {
         if (Objects.isNull(taxPayerEnum) || Objects.isNull(document)) {
@@ -28,6 +28,25 @@ public class IdentificationDocumentVO {
         }
         this.taxPayerEnum = taxPayerEnum;
         this.document = document;
+    }
+
+    public IdentificationDocumentVO(String document) {
+        if (Objects.nonNull(document)) {
+            switch (document.length()) {
+                case 14:
+                    this.taxPayerEnum = TaxPayerEnum.COMPANY_PERSON;
+                    this.document = document;
+                    break;
+                case 11:
+                    this.taxPayerEnum = TaxPayerEnum.PHYSICAL_PERSON;
+                    this.document = document;
+                    break;
+                default:
+                    throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.ERROR, "Documento inválido.");
+            }
+        } else {
+            throw new IKException(HttpStatus.INTERNAL_SERVER_ERROR.value(), IKMessageType.ERROR, "Null object.");
+        }
     }
 
     public String getFullDocument() {

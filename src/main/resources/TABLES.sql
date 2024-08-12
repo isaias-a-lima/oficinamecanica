@@ -126,7 +126,7 @@ CONSTRAINT fk_workshops_suppliers FOREIGN KEY (workshopid)
 REFERENCES workshops(workshopid)
 )COMMENT = 'Suppliers registration';
 
---2024-08-09 14:00 - Brazil - Mateus Lima - Create suppliers table.
+--2024-08-09 14:00 - Brazil - Mateus Lima - Create suppliers_parts table.
 CREATE TABLE suppliers_parts(
 workshopid BIGINT NOT NULL COMMENT 'Workshop identification number',
 supplierid INT NOT NULL COMMENT 'Supplier identification number',
@@ -136,3 +136,11 @@ CONSTRAINT fk_workshops FOREIGN KEY (workshopid) REFERENCES workshops(workshopid
 CONSTRAINT fk_suppliers FOREIGN KEY (supplierid) REFERENCES suppliers(supplierid),
 CONSTRAINT fk_parts FOREIGN KEY (partid) REFERENCES parts(partid)
 )COMMENT = 'Suppliers_parts registration';
+
+--2024-08-11 16:32 - Portugal - Isaias Lima - Alter customers table.
+ALTER TABLE customers
+ADD COLUMN  postalcode VARCHAR(8) NULL COMMENT 'Customer postal code',
+ADD COLUMN address VARCHAR(100) NULL COMMENT 'Customer address',
+ADD COLUMN city VARCHAR(100) NULL COMMENT 'Customer city',
+ADD COLUMN state VARCHAR(100) NULL COMMENT 'Customer state';
+
