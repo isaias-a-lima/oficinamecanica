@@ -108,3 +108,10 @@ REFERENCES workshops(workshopid)
 
 --2024-08-07 16:32 - Brazil - Mateus Lima - Alter parts table.
 ALTER TABLE parts ADD COLUMN brand VARCHAR(100) NOT NULL COMMENT 'Part brand';
+
+--2024-08-07 16:32 - Portugal - Isaias Lima - Alter customers table.
+ALTER TABLE customers
+ADD COLUMN  postalcode VARCHAR(8) NULL COMMENT 'Customer postal code',
+ADD COLUMN address VARCHAR(100) NULL COMMENT 'Customer address',
+ADD COLUMN city VARCHAR(100) NULL COMMENT 'Customer city',
+ADD COLUMN state VARCHAR(100) NULL COMMENT 'Customer state';
