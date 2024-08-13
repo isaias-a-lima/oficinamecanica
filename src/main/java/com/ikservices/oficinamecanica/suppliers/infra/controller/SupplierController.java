@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
+import com.ikservices.oficinamecanica.suppliers.application.usecases.GetSupplier;
 import com.ikservices.oficinamecanica.suppliers.application.usecases.GetSupplierList;
 import com.ikservices.oficinamecanica.suppliers.domain.Supplier;
+import com.ikservices.oficinamecanica.suppliers.domain.SupplierId;
 import com.ikservices.oficinamecanica.suppliers.infra.SupplierConverter;
 
 @RestController
@@ -18,11 +20,13 @@ import com.ikservices.oficinamecanica.suppliers.infra.SupplierConverter;
 public class SupplierController {
 	private GetSupplierList getSupplierList;
 	private SupplierConverter converter;
+	private GetSupplier getSupplier;
 	
 	public SupplierController(GetSupplierList getSupplierList, 
-			SupplierConverter converter) {
+			SupplierConverter converter, GetSupplier getSupplier) {
 		this.getSupplierList = getSupplierList;
 		this.converter = converter;
+		this.getSupplier = getSupplier;
 	}
 	
 	@GetMapping("workshop/{workshopId}")
@@ -30,5 +34,12 @@ public class SupplierController {
 		List<SupplierDTO> supplierList = converter.parseDTOList(getSupplierList.execute(workshopId));
 		
 		return ResponseEntity.ok(IKResponse.<SupplierDTO>build().body(supplierList));
+	}
+	
+	@GetMapping("/{workshopId}/{id}")
+	public ResponseEntity<IKResponse<SupplierDTO>> getSupplier(@PathVariable Long workshopId,
+			@PathVariable Long id) {
+		Supplier supplier = getSupplier.execute(new SupplierId(id, workshopId));
+		return ResponseEntity.ok(IKResponse.<SupplierDTO>build().body(converter.parseDTO(supplier)));
 	}
 }
