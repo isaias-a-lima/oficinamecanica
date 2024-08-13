@@ -1,6 +1,8 @@
 package com.ikservices.oficinamecanica.suppliers.infra.controller;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 import javax.transaction.Transactional;
 
@@ -12,8 +14,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
+import com.ikservices.oficinamecanica.parts.infra.controller.PartDTO;
+import com.ikservices.oficinamecanica.suppliers.application.usecases.GetNextSupplierId;
 import com.ikservices.oficinamecanica.suppliers.application.usecases.GetSupplier;
 import com.ikservices.oficinamecanica.suppliers.application.usecases.GetSupplierList;
 import com.ikservices.oficinamecanica.suppliers.application.usecases.SaveSupplier;
@@ -30,15 +36,17 @@ public class SupplierController {
 	private GetSupplier getSupplier;
 	private UpdateSupplier updateSupplier;
 	private SaveSupplier saveSupplier;
+	private GetNextSupplierId getNextSupplierId;
 	
 	public SupplierController(GetSupplierList getSupplierList, 
 			SupplierConverter converter, GetSupplier getSupplier, UpdateSupplier updateSupplier,
-			SaveSupplier saveSupplier) {
+			SaveSupplier saveSupplier, GetNextSupplierId getNextSupplierId) {
 		this.getSupplierList = getSupplierList;
 		this.converter = converter;
 		this.getSupplier = getSupplier;
 		this.saveSupplier = saveSupplier;
 		this.updateSupplier = updateSupplier;
+		this.getNextSupplierId = getNextSupplierId;
 	}
 	
 	@GetMapping("workshop/{workshopId}")
@@ -60,5 +68,23 @@ public class SupplierController {
 	public ResponseEntity<IKResponse<SupplierDTO>> updateSupplier(@RequestBody SupplierDTO dto) {
 		Supplier supplier = updateSupplier.execute(converter.parseSupplier(dto));
 		return ResponseEntity.ok(IKResponse.<SupplierDTO>build().body(converter.parseDTO(supplier)));
+	}
+	
+	@PostMapping
+	public ResponseEntity<IKResponse<SupplierDTO>> saveSupplier(@RequestBody SupplierDTO dto, UriComponentsBuilder uriBuilder) {
+		Supplier supplier = null;
+		
+		try {
+			Long nextId = getNextSupplierId.execute(dto.getWorkshopId());
+			dto.setSupplierId(nextId);
+			supplier = saveSupplier.execute(converter.parseSupplier(dto));
+			URI uri = uriBuilder.path("suppliers/{workshopId}/{id}").
+					buildAndExpand(supplier.getSupplierId().getWorkshopid(),
+							supplier.getSupplierId().getId()).toUri();
+			return ResponseEntity.created(uri).body(IKResponse.<SupplierDTO>build().body(converter.parseDTO(supplier)));
+		}catch(IKException ike) {
+			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
+			return ResponseEntity.status(code).body(IKResponse.<SupplierDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+		}
 	}
 }

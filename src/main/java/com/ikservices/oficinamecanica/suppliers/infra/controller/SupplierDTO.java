@@ -33,7 +33,7 @@ public class SupplierDTO {
 		this.landLine = supplier.getLandline().getFullPhone();
 		this.mobilePhone = supplier.getMobilePhone().getFullPhone();
 		this.email = supplier.getEmail().getMailAddress();
-		this.postalCode = supplier.getAddress().getPostalCode();
+		this.postalCode = supplier.getAddress().getFormattedPostalCode();
 		this.address = supplier.getAddress().getStreet();
 		this.city = supplier.getAddress().getCity();
 		this.state = supplier.getAddress().getState();

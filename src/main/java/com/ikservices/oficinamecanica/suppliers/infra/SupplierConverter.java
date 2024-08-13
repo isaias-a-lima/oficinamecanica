@@ -66,6 +66,7 @@ public class SupplierConverter {
 		entity.setMobilePhone(supplier.getMobilePhone().getFullPhone());
 		entity.setEmail(supplier.getEmail().getMailAddress());
 		entity.setAddress(supplier.getAddress().getStreet());
+		entity.setPostalCode(supplier.getAddress().getPostalCode());
 		entity.setCity(supplier.getAddress().getCity());
 		entity.setState(supplier.getAddress().getState());
 		entity.setType(supplier.getType().getType());
@@ -139,7 +140,7 @@ public class SupplierConverter {
 		dto.setMobilePhone(supplier.getMobilePhone().getFullPhone());
 		dto.setEmail(supplier.getEmail().getMailAddress());
 		dto.setAddress(supplier.getAddress().getStreet());
-		dto.setPostalCode(supplier.getAddress().getPostalCode());
+		dto.setPostalCode(supplier.getAddress().getFormattedPostalCode());
 		dto.setCity(supplier.getAddress().getCity());
 		dto.setState(supplier.getAddress().getState());
 		dto.setType(supplier.getType().getType());
