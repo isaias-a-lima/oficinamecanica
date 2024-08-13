@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -21,6 +22,10 @@ public class CustomerDTO implements Serializable {
     private String mobilePhone;
     private String email;
     private String type;
+    private String postalCode;
+    private String address;
+    private String city;
+    private String state;
 
     public CustomerDTO(Customer customer) {
         this.workshopId = customer.getId().getWorkshopId();
@@ -30,5 +35,9 @@ public class CustomerDTO implements Serializable {
         this.mobilePhone = Objects.nonNull(customer.getMobilePhone()) ? customer.getMobilePhone().getFullPhone() : null;
         this.email = Objects.nonNull(customer.getEmail()) ? customer.getEmail().getMailAddress() : null;
         this.type = customer.getType().getDescription();
+        this.address = customer.getAddress().getPartialAddress();
+        this.city = customer.getAddress().getCity();
+        this.state = customer.getAddress().getState();
+        this.postalCode = customer.getAddress().getFormattedPostalCode();
     }
 }

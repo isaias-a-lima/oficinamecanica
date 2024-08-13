@@ -2,6 +2,7 @@ package com.ikservices.oficinamecanica.customers.infra;
 
 import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.vo.AddressVO;
 import com.ikservices.oficinamecanica.commons.vo.EmailVO;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
@@ -38,6 +39,11 @@ public class CustomerConverter {
         customer.setMobilePhone(PhoneVO.parsePhoneVO(customerEntity.getMobilePhone()));
         customer.setEmail(new EmailVO(customerEntity.getEmail()));
         customer.setType(TaxPayerEnum.getByType(customerEntity.getType()));
+        customer.setAddress(AddressVO.getFactory().setPostalCode(customerEntity.getPostalCode())
+                .setStreetAndNumberAndComplement(customerEntity.getAddress(), null, null)
+                .setNeighborhood(null)
+                .setCityAndStateAndCountry(customerEntity.getCity(), customerEntity.getState(), null)
+                .build());
 
         return customer;
     }
@@ -64,6 +70,10 @@ public class CustomerConverter {
         entity.setLandline(customer.getLandline().getFullPhone());
         entity.setMobilePhone(customer.getMobilePhone().getFullPhone());
         entity.setType(customer.getType().getType());
+        entity.setAddress(customer.getAddress().getPartialAddress());
+        entity.setCity(customer.getAddress().getCity());
+        entity.setState(customer.getAddress().getState());
+        entity.setPostalCode(customer.getAddress().getPostalCode());
 
         return entity;
     }
@@ -91,6 +101,11 @@ public class CustomerConverter {
         customer.setMobilePhone(Objects.nonNull(customerDTO.getMobilePhone()) ? PhoneVO.parsePhoneVO(customerDTO.getMobilePhone()) : null);
         customer.setEmail(Objects.nonNull(customerDTO.getEmail()) ? new EmailVO(customerDTO.getEmail()) : null);
         customer.setType(TaxPayerEnum.getByDescription(customerDTO.getType()));
+        customer.setAddress(AddressVO.getFactory().setPostalCode(customerDTO.getPostalCode())
+                .setStreetAndNumberAndComplement(customerDTO.getAddress(), null, null)
+                .setNeighborhood(null)
+                .setCityAndStateAndCountry(customerDTO.getCity(), customerDTO.getState(), null)
+                .build());
 
         return customer;
     }
