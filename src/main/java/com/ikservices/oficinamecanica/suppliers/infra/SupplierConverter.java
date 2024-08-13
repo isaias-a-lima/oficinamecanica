@@ -58,7 +58,7 @@ public class SupplierConverter {
 		SupplierEntity entity = new SupplierEntity();
 		entity.setId(new SupplierEntityId(supplier.getSupplierId().getId(), 
 				supplier.getSupplierId().getWorkshopid()));
-		entity.setIdDoc(supplier.getIdDoc().getFullDocument());
+		entity.setIdDoc(supplier.getIdDoc().getDocument());
 		entity.setWorkshopEntity(Objects.nonNull(supplier.getWorkshop()) ? workshopConverter.
 				parseWorkshopEntity(supplier.getWorkshop(), supplier.getSupplierId().getWorkshopid()) : null);
 		entity.setName(supplier.getName());
