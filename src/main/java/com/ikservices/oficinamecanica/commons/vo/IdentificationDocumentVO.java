@@ -32,6 +32,7 @@ public class IdentificationDocumentVO {
 
     public IdentificationDocumentVO(String document) {
         if (Objects.nonNull(document)) {
+        	document = document.replaceAll("[^0-9]", "");
             switch (document.length()) {
                 case 14:
                     this.taxPayerEnum = TaxPayerEnum.COMPANY_PERSON;
