@@ -165,3 +165,19 @@ address, city, state, type)
 VALUES(2, 1, '12545678030188', 'Antonio Auto Peças', '+55 11 2222-3333', 
 '+55 11 99999-4444', 'antonio@teste.com', '02323-000', 'Rua do auto peças',
 'São Paulo', 'SP', 'J');
+
+--2024-08-21 15:11 - Brazil - Mateus Lima - Create vehicles table.
+CREATE TABLE vehicles(
+vehicleid BIGINT NOT NULL AUTO_INCREMENT COMMENT "Vehicle identification number",
+iddoc VARCHAR(14) NOT NULL COMMENT "Customer identification number",
+workshopid BIGINT NOT NULL COMMENT "Workshop identification number",
+plate VARCHAR(50) NOT NULL COMMENT "Plate number",
+brand VARCHAR(50) NOT NULL COMMENT "Brand name",
+model VARCHAR(50) NOT NULL COMMENT "Vehicle model",
+manufacturing VARCHAR(9) NOT NULL COMMENT "Manufacturing year and model year",
+engine VARCHAR(50) NOT NULL COMMENT "Vehicle engine",
+observations VARCHAR(255) NOT NULL COMMENT "Vehicle observations",
+active BOOL NOT NULL COMMENT "Identify if there is an active vehicle",
+PRIMARY KEY(vehicleid),
+CONSTRAINT fk_customers_vehicles FOREIGN KEY(workshopid, iddoc) REFERENCES customers(workshopid, docid)
+)COMMENT = "Vehicles registration";
