@@ -1,11 +1,10 @@
-package vehicles.application.usecases;
+package com.ikservices.oficinamecanica.vehicles.application.usecases;
 
 import java.util.List;
 
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
-
-import vehicles.application.gateways.VehicleRepository;
-import vehicles.domain.Vehicle;
+import com.ikservices.oficinamecanica.vehicles.application.gateways.VehicleRepository;
+import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 
 public class ListVehicles {
 	private final VehicleRepository repository;

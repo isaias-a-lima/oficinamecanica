@@ -1,11 +1,9 @@
-package vehicles.application.gateways;
+package com.ikservices.oficinamecanica.vehicles.application.gateways;
 
 import java.util.List;
 
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
-import com.ikservices.oficinamecanica.customers.domain.CustomerId;
-
-import vehicles.domain.Vehicle;
+import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 
 public interface VehicleRepository {
 	Vehicle saveVehicle(Vehicle vehicle, Long vehicleId);

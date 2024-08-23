@@ -1,4 +1,4 @@
-package vehicles.application;
+package com.ikservices.oficinamecanica.vehicles.application;
 
 public class VehicleException extends RuntimeException {
 	private static final long serialVersionUID = 1L;

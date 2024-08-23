@@ -1,4 +1,4 @@
-package vehicles.domain;
+package com.ikservices.oficinamecanica.vehicles.domain;
 
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.workshops.domain.Workshop;
