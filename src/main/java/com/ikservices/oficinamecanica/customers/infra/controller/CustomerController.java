@@ -2,7 +2,9 @@ package com.ikservices.oficinamecanica.customers.infra.controller;
 
 import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
+import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.customers.application.usecases.GetCustomer;
 import com.ikservices.oficinamecanica.customers.application.usecases.ListCustomers;
@@ -11,6 +13,9 @@ import com.ikservices.oficinamecanica.customers.application.usecases.UpdateCusto
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.domain.CustomerId;
 import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +28,8 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
+
+    private static final Logger LOGGER = IKLoggerUtil.getLogger(CustomerController.class);
 
     private final ListCustomers listCustomers;
     private final GetCustomer getCustomer;
@@ -40,11 +47,11 @@ public class CustomerController {
     }
 
     @GetMapping("/workshop/{id}")
-    public ResponseEntity<IKResponse<CustomerDTO>> listCustomers(@PathVariable("id") Long workshopId) {
+    public ResponseEntity<IKResponse<CustomerDTO>> listCustomers(@PathVariable("id") Long workshopId, @RequestParam(name = "criteria") int criteria, @RequestParam(name = "search") String search) {
 
         List<CustomerDTO> customerList = null;
         try {
-            customerList = converter.parseCustomerResponseList(listCustomers.execute(workshopId));
+            customerList = converter.parseCustomerResponseList(listCustomers.execute(workshopId, criteria, search));
         } catch (IKException ike) {
             return ResponseEntity.status(ike.getCode()).body(IKResponse.<CustomerDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
         }
@@ -62,21 +69,35 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<IKResponse<CustomerDTO>> saveCustomer(@RequestBody CustomerDTO customerDTO, UriComponentsBuilder uriBuilder) {
-        Customer customerSaved = null;
+        String logID = IKLoggerUtil.getLoggerID();
         try {
-            customerSaved = saveCustomer.execute(converter.parseCustomer(customerDTO));
+            Customer customerSaved = saveCustomer.execute(converter.parseCustomer(customerDTO));
+            URI uri = uriBuilder.path("/customer/{workshopId}/{docId}").buildAndExpand(customerSaved.getId().getWorkshopId(), customerSaved.getId().getDocId().getDocument()).toUri();
+            return ResponseEntity.created(uri).body(IKResponse.<CustomerDTO>build().body(new CustomerDTO(customerSaved)).addMessage(IKMessageType.SUCCESS, "Cadastro realizado com sucesso."));
         } catch (IKException ike) {
+            LOGGER.error(logID + " saveCustomer: " + IKLoggerUtil.parseJSON(customerDTO), ike);
             int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
             return ResponseEntity.status(code).body(IKResponse.<CustomerDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+        } catch (Exception e) {
+            LOGGER.error(logID + " saveCustomer: " + IKLoggerUtil.parseJSON(customerDTO), e);
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<CustomerDTO>build().addMessage(IKMessageType.ERROR, "ERRO inesperado. Se persistir informe ao suporte o seguinte ID: " + logID));
         }
-        URI uri = uriBuilder.path("/customer/{workshopId}/{docId}").buildAndExpand(customerSaved.getId().getWorkshopId(), customerSaved.getId().getDocId()).toUri();
-        return ResponseEntity.created(uri).body(IKResponse.<CustomerDTO>build().body(new CustomerDTO(customerSaved)));
     }
 
     @PutMapping
     @Transactional
     public ResponseEntity<IKResponse<CustomerDTO>> updateCustomer(@RequestBody CustomerDTO dto) {
-        Customer customer = updateCustomer.updateCustomer(converter.parseCustomer(dto));
-        return ResponseEntity.ok(IKResponse.<CustomerDTO>build().body(new CustomerDTO(customer)));
+        String logID = IKLoggerUtil.getLoggerID();
+        try {
+            Customer customer = updateCustomer.updateCustomer(converter.parseCustomer(dto));
+            return ResponseEntity.ok(IKResponse.<CustomerDTO>build().body(new CustomerDTO(customer)).addMessage(IKMessageType.SUCCESS, "Cliente alterado com sucesso."));
+        } catch (IKException ike) {
+            LOGGER.error(logID + " saveCustomer: " + IKLoggerUtil.parseJSON(dto), ike);
+            int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
+            return ResponseEntity.status(code).body(IKResponse.<CustomerDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+        } catch (Exception e) {
+            LOGGER.error(logID + " saveCustomer: " + IKLoggerUtil.parseJSON(dto), e);
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<CustomerDTO>build().addMessage(IKMessageType.ERROR, "ERRO inesperado. Se persistir informe ao suporte o seguinte ID: " + logID));
+        }
     }
 }

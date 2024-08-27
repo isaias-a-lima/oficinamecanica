@@ -5,16 +5,23 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.ikservices.oficinamecanica.users.application.UserException;
+import com.ikservices.oficinamecanica.users.infra.constants.UserConstants;
 import com.ikservices.oficinamecanica.users.infra.persistence.UserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Objects;
 
 @Service
 public class TokenService {
+
+    @Autowired
+    private Environment environment;
 
     @Value("${api.security.token.secret}")
     private String secret;
@@ -47,6 +54,6 @@ public class TokenService {
     }
 
     private Instant dateExpiration() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("+00:00"));
+        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of(Objects.requireNonNull(environment.getProperty(UserConstants.TIME_ZONE))));
     }
 }

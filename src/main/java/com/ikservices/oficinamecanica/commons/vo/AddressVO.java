@@ -32,7 +32,7 @@ public class AddressVO {
 
     public void setPostalCode(String code) {
 
-        if (Objects.nonNull(code) && code.length() < 8) {
+        if (Objects.nonNull(code) && !code.isEmpty() && code.length() < 8) {
             throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.WARNING, "Invalid postal code.");
         }
         this.postalCode = code.replaceAll("[^0-9]", "");
@@ -41,21 +41,22 @@ public class AddressVO {
     public String getFormattedPostalCode() {
         String codeAux;
 
-        if (Objects.nonNull(postalCode) && postalCode.length() < 8) {
+        if (Objects.isNull(postalCode) || postalCode.isEmpty()) {
+            return "";
+        }
+
+        if (postalCode.length() < 8) {
             throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.WARNING, "Invalid postal code.");
         }
 
-        if (Objects.nonNull(postalCode)) {
-            codeAux = postalCode.replaceAll("[^0-9]", "");
-            codeAux = codeAux.substring(0, 5);
-            codeAux += "-";
-            codeAux += postalCode.replaceAll("[^0-9]", "").substring(5);
+        codeAux = postalCode.replaceAll("[^0-9]", "");
+        codeAux = codeAux.substring(0, 5);
+        codeAux += "-";
+        codeAux += postalCode.replaceAll("[^0-9]", "").substring(5);
 
-            this.postalCode = codeAux;
+        this.postalCode = codeAux;
 
-            return codeAux;
-        }
-        return "";
+        return codeAux;
     }
 
     public String getPartialAddress() {
