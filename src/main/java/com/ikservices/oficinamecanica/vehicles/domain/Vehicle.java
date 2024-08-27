@@ -16,7 +16,6 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class Vehicle {
 	Customer customer;
-	Workshop workshop;
 	String plate;
 	String brand;
 	String model;
