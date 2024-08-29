@@ -1,9 +1,11 @@
 package com.ikservices.oficinamecanica.commons.vo;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
 import java.util.Objects;
 
@@ -16,9 +18,6 @@ public class PhoneVO {
     private final Integer phoneNumber;
 
     public PhoneVO(Integer countryCode, Integer stateCode, Integer phoneNumber) {
-        if (Objects.isNull(stateCode) || Objects.isNull(phoneNumber)) {
-            throw new IKException("Telefone inválido.");
-        }
         this.countryCode = countryCode;
         this.stateCode = stateCode;
         this.phoneNumber = phoneNumber;
@@ -27,9 +26,12 @@ public class PhoneVO {
     public String getFullPhone() {
         String phone = "";
 
-        if (Objects.nonNull(countryCode)) {
-            phone = "+" + countryCode + " ";
+        if (Objects.isNull(countryCode) || Objects.isNull(stateCode) || Objects.isNull(phoneNumber)) {
+            return "";
         }
+
+        phone = "+" + countryCode + " ";
+
 
         phone += stateCode + " ";
 
@@ -50,7 +52,11 @@ public class PhoneVO {
      */
     public static PhoneVO parsePhoneVO(String fullPhone) {
 
-        if (Objects.nonNull(fullPhone) && fullPhone.length() >= 16) {
+        if (Objects.isNull(fullPhone) || fullPhone.isEmpty()) {
+            return new PhoneVO(null, null, null);
+        }
+
+        if (fullPhone.length() >= 16) {
 
             boolean valid = fullPhone.contains("+") && fullPhone.contains(" ") && fullPhone.contains("-");
 
@@ -62,6 +68,6 @@ public class PhoneVO {
                 return new PhoneVO(countryCode, stateCode, phoneNumber);
             }
         }
-        return null;
+        throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.WARNING, "O número de telefone deve ter o seguinte formato: +XX XX XXXX-XXXX");
     }
 }

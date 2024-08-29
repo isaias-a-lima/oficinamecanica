@@ -9,6 +9,8 @@ import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerRepositoryJPA;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
@@ -16,6 +18,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class CustomerRepositoryImpl implements CustomerRepository {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getName());
 
     private final CustomerRepositoryJPA repository;
     private final CustomerConverter converter;
@@ -52,7 +56,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public List<Customer> getCustomerList(Long workshopId) {
-        return converter.parseCustomerList(repository.findAllByWorkshopId(workshopId));
+    public List<Customer> getCustomerList(Long workshopId, int criteria, String search) {
+        return converter.parseCustomerList(repository.findAllByWorkshopId(workshopId, criteria, search));
     }
 }

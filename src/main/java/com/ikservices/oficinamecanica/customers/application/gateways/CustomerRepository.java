@@ -11,5 +11,5 @@ public interface CustomerRepository {
     Customer saveCustomer(Customer customer);
     Customer updateCustomer(Customer customer);
     Customer getCustomer(CustomerId id);
-    List<Customer> getCustomerList(Long workshopId);
+    List<Customer> getCustomerList(Long workshopId, int criteria, String search);
 }
