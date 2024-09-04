@@ -3,6 +3,7 @@ package com.ikservices.oficinamecanica.vehicles.application.usecases;
 import java.util.List;
 
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
+import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.vehicles.application.gateways.VehicleRepository;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 

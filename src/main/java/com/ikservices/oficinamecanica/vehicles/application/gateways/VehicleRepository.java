@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
+import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 
 public interface VehicleRepository {
 	Vehicle saveVehicle(Vehicle vehicle, Long vehicleId);
 	Vehicle updateVehicle(Vehicle vehicle, Long vehicleId);
 	Vehicle getVehicle(Long vehicleId);
 	List<Vehicle> listVehicles(IdentificationDocumentVO customerId, Long workshopId);
-	Vehicle deleteVehicle(Long vehicleId);
+	void deleteVehicle(VehicleEntity vehicleEntity);
 }

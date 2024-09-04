@@ -2,6 +2,7 @@ package com.ikservices.oficinamecanica.vehicles.application.usecases;
 
 import com.ikservices.oficinamecanica.vehicles.application.gateways.VehicleRepository;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
+import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 
 public class DeleteVehicle {
 	private final VehicleRepository repository;
@@ -10,7 +11,7 @@ public class DeleteVehicle {
 		this.repository = repository;
 	}
 	
-	public Vehicle deletevehicle(Long vehicleId) {
-		return repository.deleteVehicle(vehicleId);
+	public void deletevehicle(VehicleEntity vehicleEntity) {
+		repository.deleteVehicle(vehicleEntity);
 	}
 }
