@@ -9,6 +9,7 @@ import com.ikservices.oficinamecanica.customers.infra.controller.CustomerDTO;
 import com.ikservices.oficinamecanica.vehicles.application.VehicleException;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
+import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleResponse;
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
 
@@ -61,7 +62,7 @@ public class VehicleConverter {
 	public List<Vehicle> parseVehicleList(List<VehicleEntity> vehicleEntityList) {
 		List<Vehicle> vehicleList = new ArrayList<>();
 		
-		if(Objects.nonNull(vehicleList) && !vehicleList.isEmpty()) {
+		if(Objects.nonNull(vehicleEntityList) && !vehicleEntityList.isEmpty()) {
 			for(VehicleEntity vehicleEntity : vehicleEntityList) {
 				vehicleList.add(this.parseVehicle(vehicleEntity));
 			}
@@ -121,6 +122,25 @@ public class VehicleConverter {
 		dto.setPlate(vehicle.getPlate());
 	
 		return dto;
+	}
+	
+	public List<VehicleResponse> parseResponseList(List<Vehicle> vehicleList) {
+		List<VehicleResponse> vehicleResponseList = new ArrayList<>();
+		
+		if(Objects.nonNull(vehicleList) && !vehicleList.isEmpty()) {
+			for(Vehicle vehicle: vehicleList) {
+				vehicleResponseList.add(new VehicleResponse(
+						vehicle.getCustomer().
+						getId().getDocId().getDocument(), 
+						vehicle.getCustomer().getId().getWorkshopId(),
+						vehicle.getPlate(), 
+						vehicle.getBrand(), vehicle.getModel(),
+						vehicle.getManufacturing(), vehicle.getEngine(), 
+						vehicle.getObservations()));
+			}
+		}
+		
+		return vehicleResponseList;
 	}
 	
 	public List<VehicleDTO> parseDTOList(List<Vehicle> vehicleList) {

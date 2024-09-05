@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
+import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.vehicles.application.gateways.VehicleRepository;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
@@ -60,8 +61,11 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 
 	@Override
 	public List<Vehicle> listVehicles(IdentificationDocumentVO customerId, Long workshopId) {
+		CustomerEntity entity = new CustomerEntity();
+		entity.setId(new CustomerEntityId(workshopId, customerId.getDocument()));
+		
 		return this.converter.parseVehicleList(repository.
-				findAllByCustomerEntity(new CustomerEntityId(workshopId, customerId.getDocument())));
+				findAllByCustomerEntity(entity));
 	}
 
 	@Override

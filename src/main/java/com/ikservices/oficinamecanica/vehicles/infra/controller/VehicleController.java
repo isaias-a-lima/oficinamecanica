@@ -40,11 +40,11 @@ public class VehicleController {
 	}
 	
 	@GetMapping("{workshopId}/{customerId}")
-	public ResponseEntity<IKResponse<VehicleDTO>> listVehicles(@PathVariable Long workshopId, 
+	public ResponseEntity<IKResponse<VehicleResponse>> listVehicles(@PathVariable Long workshopId, 
 			@PathVariable String customerId) {
-		List<VehicleDTO> vehicleList = converter.
-				parseDTOList(listVehicles.execute(new IdentificationDocumentVO(customerId), workshopId));
+		List<VehicleResponse> vehicleList = converter.
+				parseResponseList(listVehicles.execute(new IdentificationDocumentVO(customerId), workshopId));
 		
-		return ResponseEntity.ok(IKResponse.<VehicleDTO>build().body(vehicleList));
+		return ResponseEntity.ok(IKResponse.<VehicleResponse>build().body(vehicleList));
 	}
 }

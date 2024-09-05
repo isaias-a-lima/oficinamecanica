@@ -191,3 +191,7 @@ engine, observations, active) VALUES(1, "22233344455", 1, "T1O2F8", "Volkswagen"
 INSERT INTO vehicles(vehicleid, iddoc, workshopid, plate, brand, model, manufacturing,
 engine, observations, active) VALUES(2, "55566677788", 1, "T1O2F8", "Volkswagen",
 "polo", "2004", "1.6 103cv", "nenhuma", 1);
+
+--2024-09-05 16:37 - Brazil - Mateus Lima - Update customer adress.
+UPDATE customers set address = "Rua teste", city = "Testelândia", state = "SP", 
+postalcode = "02323000" WHERE workshopid = 1;
