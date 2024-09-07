@@ -9,13 +9,7 @@ import javax.persistence.Converter;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
@@ -58,13 +52,13 @@ public class ServiceController {
 	}
 	
 	@GetMapping("/workshop/{id}")
-	public ResponseEntity<IKResponse<ServiceDTO>> listService(@PathVariable("id") Long workshopId) {
-		List<ServiceDTO> serviceList = null;
-		
-		/*Add try and catch*/
-		serviceList = converter.parseServiceDTOList(listServices.execute(workshopId));
-			
-		return ResponseEntity.ok(IKResponse.<ServiceDTO>build().body(serviceList));
+	public ResponseEntity<IKResponse<ServiceDTO>> listService(@PathVariable("id") Long workshopId, @RequestParam(name = "search") String search) {
+		try {
+			List<ServiceDTO> serviceList = converter.parseServiceDTOList(listServices.execute(workshopId, search));
+			return ResponseEntity.ok(IKResponse.<ServiceDTO>build().body(serviceList));
+		} catch (IKException ike) {
+			return ResponseEntity.status(ike.getCode()).body(IKResponse.<ServiceDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+		}
 	}
 	
 	@PostMapping

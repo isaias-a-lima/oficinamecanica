@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import org.hibernate.service.spi.ServiceException;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
@@ -13,6 +15,7 @@ import com.ikservices.oficinamecanica.services.infra.controller.ServiceDTO;
 import com.ikservices.oficinamecanica.services.infra.persistence.ServiceEntity;
 import com.ikservices.oficinamecanica.services.infra.persistence.ServiceEntityId;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
+import org.springframework.http.HttpStatus;
 
 public class ServiceConverter {
 	
@@ -24,7 +27,7 @@ public class ServiceConverter {
 	
 	public Service parseService(ServiceEntity entity) {
 		if(Objects.isNull(entity)) {
-			throw new ServiceException("Null object");
+			throw new IKException(HttpStatus.BAD_GATEWAY.value(), IKMessageType.WARNING, "Nenhum serviço.");
 		}
 		
 		Service service = new Service();
@@ -39,7 +42,7 @@ public class ServiceConverter {
 	
 	public ServiceEntity parseEntity(Service service) {
 		if(Objects.isNull(service)) {
-			throw new ServiceException("Null object");
+			throw new IKException(HttpStatus.BAD_GATEWAY.value(), IKMessageType.WARNING, "Nenhum serviço.");
 		}
 		
 		ServiceEntity entity = new ServiceEntity();
@@ -57,7 +60,7 @@ public class ServiceConverter {
 	
 	public ServiceDTO parseDTO(Service service) {
 		if(Objects.isNull(service)) {
-			throw new ServiceException("Null object");
+			throw new IKException(HttpStatus.BAD_GATEWAY.value(), IKMessageType.WARNING, "Nenhum serviço.");
 		}
 		
 		ServiceDTO dto = new ServiceDTO();
@@ -65,7 +68,7 @@ public class ServiceConverter {
 		dto.setServiceId(service.getId().getId());
 		dto.setWorkshopId(service.getId().getWorkshopId());
 		dto.setDescription(service.getDescription());
-		dto.setCost(service.getCost());
+		dto.setCost(NumberUtil.parseStringMoney(service.getCost()));
 		
 		return dto;
 	}
@@ -105,13 +108,13 @@ public class ServiceConverter {
 
 	public Service parseService(ServiceDTO serviceDTO) {
 		if(Objects.isNull(serviceDTO)) {
-			throw new IKException("Null object.");
+			throw new IKException(HttpStatus.BAD_GATEWAY.value(), IKMessageType.WARNING, "Nenhum serviço.");
 		}
 		
 		Service service = new Service();
 		service.setId(new ServiceId(serviceDTO.getServiceId(), serviceDTO.getWorkshopId()));
 		service.setDescription(serviceDTO.getDescription());
-		service.setCost(serviceDTO.getCost());
+		service.setCost(NumberUtil.parseBigDecimal(serviceDTO.getCost()));
 		
 		return service;
 	}
