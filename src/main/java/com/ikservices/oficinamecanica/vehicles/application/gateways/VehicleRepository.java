@@ -7,7 +7,7 @@ import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 
 public interface VehicleRepository {
-	Vehicle saveVehicle(Vehicle vehicle, Long vehicleId);
+	Vehicle saveVehicle(Vehicle vehicle);
 	Vehicle updateVehicle(Vehicle vehicle, Long vehicleId);
 	Vehicle getVehicle(Long vehicleId);
 	List<Vehicle> listVehicles(IdentificationDocumentVO customerId, Long workshopId);

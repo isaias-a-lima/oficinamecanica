@@ -12,4 +12,7 @@ public interface VehicleRepositoryJPA extends JpaRepository<VehicleEntity, Long>
 	
 	
 	public List<VehicleEntity> findAllByCustomerEntity(@Param("customerEntity") CustomerEntity customerEntity);
+	
+	public VehicleEntity findByCustomerEntityAndPlate(@Param("customerEntity") CustomerEntity customerEntity, 
+			@Param("plate") String plate);
 }

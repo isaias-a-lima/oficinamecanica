@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
+import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.vehicles.application.gateways.VehicleRepository;
@@ -21,18 +22,20 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 	
 	private final VehicleConverter converter;
 	private final VehicleRepositoryJPA repository;
+	private final CustomerConverter customerConverter;
 	
 	public VehicleRepositoryImpl(VehicleConverter converter, 
-			VehicleRepositoryJPA repository) {
+			VehicleRepositoryJPA repository, CustomerConverter customerConverter) {
 		this.converter = converter;
 		this.repository = repository;
+		this.customerConverter = customerConverter;
 	}
 
 	@Override
-	public Vehicle saveVehicle(Vehicle vehicle, Long vehicleId) {
-		Optional<VehicleEntity> optional = repository.findById(vehicleId);
+	public Vehicle saveVehicle(Vehicle vehicle) {
+		VehicleEntity optional = repository.findByCustomerEntityAndPlate(customerConverter.parseEntity(vehicle.getCustomer()), vehicle.getPlate());
 		
-		if(optional.isPresent()) {
+		if(Objects.nonNull(optional)) {
 			throw new IKException(HttpStatus.FOUND.value(), IKMessageType.WARNING,
 					"Veiculo já cadastrado.");
 		}

@@ -10,7 +10,7 @@ public class SaveVehicle {
 		this.repository = repository;
 	}
 	
-	public Vehicle execute(Vehicle vehicle, Long vehicleId) {
-		return repository.saveVehicle(vehicle, vehicleId);
+	public Vehicle execute(Vehicle vehicle) {
+		return repository.saveVehicle(vehicle);
 	}
 }

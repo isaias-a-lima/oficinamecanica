@@ -25,8 +25,9 @@ public class VehicleConfig {
 	Environment environment;
 	
 	@Bean
-	public VehicleRepository vehicleRepository(VehicleConverter converter, VehicleRepositoryJPA repository) {
-		return new VehicleRepositoryImpl(converter, repository);
+	public VehicleRepository vehicleRepository(VehicleConverter converter, VehicleRepositoryJPA repository, 
+			CustomerConverter customerConverter) {
+		return new VehicleRepositoryImpl(converter, repository, customerConverter);
 	}
 	
 	@Bean
