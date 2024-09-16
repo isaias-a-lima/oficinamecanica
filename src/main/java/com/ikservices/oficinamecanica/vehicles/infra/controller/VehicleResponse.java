@@ -9,12 +9,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class VehicleResponse {
+public class VehicleResponse implements Serializable {
+	Long vehicleId;
 	String customerId;
 	Long workshopId;
 	String plate;
@@ -24,9 +27,10 @@ public class VehicleResponse {
 	String engine;
 	String observations;
 	
-	public VehicleResponse(Vehicle vehicle) {
+	public VehicleResponse(Vehicle vehicle, Long vehicleId) {
+		this.vehicleId = vehicleId;
 		this.customerId = vehicle.getCustomer().getId().getDocId().getDocument();
-		this.workshopId = vehicle.getCustomer().getWorkshop().getDocId();
+		this.workshopId = vehicle.getCustomer().getId().getWorkshopId();
 		this.plate = vehicle.getPlate();
 		this.brand = vehicle.getBrand();
 		this.model = vehicle.getModel();

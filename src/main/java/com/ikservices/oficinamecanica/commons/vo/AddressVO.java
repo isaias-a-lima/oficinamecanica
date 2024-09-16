@@ -35,7 +35,7 @@ public class AddressVO {
         if (Objects.nonNull(code) && !code.isEmpty() && code.length() < 8) {
             throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.WARNING, "Invalid postal code.");
         }
-        this.postalCode = code.replaceAll("[^0-9]", "");
+        this.postalCode = Objects.nonNull(code) ? code.replaceAll("[^0-9]", "") : null;
     }
 
     public String getFormattedPostalCode() {

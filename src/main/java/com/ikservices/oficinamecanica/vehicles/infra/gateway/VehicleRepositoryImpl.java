@@ -1,8 +1,6 @@
 package com.ikservices.oficinamecanica.vehicles.infra.gateway;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.http.HttpStatus;
 
@@ -32,16 +30,25 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 	}
 
 	@Override
-	public Vehicle saveVehicle(Vehicle vehicle) {
-		VehicleEntity optional = repository.findByCustomerEntityAndPlate(customerConverter.parseEntity(vehicle.getCustomer()), vehicle.getPlate());
-		
-		if(Objects.nonNull(optional)) {
-			throw new IKException(HttpStatus.FOUND.value(), IKMessageType.WARNING,
-					"Veiculo já cadastrado.");
-		}
-		
-		VehicleEntity savedEntity = repository.save(converter.parseEntity(vehicle));
-		return converter.parseVehicle(savedEntity);
+	public Map<Long, Vehicle> saveVehicle(Vehicle vehicle) {
+		CustomerEntity ce = new CustomerEntity();
+		ce.setId(new CustomerEntityId(vehicle.getCustomer().getId().getWorkshopId(), vehicle.getCustomer().getId().getDocId().getDocument()));
+
+		VehicleEntity entity = new VehicleEntity();
+		entity.setCustomerEntity(ce);
+		entity.setPlate(vehicle.getPlate());
+		entity.setBrand(vehicle.getBrand());
+		entity.setModel(vehicle.getModel());
+		entity.setManufacturing(vehicle.getManufacturing());
+		entity.setEngine(vehicle.getEngine());
+		entity.setObservations(vehicle.getObservations());
+		entity.setActive(true);
+
+		VehicleEntity savedEntity = repository.save(entity);
+
+		Map<Long, Vehicle> vehicleMap = new HashMap<>();
+		vehicleMap.put(savedEntity.getVehicleId(), converter.parseVehicle(savedEntity));
+		return vehicleMap;
 	}
 
 	@Override
@@ -58,12 +65,16 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 	}
 
 	@Override
-	public Vehicle getVehicle(Long vehicleId) {
-		return this.converter.parseVehicle(repository.getById(vehicleId));
+	public Map<Long, Vehicle> getVehicle(Long vehicleId) {
+		VehicleEntity entity = repository.getById(vehicleId);
+		Vehicle vehicle = this.converter.parseVehicle(entity);
+		Map<Long, Vehicle> vehicleMap = new HashMap<>();
+		vehicleMap.put(entity.getVehicleId(), vehicle);
+		return vehicleMap;
 	}
 
 	@Override
-	public List<Vehicle> listVehicles(IdentificationDocumentVO customerId, Long workshopId) {
+	public List<Map<Long, Vehicle>> listVehicles(IdentificationDocumentVO customerId, Long workshopId) {
 		CustomerEntity entity = new CustomerEntity();
 		entity.setId(new CustomerEntityId(workshopId, customerId.getDocument()));
 		

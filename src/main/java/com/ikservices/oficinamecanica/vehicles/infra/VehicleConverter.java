@@ -1,9 +1,10 @@
 package com.ikservices.oficinamecanica.vehicles.infra;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
+import com.ikservices.oficinamecanica.customers.domain.Customer;
+import com.ikservices.oficinamecanica.customers.domain.CustomerId;
 import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.customers.infra.controller.CustomerDTO;
 import com.ikservices.oficinamecanica.vehicles.application.VehicleException;
@@ -53,18 +54,20 @@ public class VehicleConverter {
 		entity.setModel(vehicle.getModel());
 		entity.setObservations(vehicle.getObservations());
 		entity.setBrand(vehicle.getBrand());
-		entity.setPlate(entity.getPlate());
+		entity.setPlate(vehicle.getPlate());
 		entity.setActive(vehicle.isActive());
 		
 		return entity;
 	}
 	
-	public List<Vehicle> parseVehicleList(List<VehicleEntity> vehicleEntityList) {
-		List<Vehicle> vehicleList = new ArrayList<>();
+	public List<Map<Long, Vehicle>> parseVehicleList(List<VehicleEntity> vehicleEntityList) {
+		List<Map<Long, Vehicle>> vehicleList = new ArrayList<>();
 		
 		if(Objects.nonNull(vehicleEntityList) && !vehicleEntityList.isEmpty()) {
 			for(VehicleEntity vehicleEntity : vehicleEntityList) {
-				vehicleList.add(this.parseVehicle(vehicleEntity));
+				Map<Long, Vehicle> vehicleMap = new HashMap<>();
+				vehicleMap.put(vehicleEntity.getVehicleId(), this.parseVehicle(vehicleEntity));
+				vehicleList.add(vehicleMap);
 			}
 		}
 		
@@ -89,11 +92,13 @@ public class VehicleConverter {
 		}
 		
 		Vehicle vehicle = new Vehicle();
-		
-		vehicle.setBrand(dto.getBrand());
-		vehicle.setCustomer(Objects.nonNull(dto.getCustomerDTO()) ? 
-				customerConverter.parseCustomer(dto.getCustomerDTO())
-				: null);
+
+		if (Objects.nonNull(dto.getCustomer())) {
+			Customer customer = new Customer();
+			customer.setId(new CustomerId(dto.getCustomer().getWorkshopId(), new IdentificationDocumentVO(dto.getCustomer().getDocId())));
+			vehicle.setCustomer(customer);
+		}
+
 		vehicle.setBrand(dto.getBrand());
 		vehicle.setEngine(dto.getEngine());
 		vehicle.setManufacturing(dto.getManufacturing());
@@ -112,7 +117,7 @@ public class VehicleConverter {
 		VehicleDTO dto = new VehicleDTO();
 		
 		dto.setBrand(vehicle.getBrand());
-		dto.setCustomerDTO(Objects.nonNull(vehicle.getCustomer()) ?
+		dto.setCustomer(Objects.nonNull(vehicle.getCustomer()) ?
 				new CustomerDTO(vehicle.getCustomer()) 
 				: null);
 		dto.setEngine(vehicle.getEngine());
@@ -124,19 +129,14 @@ public class VehicleConverter {
 		return dto;
 	}
 	
-	public List<VehicleResponse> parseResponseList(List<Vehicle> vehicleList) {
+	public List<VehicleResponse> parseResponseList(List<Map<Long, Vehicle>> vehicleList) {
 		List<VehicleResponse> vehicleResponseList = new ArrayList<>();
 		
 		if(Objects.nonNull(vehicleList) && !vehicleList.isEmpty()) {
-			for(Vehicle vehicle: vehicleList) {
-				vehicleResponseList.add(new VehicleResponse(
-						vehicle.getCustomer().
-						getId().getDocId().getDocument(), 
-						vehicle.getCustomer().getId().getWorkshopId(),
-						vehicle.getPlate(), 
-						vehicle.getBrand(), vehicle.getModel(),
-						vehicle.getManufacturing(), vehicle.getEngine(), 
-						vehicle.getObservations()));
+			for (Map<Long, Vehicle> vehicleMap : vehicleList) {
+				for (Long vehicleId : vehicleMap.keySet()) {
+					vehicleResponseList.add(new VehicleResponse(vehicleMap.get(vehicleId), vehicleId));
+				}
 			}
 		}
 		

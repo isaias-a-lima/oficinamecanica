@@ -1,6 +1,7 @@
 package com.ikservices.oficinamecanica.vehicles.application.usecases;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
@@ -14,7 +15,7 @@ public class ListVehicles {
 		this.repository = repository;
 	}
 	
-	public List<Vehicle> execute(IdentificationDocumentVO customerId, Long workshopId) {
+	public List<Map<Long, Vehicle>> execute(IdentificationDocumentVO customerId, Long workshopId) {
 		return repository.listVehicles(customerId, workshopId);
 	}
 }

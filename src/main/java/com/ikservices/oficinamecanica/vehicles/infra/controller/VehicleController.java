@@ -3,11 +3,17 @@ package com.ikservices.oficinamecanica.vehicles.infra.controller;
 import java.awt.TrayIcon.MessageType;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
+import com.ikservices.oficinamecanica.commons.response.IKRes;
+import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
+import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,9 +36,15 @@ import com.ikservices.oficinamecanica.vehicles.application.usecases.UpdateVehicl
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.vehicles.infra.VehicleConverter;
 
+import javax.persistence.EntityNotFoundException;
+
 @RestController
 @RequestMapping("vehicles")
 public class VehicleController {
+
+    private static final Logger LOGGER = IKLoggerUtil.getLogger(VehicleController.class);
+
+	private static final String DEFAULT_SERVER_ERROR_MESSAGE = "Ocorreu um imprevisto, favor tentar novamente mais tarde.";
 	private GetVehicle getVehicle;
 	private ListVehicles listVehicles;
 	private SaveVehicle saveVehicle;
@@ -62,23 +74,52 @@ public class VehicleController {
 	
 	@GetMapping("{vehicleId}")
 	public ResponseEntity<IKResponse<VehicleResponse>> getVehicle(@PathVariable Long vehicleId) {
-		Vehicle vehicle = getVehicle.execute(vehicleId);
-		return ResponseEntity.ok(IKResponse.<VehicleResponse>build().body(new VehicleResponse(vehicle)));
+		try {
+			Set<Map.Entry<Long, Vehicle>> entries = getVehicle.execute(vehicleId).entrySet();
+			VehicleResponse response = null;
+			for (Map.Entry<Long, Vehicle> entry : entries) {
+				response = new VehicleResponse(entry.getValue(), entry.getKey());
+				break;
+			}
+			if (Objects.isNull(response)) {
+				throw new IKException(HttpStatus.BAD_GATEWAY.value(), IKMessageType.WARNING, DEFAULT_SERVER_ERROR_MESSAGE);
+			}
+			return ResponseEntity.ok(IKResponse.<VehicleResponse>build().body(response));
+		} catch (IKException e) {
+			return ResponseEntity.status(e.getCode()).body(IKResponse.<VehicleResponse>build().addMessage(e.getIKMessageType(), e.getMessage()));
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(IKResponse.<VehicleResponse>build().addMessage(IKMessageType.WARNING, "Veículo não encontrado"));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<VehicleResponse>build().addMessage(IKMessageType.WARNING, DEFAULT_SERVER_ERROR_MESSAGE));
+		}
 	}
 	
 	@PostMapping()
-	public ResponseEntity<IKResponse<VehicleResponse>> saveVehicle(@RequestBody VehicleDTO vehicleDTO, UriComponentsBuilder uriBuilder) {
-		Vehicle vehicle = null;
-		
+	public ResponseEntity<IKRes<VehicleResponse>> saveVehicle(@RequestBody VehicleDTO vehicleDTO, UriComponentsBuilder uriBuilder) {
+
 		try {
-			vehicle = saveVehicle.execute(converter.parseVehicle(vehicleDTO));
-			URI uri = uriBuilder.path("vehicles/{workshopId}/{id}").buildAndExpand(vehicle.getCustomer()
-					.getWorkshop().getDocId(), vehicle.getCustomer().getId().getDocId().getDocument()).toUri();
-			return ResponseEntity.created(uri).body(IKResponse.<VehicleResponse>build().
-					body(new VehicleResponse(vehicle)).addMessage(IKMessageType.SUCCESS, "Veículo registrado com sucesso"));
+			Map<Long, Vehicle> vehicleMap = saveVehicle.execute(converter.parseVehicle(vehicleDTO));
+			VehicleResponse response = null;
+			ResponseEntity<IKRes<VehicleResponse>> responseEntity = null;
+
+			for (Long vehicleId : vehicleMap.keySet()) {
+				response = new VehicleResponse(vehicleMap.get(vehicleId), vehicleId);
+
+				URI uri = uriBuilder.path("vehicles/{vehicleId}").buildAndExpand(vehicleId).toUri();
+
+				responseEntity = ResponseEntity.created(uri).body(IKRes.<VehicleResponse>build().
+						body(new VehicleResponse(vehicleMap.get(vehicleId), vehicleId)).addMessage("Veículo registrado com sucesso"));
+			}
+
+			return responseEntity;
+
 		}catch(IKException ike) {
+			LOGGER.error("Erro ao salvar", ike);
 			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
-			return ResponseEntity.status(code).body(IKResponse.<VehicleResponse>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+			return ResponseEntity.status(code).body(IKRes.<VehicleResponse>build().addMessage(ike.getMessage()));
+		} catch (Exception e) {
+            LOGGER.error("Erro ao salvar", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<VehicleResponse>build().addMessage(DEFAULT_SERVER_ERROR_MESSAGE));
 		}
 	}
 }

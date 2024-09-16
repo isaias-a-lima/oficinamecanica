@@ -188,9 +188,9 @@ INSERT INTO vehicles(vehicleid, iddoc, workshopid, plate, brand, model, manufact
 engine, observations, active) VALUES(1, "22233344455", 1, "T1O2F8", "Volkswagen",
 "polo", "2003", "1.6 103cv", "nenhuma", 1);
 
-INSERT INTO vehicles(vehicleid, iddoc, workshopid, plate, brand, model, manufacturing,
-engine, observations, active) VALUES(2, "55566677788", 1, "T1O2F8", "Volkswagen",
-"polo", "2004", "1.6 103cv", "nenhuma", 1);
+INSERT INTO vehicles(iddoc, workshopid, plate, brand, model, manufacturing,
+engine, observations, active) VALUES("55566677788", 1, "T1O2F8", "Volkswagen",
+"Polo", "2003/2004", "Mi 1.6 103cv", "nenhuma", true);
 
 --2024-09-05 16:37 - Brazil - Mateus Lima - Update customer adress.
 UPDATE customers set address = "Rua teste", city = "Testelândia", state = "SP", 

@@ -3,6 +3,8 @@ package com.ikservices.oficinamecanica.vehicles.application.usecases;
 import com.ikservices.oficinamecanica.vehicles.application.gateways.VehicleRepository;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 
+import java.util.Map;
+
 public class GetVehicle {
 	private final VehicleRepository repository;
 	
@@ -10,7 +12,7 @@ public class GetVehicle {
 		this.repository = repository;
 	}
 	
-	public Vehicle execute(Long vehicleId) {
+	public Map<Long, Vehicle> execute(Long vehicleId) {
 		return repository.getVehicle(vehicleId);
 	}
 }

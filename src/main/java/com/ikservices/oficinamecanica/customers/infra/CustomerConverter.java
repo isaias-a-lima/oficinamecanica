@@ -66,14 +66,14 @@ public class CustomerConverter {
         CustomerEntity entity = new CustomerEntity();
         entity.setId(new CustomerEntityId(customer.getId().getWorkshopId(), customer.getId().getDocId().getDocument()));
         entity.setName(customer.getName());
-        entity.setEmail(customer.getEmail().getMailAddress());
-        entity.setLandline(customer.getLandline().getFullPhone());
-        entity.setMobilePhone(customer.getMobilePhone().getFullPhone());
-        entity.setType(customer.getType().getType());
-        entity.setAddress(customer.getAddress().getPartialAddress());
-        entity.setCity(customer.getAddress().getCity());
-        entity.setState(customer.getAddress().getState());
-        entity.setPostalCode(customer.getAddress().getPostalCode());
+        entity.setEmail(Objects.nonNull(customer.getEmail()) ? customer.getEmail().getMailAddress() : null);
+        entity.setLandline(Objects.nonNull(customer.getLandline()) ? customer.getLandline().getFullPhone() : null);
+        entity.setMobilePhone(Objects.nonNull(customer.getMobilePhone()) ? customer.getMobilePhone().getFullPhone(): null);
+        entity.setType(Objects.nonNull(customer.getType()) ? customer.getType().getType() : null);
+        entity.setAddress(Objects.nonNull(customer.getAddress()) ? customer.getAddress().getPartialAddress() : null);
+        entity.setCity(Objects.nonNull(customer.getAddress()) ? customer.getAddress().getCity() : null);
+        entity.setState(Objects.nonNull(customer.getAddress()) ? customer.getAddress().getState() : null);
+        entity.setPostalCode(Objects.nonNull(customer.getAddress()) ? customer.getAddress().getPostalCode(): null);
 
         return entity;
     }
