@@ -34,7 +34,7 @@ public class SupplierRepositoryImpl implements SupplierRepository {
 		
 		if(optional.isPresent()) {
 			throw new IKException(HttpStatus.FOUND.value(), IKMessageType.WARNING, 
-					"Peça já cadastrada.");
+					"Fornecedor já cadastrado.");
 		}
 		
 		SupplierEntity savedEntity = repository.save(converter.parseEntity(supplier));

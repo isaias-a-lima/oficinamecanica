@@ -165,3 +165,33 @@ address, city, state, type)
 VALUES(2, 1, '12545678030188', 'Antonio Auto Peças', '+55 11 2222-3333', 
 '+55 11 99999-4444', 'antonio@teste.com', '02323-000', 'Rua do auto peças',
 'São Paulo', 'SP', 'J');
+
+--2024-08-21 15:11 - Brazil - Mateus Lima - Create vehicles table.
+CREATE TABLE vehicles(
+vehicleid BIGINT NOT NULL AUTO_INCREMENT COMMENT "Vehicle identification number",
+iddoc VARCHAR(14) NOT NULL COMMENT "Customer identification number",
+workshopid BIGINT NOT NULL COMMENT "Workshop identification number",
+plate VARCHAR(50) NOT NULL COMMENT "Plate number",
+brand VARCHAR(50) NOT NULL COMMENT "Brand name",
+model VARCHAR(50) NOT NULL COMMENT "Vehicle model",
+manufacturing VARCHAR(9) NOT NULL COMMENT "Manufacturing year and model year",
+engine VARCHAR(50) NOT NULL COMMENT "Vehicle engine",
+observations VARCHAR(255) NOT NULL COMMENT "Vehicle observations",
+active BOOL NOT NULL COMMENT "Identify if there is an active vehicle",
+PRIMARY KEY(vehicleid),
+CONSTRAINT fk_customers
+_vehicles FOREIGN KEY(workshopid, iddoc) REFERENCES customers(workshopid, docid)
+)COMMENT = "Vehicles registration";
+
+--2024-09-04 16:24 - Brazil - Mateus Lima - Insert vehicles into vehicles table.
+INSERT INTO vehicles(vehicleid, iddoc, workshopid, plate, brand, model, manufacturing,
+engine, observations, active) VALUES(1, "22233344455", 1, "T1O2F8", "Volkswagen",
+"polo", "2003", "1.6 103cv", "nenhuma", 1);
+
+INSERT INTO vehicles(iddoc, workshopid, plate, brand, model, manufacturing,
+engine, observations, active) VALUES("55566677788", 1, "T1O2F8", "Volkswagen",
+"Polo", "2003/2004", "Mi 1.6 103cv", "nenhuma", true);
+
+--2024-09-05 16:37 - Brazil - Mateus Lima - Update customer adress.
+UPDATE customers set address = "Rua teste", city = "Testelândia", state = "SP", 
+postalcode = "02323000" WHERE workshopid = 1;
