@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -139,6 +140,25 @@ public class VehicleController {
 					body(IKRes.<VehicleResponse>build().addMessage(ike.getMessage()));
 		} catch(Exception e) {
 			LOGGER.error("Erro ao deletar", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<VehicleResponse>build().addMessage(DEFAULT_SERVER_ERROR_MESSAGE));
+		}
+	}
+	
+	@Transactional
+	@PutMapping("{vehicleId}")
+	public ResponseEntity<IKRes<VehicleResponse>> updateVehicle(@PathVariable Long vehicleId,
+			@RequestBody VehicleDTO vehicleDTO) {
+		
+		try {
+			Map<Long, Vehicle> vehicleMap = updateVehicle.execute(vehicleId, converter.parseVehicle(vehicleDTO));
+			return ResponseEntity.ok(IKRes.<VehicleResponse>build().
+					body(new VehicleResponse(vehicleMap.get(vehicleId), vehicleId)));
+		} catch(IKException ike) {
+			LOGGER.error("erro ao atualizar", ike);
+			return ResponseEntity.status(ike.getCode()).
+					body(IKRes.<VehicleResponse>build().addMessage(ike.getMessage()));	
+		} catch(Exception e) {
+			LOGGER.error("erro ao atualizar", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<VehicleResponse>build().addMessage(DEFAULT_SERVER_ERROR_MESSAGE));
 		}
 	}
