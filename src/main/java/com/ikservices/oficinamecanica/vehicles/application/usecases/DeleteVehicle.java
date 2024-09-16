@@ -11,7 +11,7 @@ public class DeleteVehicle {
 		this.repository = repository;
 	}
 	
-	public void deletevehicle(VehicleEntity vehicleEntity) {
-		repository.deleteVehicle(vehicleEntity);
+	public void execute(Long vehicleId) {
+		repository.deleteVehicle(vehicleId);
 	}
 }

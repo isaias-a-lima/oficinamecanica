@@ -12,5 +12,5 @@ public interface VehicleRepository {
 	Vehicle updateVehicle(Vehicle vehicle, Long vehicleId);
 	Map<Long, Vehicle> getVehicle(Long vehicleId);
 	List<Map<Long, Vehicle>> listVehicles(IdentificationDocumentVO customerId, Long workshopId);
-	void deleteVehicle(VehicleEntity vehicleEntity);
+	void deleteVehicle(Long vehicleId);
 }

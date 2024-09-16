@@ -79,11 +79,18 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 		entity.setId(new CustomerEntityId(workshopId, customerId.getDocument()));
 		
 		return this.converter.parseVehicleList(repository.
-				findAllByCustomerEntity(entity));
+				findAllByCustomerEntityAndActiveTrue(entity));
 	}
 
 	@Override
-	public void deleteVehicle(VehicleEntity vehicleEntity) {
+	public void deleteVehicle(Long vehicleId) {
+		Optional<VehicleEntity> vehicleOptional = repository.findById(vehicleId);
+		
+		if(Objects.isNull(vehicleOptional)) {
+			throw new IKException("Veículo não encontrado.");
+		}
+		
+		VehicleEntity vehicleEntity = vehicleOptional.get();
 		vehicleEntity.delete();
 	}
 }
