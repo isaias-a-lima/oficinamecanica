@@ -55,8 +55,8 @@ public class ServiceRepositoryImpl implements ServiceRepository{
 	}
 
 	@Override
-	public List<Service> getServiceList(Long workshopId) {
-		return this.converter.parseServiceList(repository.findAllByWorkshopId(workshopId));
+	public List<Service> getServiceList(Long workshopId, String search) {
+		return this.converter.parseServiceList(repository.findAllByWorkshopId(workshopId, search));
 	}
 
 	@Override
