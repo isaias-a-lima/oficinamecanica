@@ -4,6 +4,7 @@ public class VehicleConstant {
 	public static final String SAVE_SUCCESS_MESSAGE = "vehicle.save.success.message";
 	public static final String UPDATE_SUCCESS_MESSAGE  = "vehicle.update.success.message";
 	public static final String DELETE_SUCCESS_MESSAGE = "vehicle.delete.success.message";
-	public static final String VEHICLE_ALREADY_RECORDED_TO_THIS_CUSTOMER = 
-			"vehicle.ja.se.encontra.registrado.para.esse.cliente";
+	public static final String RECORDED_MESSAGE = "vehicle.recorded.message";
+	public static final String DEFAULT_SERVER_ERROR_MESSAGE = "vehicle.default.server.error.message";
+	public static final String OPERATION_ERROR_MESSAGE = "vehicle.operation.error.message";
 }
