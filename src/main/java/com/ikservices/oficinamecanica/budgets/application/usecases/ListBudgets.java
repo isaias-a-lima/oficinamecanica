@@ -1,6 +1,7 @@
 package com.ikservices.oficinamecanica.budgets.application.usecases;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ikservices.oficinamecanica.budgets.application.gateways.BudgetRepository;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
@@ -12,7 +13,7 @@ public class ListBudgets {
 		this.repository = repository;
 	}
 	
-	public List<Budget> execute(Long vehicleId) {
+	public List<Map<Long, Budget>> execute(Long vehicleId) {
 		return repository.listBudgets(vehicleId);
 	}
 }
