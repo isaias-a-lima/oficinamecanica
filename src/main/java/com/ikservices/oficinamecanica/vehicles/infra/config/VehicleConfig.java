@@ -1,10 +1,8 @@
 package com.ikservices.oficinamecanica.vehicles.infra.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 
 import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.vehicles.application.gateways.VehicleRepository;
@@ -21,8 +19,6 @@ import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConver
 @Configuration
 @PropertySource(name="vehicle.properties", value="classpath:vehicles.properties", encoding="utf-8")
 public class VehicleConfig {
-	@Autowired
-	Environment environment;
 	
 	@Bean
 	public VehicleRepository vehicleRepository(VehicleConverter converter, VehicleRepositoryJPA repository, 
