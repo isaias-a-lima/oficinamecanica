@@ -13,7 +13,14 @@ public class NumberUtil {
         if (Objects.isNull(valor) || valor.isEmpty()) {
             return BigDecimal.ZERO;
         }
-        valor = valor.replace(",", "_").replace(".", "").replace("_", ".");
+        valor = valor.replaceAll("[^0-9.,]","");
+
+        if (valor.contains(",") && valor.contains(".")) {
+            valor = valor.replace(",", "_").replace(".", "").replace("_", ".");
+        } else if (valor.contains(",")) {
+            valor = valor.replace(",", ".");
+        }
+
         return new BigDecimal(valor);
     }
 
