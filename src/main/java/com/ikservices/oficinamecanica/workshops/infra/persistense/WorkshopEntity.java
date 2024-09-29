@@ -1,6 +1,5 @@
 package com.ikservices.oficinamecanica.workshops.infra.persistense;
 
-import com.ikservices.oficinamecanica.users.domain.User;
 import com.ikservices.oficinamecanica.users.infra.persistence.UserEntity;
 import lombok.*;
 

@@ -2,13 +2,17 @@ package com.ikservices.oficinamecanica.customers.application.usecases;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessage;
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKMessages;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
+import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
+import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
 import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRepository;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.infra.constants.CustomerConstants;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import org.slf4j.Logger;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Map;
@@ -26,20 +30,35 @@ public class ListCustomers {
         this.ikMessages = ikMessages;
     }
 
-    public List<Customer> execute(Long workshopId) {
+    public List<Customer> execute(Long workshopId, int criteria, String search) {
         List<Customer> customerList = null;
         String loggerID = IKLoggerUtil.getLoggerID();
+        String errorMessage = String.format("ERROR_ID: %s, workshopId: %d, criteria: %d, search: %s", loggerID, workshopId, criteria, search);
 
         try {
-            customerList = repository.getCustomerList(workshopId);
+            customerList = repository.getCustomerList(workshopId, criteria, validSearch(criteria, search));
+        } catch (IKException ie) {
+            LOGGER.error(errorMessage, ie);
+            throw new IKException(ie.getCode(), ie.getIKMessageType(), ie.getMessage());
         } catch (Exception e) {
-            String errorMessage = String.format("ERROR_ID: %s, workshopId: %d", loggerID, workshopId);
             LOGGER.error(errorMessage, e);
-
             IKMessage ikMessage = ikMessages.getPropertyMessage(CustomerConstants.UNEXPECTED_ERROR_MESSAGE_KEY);
-
             throw new IKException(ikMessage.getCode(), ikMessage.getIKMessageType(), ikMessage.getMessage());
         }
         return customerList;
+    }
+
+    private String validSearch(int criteria, String search) {
+        switch (criteria) {
+            case 1:
+                IdentificationDocumentVO doc = new IdentificationDocumentVO(search);
+                return doc.getDocument();
+            case 2:
+                return search;
+            case 3:
+                return PhoneVO.parsePhoneVO(search).getFullPhone();
+            default:
+                throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.WARNING, "Escolha um critério válido.");
+        }
     }
 }

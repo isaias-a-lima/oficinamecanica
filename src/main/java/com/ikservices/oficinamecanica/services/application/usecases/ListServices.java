@@ -12,7 +12,7 @@ public class ListServices {
 		this.repository = repository;
 	}
 	
-	public List<Service> execute(Long workshopId){
-		return repository.getServiceList(workshopId);
+	public List<Service> execute(Long workshopId, String search){
+		return repository.getServiceList(workshopId, search);
 	}
 }

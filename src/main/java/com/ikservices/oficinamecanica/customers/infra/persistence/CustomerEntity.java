@@ -12,7 +12,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 public class CustomerEntity {
     @EmbeddedId
     private CustomerEntityId id;
@@ -29,6 +29,14 @@ public class CustomerEntity {
     private String email;
     @Column(name = "TYPE")
     private Character type;
+    @Column(name = "POSTALCODE")
+    private String postalCode;
+    @Column(name = "ADDRESS")
+    private String address;
+    @Column(name = "CITY")
+    private String city;
+    @Column(name = "STATE")
+    private String state;
 
     public void update(CustomerEntity customerEntity) {
         if (Objects.nonNull(customerEntity.getId().getDocId())) {
@@ -48,6 +56,18 @@ public class CustomerEntity {
         }
         if (Objects.nonNull(customerEntity.getType())) {
             this.type = customerEntity.getType();
+        }
+        if (Objects.nonNull(customerEntity.getPostalCode())) {
+            this.postalCode = customerEntity.getPostalCode();
+        }
+        if (Objects.nonNull(customerEntity.getAddress())) {
+            this.address = customerEntity.getAddress();
+        }
+        if (Objects.nonNull(customerEntity.getCity())) {
+            this.city = customerEntity.getCity();
+        }
+        if (Objects.nonNull(customerEntity.getState())) {
+            this.state = customerEntity.getState();
         }
     }
 

@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.customers.domain;
 
+import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
 import com.ikservices.oficinamecanica.commons.vo.AddressVO;
 import com.ikservices.oficinamecanica.commons.vo.EmailVO;
 import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
@@ -18,5 +19,5 @@ public class Customer {
     private PhoneVO mobilePhone;
     private EmailVO email;
     private AddressVO address;
-    private CustomerType type;
+    private TaxPayerEnum type;
 }

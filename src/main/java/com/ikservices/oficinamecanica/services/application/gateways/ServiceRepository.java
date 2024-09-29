@@ -9,6 +9,7 @@ public interface ServiceRepository {
 	Service saveService(Service service);
 	Service updateService(Service service);
 	Service getService(ServiceId id);
-	List<Service> getServiceList(Long workshopId);
+	List<Service> getServiceList(Long workshopId, String search);
 	void deleteService(Long id);
+	Long getNextServiceId(Long workshopId);
 }

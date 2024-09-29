@@ -20,11 +20,11 @@ public class CustomerInterceptor {
         this.customerMessages = customerMessages;
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<IKResponse<CustomerDTO>> entityNotFound() {
-        IKMessage ikMessage = customerMessages.getPropertyMessage(CustomerConstants.CUSTOMER_NOT_FOUND_MESSAGE_KEY);
-        return ResponseEntity.status(ikMessage.getCode()).body(
-                IKResponse.<CustomerDTO>build().addMessage(ikMessage.getIKMessageType(), ikMessage.getMessage())
-        );
-    }
+//    @ExceptionHandler(EntityNotFoundException.class)
+//    public ResponseEntity<IKResponse<CustomerDTO>> entityNotFound() {
+//        IKMessage ikMessage = customerMessages.getPropertyMessage(CustomerConstants.CUSTOMER_NOT_FOUND_MESSAGE_KEY);
+//        return ResponseEntity.status(ikMessage.getCode()).body(
+//                IKResponse.<CustomerDTO>build().addMessage(ikMessage.getIKMessageType(), ikMessage.getMessage())
+//        );
+//    }
 }
