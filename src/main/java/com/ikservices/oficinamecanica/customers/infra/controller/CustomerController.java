@@ -3,13 +3,11 @@ package com.ikservices.oficinamecanica.customers.infra.controller;
 import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
+import com.ikservices.oficinamecanica.commons.response.IKRes;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
-import com.ikservices.oficinamecanica.customers.application.usecases.GetCustomer;
-import com.ikservices.oficinamecanica.customers.application.usecases.ListCustomers;
-import com.ikservices.oficinamecanica.customers.application.usecases.SaveCustomer;
-import com.ikservices.oficinamecanica.customers.application.usecases.UpdateCustomer;
+import com.ikservices.oficinamecanica.customers.application.usecases.*;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.domain.CustomerId;
 import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
@@ -36,14 +34,16 @@ public class CustomerController {
     private final CustomerConverter converter;
     private final SaveCustomer saveCustomer;
     private final UpdateCustomer updateCustomer;
+    private final GetCustomerByVeclicle getCustomerByVeclicle;
 
     public CustomerController(ListCustomers listCustomers, CustomerConverter converter,
-                              GetCustomer getCustomer, SaveCustomer saveCustomer, UpdateCustomer updateCustomer) {
+                              GetCustomer getCustomer, SaveCustomer saveCustomer, UpdateCustomer updateCustomer, GetCustomerByVeclicle getCustomerByVeclicle) {
         this.listCustomers = listCustomers;
         this.converter = converter;
         this.getCustomer = getCustomer;
         this.saveCustomer = saveCustomer;
         this.updateCustomer = updateCustomer;
+        this.getCustomerByVeclicle = getCustomerByVeclicle;
     }
 
     @GetMapping("/workshop/{id}")
@@ -98,6 +98,24 @@ public class CustomerController {
         } catch (Exception e) {
             LOGGER.error(logID + " saveCustomer: " + IKLoggerUtil.parseJSON(dto), e);
             return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<CustomerDTO>build().addMessage(IKMessageType.ERROR, "ERRO inesperado. Se persistir informe ao suporte o seguinte ID: " + logID));
+        }
+    }
+
+    @GetMapping("workshop/vehicle/{workshopId}/{plate}")
+    public ResponseEntity<IKRes<CustomerDTO>> getCustomerByVehicle(@PathVariable("workshopId") Long workshopId, @PathVariable("plate") String plate) {
+        String logID = IKLoggerUtil.getLoggerID();
+        try {
+            List<Customer> customers = getCustomerByVeclicle.execute(workshopId, plate);
+            return ResponseEntity.ok(IKRes.<CustomerDTO>build().body(converter.parseCustomerResponseList(customers)));
+        } catch (IKException ike) {
+            String logMsg = String.format("ID: %s - getCustomerByVehicle - workshopId: %d, plate: %s", logID, workshopId, plate);
+            LOGGER.error(logMsg, ike.getCause());
+            int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
+            return ResponseEntity.status(code).body(IKRes.<CustomerDTO>build().addMessage(ike.getMessage()));
+        } catch (Exception e) {
+            String logMsg = String.format("ID: %s - getCustomerByVehicle - workshopId: %d, plate: %s", logID, workshopId, plate);
+            LOGGER.error(logMsg, e);
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<CustomerDTO>build().addMessage("ERRO inesperado. Se persistir informe ao suporte o seguinte ID: " + logID));
         }
     }
 }

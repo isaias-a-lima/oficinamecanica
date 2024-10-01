@@ -59,4 +59,9 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     public List<Customer> getCustomerList(Long workshopId, int criteria, String search) {
         return converter.parseCustomerList(repository.findAllByWorkshopId(workshopId, criteria, search));
     }
+
+    @Override
+    public List<Customer> getCustomerByVehicles(Long workshopId, String plate) {
+        return converter.parseCustomerList(repository.findByVehicles(workshopId, plate));
+    }
 }

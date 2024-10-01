@@ -1,9 +1,11 @@
 package com.ikservices.oficinamecanica.customers.infra.persistence;
 
+import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -37,6 +39,8 @@ public class CustomerEntity {
     private String city;
     @Column(name = "STATE")
     private String state;
+    @OneToMany(mappedBy = "customerEntity")
+    private List<VehicleEntity> vehicles;
 
     public void update(CustomerEntity customerEntity) {
         if (Objects.nonNull(customerEntity.getId().getDocId())) {
