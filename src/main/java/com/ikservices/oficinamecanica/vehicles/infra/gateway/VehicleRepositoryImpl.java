@@ -52,7 +52,7 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 	}
 
 	@Override
-	public Vehicle updateVehicle(Vehicle vehicle, Long vehicleId) {
+	public Map<Long, Vehicle> updateVehicle(Long vehicleId, Vehicle vehicle) {
 		Optional<VehicleEntity> optional = repository.findById(vehicleId);
 		
 		VehicleEntity entity = optional.orElse(null);
@@ -61,7 +61,9 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 			entity.update(converter.parseEntity(vehicle));
 		}
 		
-		return converter.parseVehicle(entity);
+		Map<Long, Vehicle> vehicleMap = new HashMap<>();
+		vehicleMap.put(entity.getVehicleId(), converter.parseVehicle(entity));
+		return vehicleMap;
 	}
 
 	@Override

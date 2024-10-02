@@ -36,7 +36,11 @@ public class ListCustomers {
         String errorMessage = String.format("ERROR_ID: %s, workshopId: %d, criteria: %d, search: %s", loggerID, workshopId, criteria, search);
 
         try {
-            customerList = repository.getCustomerList(workshopId, criteria, validSearch(criteria, search));
+            if (criteria == 4) {
+                customerList = repository.getCustomerByVehicles(workshopId, search);
+            } else {
+                customerList = repository.getCustomerList(workshopId, criteria, validSearch(criteria, search));
+            }
         } catch (IKException ie) {
             LOGGER.error(errorMessage, ie);
             throw new IKException(ie.getCode(), ie.getIKMessageType(), ie.getMessage());

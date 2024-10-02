@@ -2,10 +2,7 @@ package com.ikservices.oficinamecanica.customers.infra.config;
 
 import com.ikservices.oficinamecanica.commons.response.IKMessages;
 import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRepository;
-import com.ikservices.oficinamecanica.customers.application.usecases.GetCustomer;
-import com.ikservices.oficinamecanica.customers.application.usecases.ListCustomers;
-import com.ikservices.oficinamecanica.customers.application.usecases.SaveCustomer;
-import com.ikservices.oficinamecanica.customers.application.usecases.UpdateCustomer;
+import com.ikservices.oficinamecanica.customers.application.usecases.*;
 import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerMessages;
 import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerRepositoryImpl;
@@ -63,5 +60,10 @@ public class CustomerConfig {
     @Bean
     public WorkshopConverter workshopConverter(UserConverter userConverter) {
         return new WorkshopConverter(userConverter);
+    }
+
+    @Bean
+    public GetCustomerByVeclicle getCustomerByVeclicle(CustomerRepository repository) {
+        return new GetCustomerByVeclicle(repository);
     }
 }

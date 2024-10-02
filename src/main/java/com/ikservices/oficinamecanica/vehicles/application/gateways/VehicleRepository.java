@@ -9,7 +9,7 @@ import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 
 public interface VehicleRepository {
 	Map<Long, Vehicle> saveVehicle(Vehicle vehicle);
-	Vehicle updateVehicle(Vehicle vehicle, Long vehicleId);
+	Map<Long, Vehicle> updateVehicle(Long vehicleId, Vehicle vehicle);
 	Map<Long, Vehicle> getVehicle(Long vehicleId);
 	List<Map<Long, Vehicle>> listVehicles(IdentificationDocumentVO customerId, Long workshopId);
 	void deleteVehicle(Long vehicleId);
