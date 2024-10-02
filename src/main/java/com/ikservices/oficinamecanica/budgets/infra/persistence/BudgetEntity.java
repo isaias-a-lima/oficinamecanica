@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -34,7 +35,7 @@ public class BudgetEntity {
 	private Long budgetId;
 	
 	@ManyToOne
-	@Column(name = "VEHICLEID")
+	@JoinColumn(name = "VEHICLEID", referencedColumnName = "VEHICLEID", insertable = false, updatable = false)
 	private VehicleEntity vehicleEntity;
 	
 	@Column(name = "OPENINGDATE")
