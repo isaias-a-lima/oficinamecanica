@@ -2,6 +2,7 @@ package com.ikservices.oficinamecanica.vehicles.infra;
 
 import java.util.*;
 
+import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.domain.CustomerId;
@@ -13,16 +14,15 @@ import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
 import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleResponse;
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
+@Component
 public class VehicleConverter {
-	private final WorkshopConverter workshopConverter;
-	private final CustomerConverter customerConverter;
-	
-	public VehicleConverter(WorkshopConverter workshopConverter, 
-			CustomerConverter customerConverter) {
-		this.workshopConverter = workshopConverter;
-		this.customerConverter = customerConverter;
-	}
+	@Autowired
+	@Lazy
+	private CustomerConverter customerConverter;
 	
 	public Vehicle parseVehicle(VehicleEntity entity) {
 		if(Objects.isNull(entity)) {
@@ -30,7 +30,16 @@ public class VehicleConverter {
 		}
 		
 		Vehicle vehicle = new Vehicle();
-		vehicle.setCustomer(customerConverter.parseCustomer(entity.getCustomerEntity()));
+
+		Customer customer = new Customer();
+		customer.setId(
+				new CustomerId(
+						entity.getCustomerEntity().getId().getWorkshopId(),
+						new IdentificationDocumentVO(TaxPayerEnum.getByType(entity.getCustomerEntity().getType()),entity.getCustomerEntity().getId().getDocId())
+				)
+		);
+
+		vehicle.setCustomer(customer);
 		vehicle.setPlate(entity.getPlate());
 		vehicle.setManufacturing(entity.getManufacturing());
 		vehicle.setObservations(entity.getObservations());
@@ -74,12 +83,20 @@ public class VehicleConverter {
 		return vehicleList;
 	}
 	
-	public List<VehicleEntity> parseVehicleEntityList(List<Vehicle> vehicleList) {
+	public List<VehicleEntity> parseVehicleEntityList(List<Map<Long, Vehicle>> vehicleList) {
 		List<VehicleEntity> vehicleEntityList = new ArrayList<>();
 		
 		if(Objects.nonNull(vehicleList) && !vehicleList.isEmpty()) {
-			for(Vehicle vehicle : vehicleList) {
-				vehicleEntityList.add(this.parseEntity(vehicle));
+
+			for(Map<Long, Vehicle> vehicleMap : vehicleList) {
+
+				for (Map.Entry<Long, Vehicle> entry : vehicleMap.entrySet()) {
+
+					VehicleEntity vehicleEntity = this.parseEntity(entry.getValue());
+					vehicleEntity.setVehicleId(entry.getKey());
+
+					vehicleEntityList.add(vehicleEntity);
+				}
 			}
 		}
 		
@@ -106,6 +123,29 @@ public class VehicleConverter {
 		vehicle.setPlate(dto.getPlate());
 		vehicle.setObservations(dto.getObservations());
 		
+		return vehicle;
+	}
+
+	public Vehicle parseVehicle(VehicleResponse dto) {
+		if(Objects.isNull(dto)) {
+			throw new VehicleException("Null object");
+		}
+
+		Vehicle vehicle = new Vehicle();
+
+		if (!dto.getCustomerId().isEmpty() && Objects.nonNull(dto.getWorkshopId())) {
+			Customer customer = new Customer();
+			customer.setId(new CustomerId(dto.getWorkshopId(), new IdentificationDocumentVO(dto.getCustomerId())));
+			vehicle.setCustomer(customer);
+		}
+
+		vehicle.setBrand(dto.getBrand());
+		vehicle.setEngine(dto.getEngine());
+		vehicle.setManufacturing(dto.getManufacturing());
+		vehicle.setModel(dto.getModel());
+		vehicle.setPlate(dto.getPlate());
+		vehicle.setObservations(dto.getObservations());
+
 		return vehicle;
 	}
 	

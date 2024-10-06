@@ -29,7 +29,7 @@ public class VehicleResponse implements Serializable {
 	
 	public VehicleResponse(Vehicle vehicle, Long vehicleId) {
 		this.vehicleId = vehicleId;
-		this.customerId = vehicle.getCustomer().getId().getDocId().getDocument();
+		this.customerId = vehicle.getCustomer().getId().getDocId().getFullDocument();
 		this.workshopId = vehicle.getCustomer().getId().getWorkshopId();
 		this.plate = vehicle.getPlate();
 		this.brand = vehicle.getBrand();

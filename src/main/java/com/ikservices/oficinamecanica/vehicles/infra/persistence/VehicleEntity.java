@@ -36,8 +36,8 @@ public class VehicleEntity {
 	private Long vehicleId;
 	
 	@ManyToOne
-	@JoinColumn(name = "IDDOC", referencedColumnName = "DOCID")
-	@JoinColumn(name = "WORKSHOPID", referencedColumnName = "WORKSHOPID")
+	@JoinColumn(name = "IDDOC", referencedColumnName = "DOCID", updatable = false, insertable = false)
+	@JoinColumn(name = "WORKSHOPID", referencedColumnName = "WORKSHOPID", updatable = false, insertable = false)
 	private CustomerEntity customerEntity;
 	
 	@Column(name = "PLATE")

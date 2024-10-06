@@ -12,7 +12,6 @@ import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.domain.CustomerId;
 import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +50,7 @@ public class CustomerController {
 
         List<CustomerDTO> customerList = null;
         try {
-            customerList = converter.parseCustomerResponseList(listCustomers.execute(workshopId, criteria, search));
+            customerList = converter.parseCustomerDTOList(listCustomers.execute(workshopId, criteria, search));
         } catch (IKException ike) {
             return ResponseEntity.status(ike.getCode()).body(IKResponse.<CustomerDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
         }
@@ -106,7 +105,7 @@ public class CustomerController {
         String logID = IKLoggerUtil.getLoggerID();
         try {
             List<Customer> customers = getCustomerByVeclicle.execute(workshopId, plate);
-            return ResponseEntity.ok(IKRes.<CustomerDTO>build().body(converter.parseCustomerResponseList(customers)));
+            return ResponseEntity.ok(IKRes.<CustomerDTO>build().body(converter.parseCustomerDTOList(customers)));
         } catch (IKException ike) {
             String logMsg = String.format("ID: %s - getCustomerByVehicle - workshopId: %d, plate: %s", logID, workshopId, plate);
             LOGGER.error(logMsg, ike.getCause());

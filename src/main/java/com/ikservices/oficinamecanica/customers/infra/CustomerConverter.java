@@ -11,19 +11,25 @@ import com.ikservices.oficinamecanica.customers.domain.CustomerId;
 import com.ikservices.oficinamecanica.customers.infra.controller.CustomerDTO;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
+import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
+import com.ikservices.oficinamecanica.vehicles.infra.VehicleConverter;
+import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleResponse;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+@Component
 public class CustomerConverter {
 
-    private final WorkshopConverter workshopConverter;
-
-    public CustomerConverter(WorkshopConverter workshopConverter) {
-        this.workshopConverter = workshopConverter;
-    }
+    @Autowired
+    @Lazy
+    private WorkshopConverter workshopConverter;
+    @Autowired
+    @Lazy
+    private VehicleConverter vehicleConverter;
 
     public Customer parseCustomer(CustomerEntity customerEntity) {
         if (Objects.isNull(customerEntity)) {
@@ -44,6 +50,8 @@ public class CustomerConverter {
                 .setNeighborhood(null)
                 .setCityAndStateAndCountry(customerEntity.getCity(), customerEntity.getState(), null)
                 .build());
+
+        customer.setVehicles(vehicleConverter.parseVehicleList(customerEntity.getVehicles()));
 
         return customer;
     }
@@ -75,13 +83,15 @@ public class CustomerConverter {
         entity.setState(Objects.nonNull(customer.getAddress()) ? customer.getAddress().getState() : null);
         entity.setPostalCode(Objects.nonNull(customer.getAddress()) ? customer.getAddress().getPostalCode(): null);
 
+        entity.setVehicles(vehicleConverter.parseVehicleEntityList(customer.getVehicles()));
+
         return entity;
     }
 
-    public List<CustomerDTO> parseCustomerResponseList(List<Customer> customerMap) {
+    public List<CustomerDTO> parseCustomerDTOList(List<Customer> customerList) {
         List<CustomerDTO> responseList = new ArrayList<>();
-        if (Objects.nonNull(customerMap) && !customerMap.isEmpty()) {
-            for (Customer customer : customerMap) {
+        if (Objects.nonNull(customerList) && !customerList.isEmpty()) {
+            for (Customer customer : customerList) {
                 responseList.add(new CustomerDTO(customer));
             }
         }
@@ -106,6 +116,14 @@ public class CustomerConverter {
                 .setNeighborhood(null)
                 .setCityAndStateAndCountry(customerDTO.getCity(), customerDTO.getState(), null)
                 .build());
+
+        customer.setVehicles(new ArrayList<>());
+
+        for (VehicleResponse vehicleResponse : customerDTO.getVehicles()) {
+            Map<Long, Vehicle> vehicleMap = new HashMap<>();
+            vehicleMap.put(vehicleResponse.getVehicleId(), vehicleConverter.parseVehicle(vehicleResponse));
+            customer.getVehicles().add(vehicleMap);
+        }
 
         return customer;
     }
