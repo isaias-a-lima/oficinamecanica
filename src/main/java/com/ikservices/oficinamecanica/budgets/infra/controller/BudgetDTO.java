@@ -21,4 +21,5 @@ public class BudgetDTO {
 	Long km;
 	Character budgetStatus;
 	String amount;
+	Long budgetId;
 }

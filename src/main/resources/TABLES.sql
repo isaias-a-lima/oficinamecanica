@@ -200,10 +200,17 @@ postalcode = "02323000" WHERE workshopid = 1;
 CREATE TABLE BUDGETS(
 budgetid BIGINT NOT NULL AUTO_INCREMENT COMMENT "Budget identification number",
 vehicleid BIGINT NOT NULL COMMENT "Vehicle identification number",
-opening DATE NOT NULL COMMENT "Budget opening date",
+openingdate DATE NOT NULL COMMENT "Budget opening date",
 km BIGINT NOT NULL COMMENT "kilometers traveled",
 bstatus CHAR(2) NOT NULL COMMENT "Budget status",
 amount DECIMAL(7,2) NOT NULL COMMENT "Budget amount",
 PRIMARY KEY (budgetid),
 CONSTRAINT fk_vehicles_budgets FOREIGN KEY(vehicleid) REFERENCES vehicles(vehicleid)
 )COMMENT = "Vehicles registration";
+
+--2024-10-07 17:14 - Brazil - Mateus Lima - Insert into budgets table.
+INSERT INTO budgets(budgetid, vehicleid, openingdate, km, bstatus, amount)
+VALUES(1, 1, '2024-10-07', 1000, 00, 0);
+
+INSERT INTO budgets(budgetid, vehicleid, openingdate, km, bstatus, amount)
+VALUES(2, 1, '2024-10-06', 1000, 00, 0);

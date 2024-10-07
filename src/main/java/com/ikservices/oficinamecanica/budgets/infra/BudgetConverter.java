@@ -5,7 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
+
+import org.springframework.stereotype.Component;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetDTO;
@@ -14,6 +18,7 @@ import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.vehicles.infra.VehicleConverter;
 
+@Component
 public class BudgetConverter {
 	private final VehicleConverter vehicleConverter;
 	
@@ -77,17 +82,22 @@ public class BudgetConverter {
 		return budgetList;
 	}
 	
-	public BudgetDTO parseDTO(Budget budget) {
-		if(Objects.isNull(budget)) {
+	public BudgetDTO parseDTO(Map<Long, Budget> budgetMap) {
+		if(Objects.isNull(budgetMap)) {
 			throw new IKException("Null object");
 		}
 		
 		BudgetDTO dto = new BudgetDTO();
-		dto.setAmount(NumberUtil.parseStringMoney(budget.getAmount()));
-		dto.setBudgetStatus(budget.getBudgetStatus());
-		dto.setKm(budget.getKm());
-		dto.setOpeningDate(budget.getOpeningDate().toString());
-		dto.setVehicle(vehicleConverter.parseDTO(budget.getVehicle()));
+		Set<Entry<Long, Budget>> entries = budgetMap.entrySet();
+		
+		for(Map.Entry<Long, Budget> entry : entries) {
+			dto.setAmount(NumberUtil.parseStringMoney(entry.getValue().getAmount()));
+			dto.setBudgetStatus(entry.getValue().getBudgetStatus());
+			dto.setKm(entry.getValue().getKm());
+			dto.setOpeningDate(entry.getValue().getOpeningDate().toString());
+			dto.setVehicle(vehicleConverter.parseDTO(entry.getValue().getVehicle()));
+			dto.setBudgetId(entry.getKey());
+		}
 		
 		return dto;
 	}
@@ -104,5 +114,31 @@ public class BudgetConverter {
 		budget.setOpeningDate(LocalDate.parse(dto.getOpeningDate()));
 		
 		return budget;
+	}
+	
+	public List<Map<Long, Budget>> parseDTOList(List<BudgetDTO> dtoList) {
+		List<Map<Long, Budget>> budgetList = new ArrayList<>();
+		
+		if(Objects.nonNull(dtoList) && !dtoList.isEmpty()) {
+			for(BudgetDTO dto : dtoList) {
+				Map<Long, Budget> budgetMap = new HashMap<>();
+				budgetMap.put(dto.getBudgetId(), this.parseBudget(dto));
+				budgetList.add(budgetMap);
+			}
+		}
+		
+		return budgetList;
+	}
+	
+	public List<BudgetDTO> parseToDTO(List<Map<Long, Budget>> budgetList) {
+		List<BudgetDTO> dtoList = new ArrayList<>();
+		
+		if(Objects.nonNull(budgetList) && !budgetList.isEmpty()) {
+			for(Map<Long, Budget> budgetMap : budgetList) {
+				dtoList.add(this.parseDTO(budgetMap));
+			}
+		}
+		
+		return dtoList;
 	}
 }

@@ -11,6 +11,7 @@ import com.ikservices.oficinamecanica.budgets.application.usecases.ChangeStatus;
 import com.ikservices.oficinamecanica.budgets.application.usecases.GetBudget;
 import com.ikservices.oficinamecanica.budgets.application.usecases.IncreaseAmount;
 import com.ikservices.oficinamecanica.budgets.application.usecases.ListBudgets;
+import com.ikservices.oficinamecanica.budgets.application.usecases.SaveBudget;
 import com.ikservices.oficinamecanica.budgets.application.usecases.UpdateBudget;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.budgets.infra.gateways.BudgetRepositoryImpl;
@@ -29,11 +30,6 @@ public class BudgetConfig {
 	}
 	
 	@Bean
-	BudgetConverter budgetConverter(VehicleConverter vehicleConverter) {
-		return new BudgetConverter(vehicleConverter);
-	}
-	
-	@Bean
 	GetBudget getBudget(BudgetRepository repository) {
 		return new GetBudget(repository);
 	}
@@ -41,6 +37,11 @@ public class BudgetConfig {
 	@Bean
 	UpdateBudget updateBudget(BudgetRepository repository) {
 		return new UpdateBudget(repository);
+	}
+	
+	@Bean
+	SaveBudget saveBudget(BudgetRepository repository) {
+		return new SaveBudget(repository);
 	}
 	
 	@Bean
