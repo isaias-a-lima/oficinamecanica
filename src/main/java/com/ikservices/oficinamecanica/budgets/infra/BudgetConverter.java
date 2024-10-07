@@ -16,7 +16,9 @@ import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetDTO;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
+import com.ikservices.oficinamecanica.customers.infra.controller.CustomerDTO;
 import com.ikservices.oficinamecanica.vehicles.infra.VehicleConverter;
+import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
 
 @Component
 public class BudgetConverter {
@@ -82,7 +84,7 @@ public class BudgetConverter {
 		return budgetList;
 	}
 	
-	public BudgetDTO parseDTO(Map<Long, Budget> budgetMap) {
+	public BudgetDTO parseDTO(Map<Long, Budget> budgetMap, Long vehicleId) {
 		if(Objects.isNull(budgetMap)) {
 			throw new IKException("Null object");
 		}
@@ -95,8 +97,16 @@ public class BudgetConverter {
 			dto.setBudgetStatus(entry.getValue().getBudgetStatus());
 			dto.setKm(entry.getValue().getKm());
 			dto.setOpeningDate(entry.getValue().getOpeningDate().toString());
-			dto.setVehicle(vehicleConverter.parseDTO(entry.getValue().getVehicle()));
 			dto.setBudgetId(entry.getKey());
+			VehicleDTO vehicleDTO = new VehicleDTO();
+			vehicleDTO.setBrand(entry.getValue().getVehicle().getBrand());
+			vehicleDTO.setCustomer(new CustomerDTO(entry.getValue().getVehicle().getCustomer()));
+			vehicleDTO.setEngine(entry.getValue().getVehicle().getEngine());
+			vehicleDTO.setManufacturing(entry.getValue().getVehicle().getManufacturing());
+			vehicleDTO.setModel(entry.getValue().getVehicle().getModel());
+			vehicleDTO.setPlate(entry.getValue().getVehicle().getPlate());
+			vehicleDTO.setObservations(entry.getValue().getVehicle().getObservations());
+			vehicleDTO.setVehicleId(vehicleId);
 		}
 		
 		return dto;
@@ -130,12 +140,12 @@ public class BudgetConverter {
 		return budgetList;
 	}
 	
-	public List<BudgetDTO> parseToDTO(List<Map<Long, Budget>> budgetList) {
+	public List<BudgetDTO> parseToDTO(List<Map<Long, Budget>> budgetList, Long vehicleId) {
 		List<BudgetDTO> dtoList = new ArrayList<>();
 		
 		if(Objects.nonNull(budgetList) && !budgetList.isEmpty()) {
 			for(Map<Long, Budget> budgetMap : budgetList) {
-				dtoList.add(this.parseDTO(budgetMap));
+				dtoList.add(this.parseDTO(budgetMap, vehicleId));
 			}
 		}
 		
