@@ -179,8 +179,7 @@ engine VARCHAR(50) NOT NULL COMMENT "Vehicle engine",
 observations VARCHAR(255) NOT NULL COMMENT "Vehicle observations",
 active BOOL NOT NULL COMMENT "Identify if there is an active vehicle",
 PRIMARY KEY(vehicleid),
-CONSTRAINT fk_customers
-_vehicles FOREIGN KEY(workshopid, iddoc) REFERENCES customers(workshopid, docid)
+CONSTRAINT fk_customers_vehicles FOREIGN KEY(workshopid, iddoc) REFERENCES customers(workshopid, docid)
 )COMMENT = "Vehicles registration";
 
 --2024-09-04 16:24 - Brazil - Mateus Lima - Insert vehicles into vehicles table.

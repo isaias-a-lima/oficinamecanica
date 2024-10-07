@@ -2,14 +2,13 @@ package com.ikservices.oficinamecanica.vehicles.infra.gateway;
 
 import java.util.*;
 
+import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpStatus;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
-import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
-import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.vehicles.application.gateways.VehicleRepository;
@@ -34,6 +33,8 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 		ce.setId(new CustomerEntityId(vehicle.getCustomer().getId().getWorkshopId(), vehicle.getCustomer().getId().getDocId().getDocument()));
 
 		VehicleEntity entity = new VehicleEntity();
+		entity.setWorkshopId(ce.getId().getWorkshopId());
+		entity.setIdDoc(ce.getId().getDocId());
 		entity.setCustomerEntity(ce);
 		entity.setPlate(vehicle.getPlate());
 		entity.setBrand(vehicle.getBrand());
