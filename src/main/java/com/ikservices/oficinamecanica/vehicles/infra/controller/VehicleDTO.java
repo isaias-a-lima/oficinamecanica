@@ -16,6 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class VehicleDTO implements Serializable {
+	Long vehicleId;
 	CustomerDTO customer;
 	String plate;
 	String brand;

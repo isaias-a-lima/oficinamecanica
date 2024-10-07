@@ -8,6 +8,7 @@ import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerMessages;
 import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerRepositoryImpl;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerRepositoryJPA;
 import com.ikservices.oficinamecanica.users.infra.UserConverter;
+import com.ikservices.oficinamecanica.vehicles.infra.VehicleConverter;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,13 +23,8 @@ public class CustomerConfig {
     Environment environment;
 
     @Bean
-    public CustomerRepository customerRepository(CustomerRepositoryJPA customerRepositoryJPA, CustomerConverter converter) {
-        return new CustomerRepositoryImpl(customerRepositoryJPA, converter);
-    }
-
-    @Bean
-    public CustomerConverter customerConverter(WorkshopConverter workshopConverter) {
-        return new CustomerConverter(workshopConverter);
+    public CustomerRepository customerRepository(CustomerRepositoryJPA customerRepositoryJPA) {
+        return new CustomerRepositoryImpl(customerRepositoryJPA);
     }
 
     @Bean

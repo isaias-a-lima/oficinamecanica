@@ -11,6 +11,8 @@ import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerRepositoryJPA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
@@ -22,12 +24,12 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getName());
 
     private final CustomerRepositoryJPA repository;
-    private final CustomerConverter converter;
+    @Autowired
+    @Lazy
+    private CustomerConverter converter;
 
-    public CustomerRepositoryImpl(CustomerRepositoryJPA repository,
-                                  CustomerConverter converter) {
+    public CustomerRepositoryImpl(CustomerRepositoryJPA repository) {
         this.repository = repository;
-        this.converter = converter;
     }
 
     @Override

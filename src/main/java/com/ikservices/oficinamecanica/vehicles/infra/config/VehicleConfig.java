@@ -21,14 +21,8 @@ import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConver
 public class VehicleConfig {
 	
 	@Bean
-	public VehicleRepository vehicleRepository(VehicleConverter converter, VehicleRepositoryJPA repository, 
-			CustomerConverter customerConverter) {
-		return new VehicleRepositoryImpl(converter, repository, customerConverter);
-	}
-	
-	@Bean
-	public VehicleConverter vehicleConverter(WorkshopConverter workshopConverter, CustomerConverter customerConverter) {
-		return new VehicleConverter(workshopConverter, customerConverter);
+	public VehicleRepository vehicleRepository(VehicleRepositoryJPA repository) {
+		return new VehicleRepositoryImpl(repository);
 	}
 	
 	@Bean

@@ -2,6 +2,8 @@ package com.ikservices.oficinamecanica.vehicles.infra.gateway;
 
 import java.util.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
@@ -17,16 +19,13 @@ import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleRepositoryJPA;
 
 public class VehicleRepositoryImpl implements VehicleRepository {
-	
-	private final VehicleConverter converter;
+	@Autowired
+	@Lazy
+	private VehicleConverter converter;
 	private final VehicleRepositoryJPA repository;
-	private final CustomerConverter customerConverter;
 	
-	public VehicleRepositoryImpl(VehicleConverter converter, 
-			VehicleRepositoryJPA repository, CustomerConverter customerConverter) {
-		this.converter = converter;
+	public VehicleRepositoryImpl(VehicleRepositoryJPA repository) {
 		this.repository = repository;
-		this.customerConverter = customerConverter;
 	}
 
 	@Override
