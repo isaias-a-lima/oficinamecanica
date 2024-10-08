@@ -9,12 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
-import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -34,6 +31,12 @@ public class VehicleEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "VEHICLEID")
 	private Long vehicleId;
+
+	@Column(name = "IDDOC")
+	private String idDoc;
+
+	@Column(name = "WORKSHOPID")
+	private Long workshopId;
 	
 	@ManyToOne
 	@JoinColumn(name = "IDDOC", referencedColumnName = "DOCID", updatable = false, insertable = false)

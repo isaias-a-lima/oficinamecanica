@@ -57,6 +57,8 @@ public class VehicleConverter {
 		}
 		
 		VehicleEntity entity = new VehicleEntity();
+		entity.setIdDoc(vehicle.getCustomer().getId().getDocId().getDocument());
+		entity.setWorkshopId(vehicle.getCustomer().getId().getWorkshopId());
 		entity.setCustomerEntity(customerConverter.parseEntity(vehicle.getCustomer()));
 		entity.setEngine(vehicle.getEngine());
 		entity.setManufacturing(vehicle.getManufacturing());
