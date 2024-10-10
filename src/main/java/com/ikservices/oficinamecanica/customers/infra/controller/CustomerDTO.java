@@ -41,16 +41,18 @@ public class CustomerDTO implements Serializable {
         this.landline = Objects.nonNull(customer.getLandline()) ? customer.getLandline().getFullPhone() : null;
         this.mobilePhone = Objects.nonNull(customer.getMobilePhone()) ? customer.getMobilePhone().getFullPhone() : null;
         this.email = Objects.nonNull(customer.getEmail()) ? customer.getEmail().getMailAddress() : null;
-        this.type = customer.getType().getDescription();
-        this.address = customer.getAddress().getPartialAddress();
-        this.city = customer.getAddress().getCity();
-        this.state = customer.getAddress().getState();
-        this.postalCode = customer.getAddress().getFormattedPostalCode();
+        this.type = Objects.nonNull(customer.getType()) ? customer.getType().getDescription() : null;
+        this.address = Objects.nonNull(customer.getAddress()) ? customer.getAddress().getPartialAddress() : null;
+        this.city = Objects.nonNull(customer.getAddress()) ? customer.getAddress().getCity() : null;
+        this.state = Objects.nonNull(customer.getAddress()) ? customer.getAddress().getState() : null;
+        this.postalCode = Objects.nonNull(customer.getAddress()) ? customer.getAddress().getFormattedPostalCode() : null;
         this.vehicles = new ArrayList<>();
 
-        for (Map<Long, Vehicle> vehicleMap : customer.getVehicles()) {
-            for (Map.Entry<Long, Vehicle> vehicleEntry : vehicleMap.entrySet()) {
-                this.vehicles.add(new VehicleResponse(vehicleEntry.getValue(), vehicleEntry.getKey()));
+        if (Objects.nonNull(customer.getVehicles()) && !customer.getVehicles().isEmpty()) {
+            for (Map<Long, Vehicle> vehicleMap : customer.getVehicles()) {
+                for (Map.Entry<Long, Vehicle> vehicleEntry : vehicleMap.entrySet()) {
+                    this.vehicles.add(new VehicleResponse(vehicleEntry.getValue(), vehicleEntry.getKey()));
+                }
             }
         }
     }
