@@ -75,24 +75,27 @@ public class VehicleController {
 	}
 	
 	@GetMapping("{vehicleId}")
-	public ResponseEntity<IKResponse<VehicleResponse>> getVehicle(@PathVariable Long vehicleId) {
+	public ResponseEntity<IKResponse<VehicleDTO>> getVehicle(@PathVariable Long vehicleId) {
 		try {
 			Set<Map.Entry<Long, Vehicle>> entries = getVehicle.execute(vehicleId).entrySet();
-			VehicleResponse response = null;
+			VehicleDTO response = null;
 			for (Map.Entry<Long, Vehicle> entry : entries) {
-				response = new VehicleResponse(entry.getValue(), entry.getKey());
+				response = new VehicleDTO(entry.getValue(), entry.getKey());
 				break;
 			}
 			if (Objects.isNull(response)) {
 				throw new IKException(HttpStatus.BAD_GATEWAY.value(), IKMessageType.WARNING, environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE));
 			}
-			return ResponseEntity.ok(IKResponse.<VehicleResponse>build().body(response));
+			return ResponseEntity.ok(IKResponse.<VehicleDTO>build().body(response));
 		} catch (IKException e) {
-			return ResponseEntity.status(e.getCode()).body(IKResponse.<VehicleResponse>build().addMessage(e.getIKMessageType(), e.getMessage()));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(e.getCode()).body(IKResponse.<VehicleDTO>build().addMessage(e.getIKMessageType(), e.getMessage()));
 		} catch (EntityNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(IKResponse.<VehicleResponse>build().addMessage(IKMessageType.WARNING, "Veículo não encontrado"));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(IKResponse.<VehicleDTO>build().addMessage(IKMessageType.WARNING, "Veículo não encontrado"));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<VehicleResponse>build().addMessage(IKMessageType.WARNING, environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<VehicleDTO>build().addMessage(IKMessageType.WARNING, environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
 		}
 	}
 	
@@ -145,14 +148,13 @@ public class VehicleController {
 	}
 	
 	@Transactional
-	@PutMapping("{vehicleId}")
-	public ResponseEntity<IKRes<VehicleResponse>> updateVehicle(@PathVariable Long vehicleId,
-			@RequestBody VehicleDTO vehicleDTO) {
+	@PutMapping()
+	public ResponseEntity<IKRes<VehicleResponse>> updateVehicle(@RequestBody VehicleDTO vehicleDTO) {
 		
 		try {
-			Map<Long, Vehicle> vehicleMap = updateVehicle.execute(vehicleId, converter.parseVehicle(vehicleDTO));
+			Map<Long, Vehicle> vehicleMap = updateVehicle.execute(vehicleDTO.getVehicleId(), converter.parseVehicle(vehicleDTO));
 			return ResponseEntity.ok(IKRes.<VehicleResponse>build().
-					body(new VehicleResponse(vehicleMap.get(vehicleId), vehicleId)).addMessage(environment.getProperty(VehicleConstant.UPDATE_SUCCESS_MESSAGE)));
+					body(new VehicleResponse(vehicleMap.get(vehicleDTO.getVehicleId()), vehicleDTO.getVehicleId())).addMessage(environment.getProperty(VehicleConstant.UPDATE_SUCCESS_MESSAGE)));
 		} catch(IKException ike) {
 			LOGGER.error(environment.getProperty(VehicleConstant.OPERATION_ERROR_MESSAGE), ike);
 			return ResponseEntity.status(ike.getCode()).
