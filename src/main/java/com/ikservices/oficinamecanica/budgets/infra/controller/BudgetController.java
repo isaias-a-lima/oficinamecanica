@@ -1,7 +1,9 @@
 package com.ikservices.oficinamecanica.budgets.infra.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
@@ -14,8 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ikservices.oficinamecanica.budgets.application.usecases.ChangeStatus;
 import com.ikservices.oficinamecanica.budgets.application.usecases.GetBudget;
@@ -85,6 +90,34 @@ public class BudgetController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(IKRes.<BudgetDTO>build().addMessage("Orçamento não encontrado"));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<BudgetDTO>build().addMessage(environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+		}
+	}
+	
+	@PostMapping()
+	public ResponseEntity<IKRes<BudgetDTO>> saveBudget(@RequestBody BudgetDTO budgetDTO, UriComponentsBuilder uriBuilder) {
+		String budgetJSON = IKLoggerUtil.parseJSON(budgetDTO);
+		try {
+			Map<Long, Budget> budgetMap = saveBudget.execute(converter.parseBudget(budgetDTO), budgetDTO.getBudgetId());
+			
+			ResponseEntity<IKRes<BudgetDTO>> responseEntity = null;
+			
+			for(Long budgetId : budgetMap.keySet()) {
+				URI uri = uriBuilder.path("budgets/{budgetId}").buildAndExpand(budgetId).toUri();
+				
+				responseEntity = ResponseEntity.created(uri).body(IKRes.<BudgetDTO>build().body(
+						converter.parseDTO(budgetMap, budgetDTO.getVehicle().getVehicleId()))
+						.addMessage("Orçamento salvo."));
+			}
+			
+			return responseEntity;
+			
+		}catch(IKException ike) {
+			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
+			LOGGER.error(budgetJSON + " - " + ike.getMessage(), ike);
+			return ResponseEntity.status(code).body(IKRes.<BudgetDTO>build().addMessage(ike.getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(budgetJSON + " - " + e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<BudgetDTO>build().addMessage("Erro ao salvar"));
 		}
 	}
 }
