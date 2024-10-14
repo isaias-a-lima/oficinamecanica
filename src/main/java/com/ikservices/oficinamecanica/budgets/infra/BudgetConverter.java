@@ -38,7 +38,7 @@ public class BudgetConverter {
 		budget.setBudgetStatus(entity.getBudgetStatus());
 		budget.setKm(entity.getKm());
 		budget.setOpeningDate(entity.getOpeningDate());
-		budget.setVehicle(vehicleConverter.parseVehicle(entity.getVehicleEntity()));
+		budget.setVehicle(Objects.nonNull(entity.getVehicleEntity()) ? vehicleConverter.parseVehicle(entity.getVehicleEntity()) : null);
 		
 		return budget;
 	}
@@ -60,13 +60,13 @@ public class BudgetConverter {
 	
 	public List<BudgetEntity> parseBudgetEntityList(List<Budget> budgetList) {
 		List<BudgetEntity> budgetEntityList = new ArrayList<>();
-		
-		if(Objects.nonNull(budgetList) && !budgetEntityList.isEmpty()) {
+
+		if(Objects.nonNull(budgetList) && !budgetList.isEmpty()) {
 			for(Budget budget : budgetList) {
 				budgetEntityList.add(this.parseEntity(budget));
 			}
 		}
-		
+
 		return budgetEntityList;
 	}
 	
@@ -84,12 +84,13 @@ public class BudgetConverter {
 		return budgetList;
 	}
 	
-	public BudgetDTO parseDTO(Map<Long, Budget> budgetMap, Long vehicleId) {
+	public BudgetDTO parseBudgetDTO(Map<Long, Budget> budgetMap, Long vehicleId) {
 		if(Objects.isNull(budgetMap)) {
 			throw new IKException("Null object");
 		}
 		
 		BudgetDTO dto = new BudgetDTO();
+
 		Set<Entry<Long, Budget>> entries = budgetMap.entrySet();
 		
 		for(Map.Entry<Long, Budget> entry : entries) {
@@ -98,15 +99,10 @@ public class BudgetConverter {
 			dto.setKm(entry.getValue().getKm());
 			dto.setOpeningDate(entry.getValue().getOpeningDate().toString());
 			dto.setBudgetId(entry.getKey());
-			VehicleDTO vehicleDTO = new VehicleDTO();
-			vehicleDTO.setBrand(entry.getValue().getVehicle().getBrand());
-			vehicleDTO.setCustomer(new CustomerDTO(entry.getValue().getVehicle().getCustomer()));
-			vehicleDTO.setEngine(entry.getValue().getVehicle().getEngine());
-			vehicleDTO.setManufacturing(entry.getValue().getVehicle().getManufacturing());
-			vehicleDTO.setModel(entry.getValue().getVehicle().getModel());
-			vehicleDTO.setPlate(entry.getValue().getVehicle().getPlate());
-			vehicleDTO.setObservations(entry.getValue().getVehicle().getObservations());
-			vehicleDTO.setVehicleId(vehicleId);
+
+			dto.setVehicle(Objects.nonNull(entry.getValue().getVehicle()) ? new VehicleDTO(entry.getValue().getVehicle(), vehicleId) : new VehicleDTO(vehicleId));
+
+			break;
 		}
 		
 		return dto;
@@ -126,26 +122,12 @@ public class BudgetConverter {
 		return budget;
 	}
 	
-	public List<Map<Long, Budget>> parseDTOList(List<BudgetDTO> dtoList) {
-		List<Map<Long, Budget>> budgetList = new ArrayList<>();
-		
-		if(Objects.nonNull(dtoList) && !dtoList.isEmpty()) {
-			for(BudgetDTO dto : dtoList) {
-				Map<Long, Budget> budgetMap = new HashMap<>();
-				budgetMap.put(dto.getBudgetId(), this.parseBudget(dto));
-				budgetList.add(budgetMap);
-			}
-		}
-		
-		return budgetList;
-	}
-	
-	public List<BudgetDTO> parseToDTO(List<Map<Long, Budget>> budgetList, Long vehicleId) {
+	public List<BudgetDTO> parseBudgetDTOList(List<Map<Long, Budget>> budgetList, Long vehicleId) {
 		List<BudgetDTO> dtoList = new ArrayList<>();
 		
 		if(Objects.nonNull(budgetList) && !budgetList.isEmpty()) {
 			for(Map<Long, Budget> budgetMap : budgetList) {
-				dtoList.add(this.parseDTO(budgetMap, vehicleId));
+				dtoList.add(this.parseBudgetDTO(budgetMap, vehicleId));
 			}
 		}
 		

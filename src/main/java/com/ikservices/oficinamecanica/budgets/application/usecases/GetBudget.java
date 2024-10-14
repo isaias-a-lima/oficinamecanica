@@ -12,7 +12,7 @@ public class GetBudget {
 		this.repository = repository;
 	}
 	
-	public Map<Long, Budget> execute(Long budgetId) {
+	public Map<Long, Map<Long, Budget>> execute(Long budgetId) {
 		return repository.getBudget(budgetId);
 	}
 }

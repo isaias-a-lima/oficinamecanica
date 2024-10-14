@@ -4,14 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 
@@ -33,9 +26,12 @@ public class BudgetEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "BUDGETID")
 	private Long budgetId;
+
+	@Column(name = "VEHICLEID")
+	private Long vehicleId;
 	
-	@ManyToOne
-	@JoinColumn(name = "VEHICLEID", referencedColumnName = "VEHICLEID", insertable = false, updatable = false)
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "VEHICLEID", referencedColumnName = "VEHICLEID", updatable = false, insertable = false)
 	private VehicleEntity vehicleEntity;
 	
 	@Column(name = "OPENINGDATE")

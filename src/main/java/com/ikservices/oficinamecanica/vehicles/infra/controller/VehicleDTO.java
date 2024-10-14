@@ -29,15 +29,15 @@ public class VehicleDTO implements Serializable {
 
 	public VehicleDTO(Vehicle vehicle, Long vehicleId) {
 		this.vehicleId = vehicleId;
-		vehicle.getCustomer().setVehicles(null); // set null to avoid stack overflow
-		if (Objects.nonNull(vehicle.getCustomer())) {
-			this.customer = new CustomerDTO(vehicle.getCustomer());
-		}
 		this.plate = vehicle.getPlate();
 		this.brand = vehicle.getBrand();
 		this.model = vehicle.getModel();
 		this.manufacturing = vehicle.getManufacturing();
 		this.engine = vehicle.getEngine();
 		this.observations = vehicle.getObservations();
+	}
+
+	public VehicleDTO(Long vehicleId) {
+		this.vehicleId = vehicleId;
 	}
 }

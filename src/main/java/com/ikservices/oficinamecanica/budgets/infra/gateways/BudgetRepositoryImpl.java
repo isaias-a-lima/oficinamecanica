@@ -32,13 +32,18 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 	}
 
 	@Override
-	public Map<Long, Budget> getBudget(Long budgetId) {
+	public Map<Long, Map<Long, Budget>> getBudget(Long budgetId) {
 		BudgetEntity budgetEntity = repositoryJPA.getById(budgetId);
+
 		Budget budget = converter.parseBudget(budgetEntity);
-		Map<Long, Budget> budgetMap = new HashMap<>();
-		budgetMap.put(budgetEntity.getBudgetId(), budget);
+
+		Map<Long, Budget> innerMap = new HashMap<>();
+		innerMap.put(budgetEntity.getBudgetId(), budget);
+
+		Map<Long, Map<Long, Budget>> outerMap = new HashMap<>();
+		outerMap.put(budgetEntity.getVehicleId(), innerMap);
 		
-		return budgetMap;
+		return outerMap;
 	}
 
 	@Override
@@ -51,10 +56,10 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 		budgetEntity.setBudgetStatus(budget.getBudgetStatus());
 		budgetEntity.setKm(budget.getKm());
 		budgetEntity.setOpeningDate(budget.getOpeningDate());
-		budgetEntity.setVehicleEntity(vehicleEntity);
-		
-		budgetEntity.setVehicleEntity(vehicleEntity);
+		budgetEntity.setVehicleId(vehicleId);
+
 		BudgetEntity savedBudget = repositoryJPA.save(budgetEntity);
+
 		Map<Long, Budget> budgetMap = new HashMap<>();
 		budgetMap.put(savedBudget.getBudgetId(), converter.parseBudget(savedBudget));
 		
