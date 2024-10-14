@@ -19,6 +19,9 @@ public class Vehicle {
 	String plate;
 	String brand;
 	String model;
+	String color;
+	String fuel;
+	String transmission;
 	String manufacturing;
 	String engine;
 	String observations;

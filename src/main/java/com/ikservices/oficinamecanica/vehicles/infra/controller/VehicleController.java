@@ -47,12 +47,12 @@ public class VehicleController {
     @Autowired
     private Environment environment;
     
-	private GetVehicle getVehicle;
-	private ListVehicles listVehicles;
-	private SaveVehicle saveVehicle;
-	private DeleteVehicle deleteVehicle;
-	private UpdateVehicle updateVehicle;
-	private VehicleConverter converter;
+	private final GetVehicle getVehicle;
+	private final ListVehicles listVehicles;
+	private final SaveVehicle saveVehicle;
+	private final DeleteVehicle deleteVehicle;
+	private final UpdateVehicle updateVehicle;
+	private final VehicleConverter converter;
 	
 	public VehicleController(GetVehicle getVehicle, ListVehicles listVehicles,
 			SaveVehicle saveVehicle, DeleteVehicle deleteVehicle, UpdateVehicle 

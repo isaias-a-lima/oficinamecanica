@@ -174,6 +174,9 @@ workshopid BIGINT NOT NULL COMMENT "Workshop identification number",
 plate VARCHAR(50) NOT NULL COMMENT "Plate number",
 brand VARCHAR(50) NOT NULL COMMENT "Brand name",
 model VARCHAR(50) NOT NULL COMMENT "Vehicle model",
+color VARCHAR(50) NULL COMMENT "Vehicle color",
+fuel VARCHAR(30) NULL COMMENT "Fuel type",
+transmission VARCHAR(30) COMMENT "Transmission type",
 manufacturing VARCHAR(9) NOT NULL COMMENT "Manufacturing year and model year",
 engine VARCHAR(50) NOT NULL COMMENT "Vehicle engine",
 observations VARCHAR(255) NOT NULL COMMENT "Vehicle observations",
@@ -183,13 +186,13 @@ CONSTRAINT fk_customers_vehicles FOREIGN KEY(workshopid, iddoc) REFERENCES custo
 )COMMENT = "Vehicles registration";
 
 --2024-09-04 16:24 - Brazil - Mateus Lima - Insert vehicles into vehicles table.
-INSERT INTO vehicles(vehicleid, iddoc, workshopid, plate, brand, model, manufacturing,
+INSERT INTO vehicles(vehicleid, iddoc, workshopid, plate, brand, model, color, fuel, transmission, manufacturing,
 engine, observations, active) VALUES(1, "22233344455", 1, "T1O2F8", "Volkswagen",
-"polo", "2003", "1.6 103cv", "nenhuma", 1);
+"polo", "Azul", "Gasolina", "Manual" "2003", "1.6 103cv", "nenhuma", 1);
 
-INSERT INTO vehicles(iddoc, workshopid, plate, brand, model, manufacturing,
+INSERT INTO vehicles(iddoc, workshopid, plate, brand, model, olor, fuel, transmission, manufacturing,
 engine, observations, active) VALUES("55566677788", 1, "T1O2F8", "Volkswagen",
-"Polo", "2003/2004", "Mi 1.6 103cv", "nenhuma", true);
+"Polo", "Vermelho", "Gasolina", "Manual" "2003/2004", "Mi 1.6 103cv", "nenhuma", true);
 
 --2024-09-05 16:37 - Brazil - Mateus Lima - Update customer adress.
 UPDATE customers set address = "Rua teste", city = "Testelândia", state = "SP", 

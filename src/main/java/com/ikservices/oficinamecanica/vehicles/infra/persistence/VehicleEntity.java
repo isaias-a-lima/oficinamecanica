@@ -46,6 +46,15 @@ public class VehicleEntity {
 	
 	@Column(name = "MODEL")
 	private String model;
+
+	@Column(name = "COLOR")
+	private String color;
+
+	@Column(name = "FUEL")
+	private String fuel;
+
+	@Column(name = "TRANSMISSION")
+	private String transmission;
 	
 	@Column(name = "MANUFACTURING")
 	private String manufacturing;
@@ -71,6 +80,15 @@ public class VehicleEntity {
 		}
 		if(Objects.nonNull(entity.getModel())) {
 			this.model = entity.getModel();
+		}
+		if(Objects.nonNull(entity.getColor())) {
+			this.color = entity.getColor();
+		}
+		if(Objects.nonNull(entity.getFuel())) {
+			this.fuel = entity.getFuel();
+		}
+		if(Objects.nonNull(entity.getTransmission())) {
+			this.transmission = entity.getTransmission();
 		}
 		if(Objects.nonNull(entity.getManufacturing())) {
 			this.manufacturing = entity.getManufacturing();

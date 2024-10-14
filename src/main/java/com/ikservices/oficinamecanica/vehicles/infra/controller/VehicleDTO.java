@@ -23,6 +23,9 @@ public class VehicleDTO implements Serializable {
 	String plate;
 	String brand;
 	String model;
+	String color;
+	String fuel;
+	String transmission;
 	String manufacturing;
 	String engine;
 	String observations;
@@ -32,6 +35,9 @@ public class VehicleDTO implements Serializable {
 		this.plate = vehicle.getPlate();
 		this.brand = vehicle.getBrand();
 		this.model = vehicle.getModel();
+		this.color = vehicle.getColor();
+		this.fuel = vehicle.getFuel();
+		this.transmission = vehicle.getTransmission();
 		this.manufacturing = vehicle.getManufacturing();
 		this.engine = vehicle.getEngine();
 		this.observations = vehicle.getObservations();

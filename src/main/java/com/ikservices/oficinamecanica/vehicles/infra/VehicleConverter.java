@@ -1,7 +1,5 @@
 package com.ikservices.oficinamecanica.vehicles.infra;
 
-import java.util.*;
-
 import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
@@ -13,10 +11,11 @@ import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
 import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleResponse;
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
-import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import java.util.*;
 
 @Component
 public class VehicleConverter {
@@ -46,6 +45,9 @@ public class VehicleConverter {
 		vehicle.setBrand(entity.getBrand());
 		vehicle.setEngine(entity.getEngine());
 		vehicle.setModel(entity.getModel());
+		vehicle.setColor(entity.getColor());
+		vehicle.setFuel(entity.getFuel());
+		vehicle.setTransmission(entity.getTransmission());
 		vehicle.setActive(entity.getActive());
 		
 		return vehicle;
@@ -63,6 +65,9 @@ public class VehicleConverter {
 		entity.setEngine(vehicle.getEngine());
 		entity.setManufacturing(vehicle.getManufacturing());
 		entity.setModel(vehicle.getModel());
+		entity.setColor(vehicle.getColor());
+		entity.setFuel(vehicle.getFuel());
+		entity.setTransmission(vehicle.getTransmission());
 		entity.setObservations(vehicle.getObservations());
 		entity.setBrand(vehicle.getBrand());
 		entity.setPlate(vehicle.getPlate());
@@ -122,6 +127,9 @@ public class VehicleConverter {
 		vehicle.setEngine(dto.getEngine());
 		vehicle.setManufacturing(dto.getManufacturing());
 		vehicle.setModel(dto.getModel());
+		vehicle.setColor(dto.getColor());
+		vehicle.setFuel(dto.getFuel());
+		vehicle.setTransmission(dto.getTransmission());
 		vehicle.setPlate(dto.getPlate());
 		vehicle.setObservations(dto.getObservations());
 		
@@ -145,6 +153,9 @@ public class VehicleConverter {
 		vehicle.setEngine(dto.getEngine());
 		vehicle.setManufacturing(dto.getManufacturing());
 		vehicle.setModel(dto.getModel());
+		vehicle.setColor(dto.getColor());
+		vehicle.setFuel(dto.getFuel());
+		vehicle.setTransmission(dto.getTransmission());
 		vehicle.setPlate(dto.getPlate());
 		vehicle.setObservations(dto.getObservations());
 
@@ -165,6 +176,9 @@ public class VehicleConverter {
 		dto.setEngine(vehicle.getEngine());
 		dto.setManufacturing(vehicle.getManufacturing());
 		dto.setModel(vehicle.getModel());
+		dto.setColor(vehicle.getColor());
+		dto.setFuel(vehicle.getFuel());
+		dto.setTransmission(vehicle.getTransmission());
 		dto.setObservations(vehicle.getObservations());
 		dto.setPlate(vehicle.getPlate());
 	
