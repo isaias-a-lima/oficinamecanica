@@ -194,3 +194,22 @@ engine, observations, active) VALUES("55566677788", 1, "T1O2F8", "Volkswagen",
 --2024-09-05 16:37 - Brazil - Mateus Lima - Update customer adress.
 UPDATE customers set address = "Rua teste", city = "Testelândia", state = "SP", 
 postalcode = "02323000" WHERE workshopid = 1;
+
+--2024-09-26 15:10 - Brazil - Mateus Lima - Create budgets table.
+CREATE TABLE BUDGETS(
+budgetid BIGINT NOT NULL AUTO_INCREMENT COMMENT "Budget identification number",
+vehicleid BIGINT NOT NULL COMMENT "Vehicle identification number",
+openingdate DATE NOT NULL COMMENT "Budget opening date",
+km BIGINT NOT NULL COMMENT "kilometers traveled",
+bstatus CHAR(2) NOT NULL COMMENT "Budget status",
+amount DECIMAL(7,2) NOT NULL COMMENT "Budget amount",
+PRIMARY KEY (budgetid),
+CONSTRAINT fk_vehicles_budgets FOREIGN KEY(vehicleid) REFERENCES vehicles(vehicleid)
+)COMMENT = "Vehicles registration";
+
+--2024-10-07 17:14 - Brazil - Mateus Lima - Insert into budgets table.
+INSERT INTO budgets(budgetid, vehicleid, openingdate, km, bstatus, amount)
+VALUES(1, 1, '2024-10-07', 1000, 00, 0);
+
+INSERT INTO budgets(budgetid, vehicleid, openingdate, km, bstatus, amount)
+VALUES(2, 1, '2024-10-06', 1000, 00, 0);

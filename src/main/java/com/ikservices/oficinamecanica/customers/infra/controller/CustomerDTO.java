@@ -46,7 +46,7 @@ public class CustomerDTO implements Serializable {
         this.city = Objects.nonNull(customer.getAddress()) ? customer.getAddress().getCity() : null;
         this.state = Objects.nonNull(customer.getAddress()) ? customer.getAddress().getState() : null;
         this.postalCode = Objects.nonNull(customer.getAddress()) ? customer.getAddress().getFormattedPostalCode() : null;
-        this.vehicles = new ArrayList<>();
+        this.vehicles = new ArrayList<>();  	
 
         if (Objects.nonNull(customer.getVehicles()) && !customer.getVehicles().isEmpty()) {
             for (Map<Long, Vehicle> vehicleMap : customer.getVehicles()) {

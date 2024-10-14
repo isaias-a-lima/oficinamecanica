@@ -1,16 +1,11 @@
 package com.ikservices.oficinamecanica.vehicles.infra.persistence;
 
+import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 
 import lombok.AllArgsConstructor;
@@ -63,6 +58,9 @@ public class VehicleEntity {
 	
 	@Column(name = "ACTIVE")
 	private Boolean active;
+
+	@OneToMany(mappedBy = "vehicleEntity")
+	private List<BudgetEntity> budgetList;
 	
 	public void update(VehicleEntity entity) {
 		if(Objects.nonNull(entity.getPlate())) {

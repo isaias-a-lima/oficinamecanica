@@ -1,6 +1,5 @@
 package com.ikservices.oficinamecanica.vehicles.infra.controller;
 
-import java.awt.TrayIcon.MessageType;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +28,6 @@ import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
-import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
-import com.ikservices.oficinamecanica.suppliers.infra.controller.SupplierDTO;
 import com.ikservices.oficinamecanica.vehicles.application.usecases.DeleteVehicle;
 import com.ikservices.oficinamecanica.vehicles.application.usecases.GetVehicle;
 import com.ikservices.oficinamecanica.vehicles.application.usecases.ListVehicles;
