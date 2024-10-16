@@ -149,9 +149,19 @@ public class BudgetController {
 	
 	@Transactional
 	@PutMapping
-	public ResponseEntity<IKRes<BudgetDTO>> updateBudget(@RequestBody VehicleDTO vehicleDTO) {
+	public ResponseEntity<IKRes<BudgetDTO>> updateBudget(@RequestBody BudgetDTO budgetDTO) {
 		
-		return null;
-		
+		try {
+			Map<Long, Budget> budgetMap = updateBudget.execute(converter.parseBudget(budgetDTO), budgetDTO.getBudgetId());
+			
+			return ResponseEntity.ok(IKRes.<BudgetDTO>build().body(converter.parseBudgetDTO(budgetMap, null)));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(ike.getCode()).body(IKRes.<BudgetDTO>build().addMessage(ike.getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<BudgetDTO>build().addMessage(
+					environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
+		}
 	}
 }

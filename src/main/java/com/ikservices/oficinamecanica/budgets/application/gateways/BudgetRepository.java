@@ -10,7 +10,7 @@ public interface BudgetRepository {
 	public List<Map<Long, Budget>> listBudgets(Long vehicleId);
 	public Map<Long, Map<Long, Budget>> getBudget(Long budgetId);
 	public Map<Long, Budget> saveBudget(Budget budget, Long vehicleId);
-	public Budget updateBudget(Budget budget, Long vehicleId);
+	public Map<Long, Budget> updateBudget(Budget budget, Long budgetId);
 	public void changeStatus(Long budgetId, Character budgetStatus);
 	public void increaseAmount(Long budgetId, BigDecimal value);
 }

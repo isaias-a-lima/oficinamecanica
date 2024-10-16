@@ -1,5 +1,7 @@
 package com.ikservices.oficinamecanica.budgets.application.usecases;
 
+import java.util.Map;
+
 import com.ikservices.oficinamecanica.budgets.application.gateways.BudgetRepository;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 
@@ -10,7 +12,7 @@ public class UpdateBudget {
 		this.repository = repository;
 	}
 	
-	public Budget execute(Budget budget, Long vehicleId) {
-		return repository.updateBudget(budget, vehicleId);
+	public Map<Long, Budget> execute(Budget budget, Long budgetId) {
+		return repository.updateBudget(budget, budgetId);
 	}
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.ikservices.oficinamecanica.budgets.application.gateways.BudgetRepository;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
@@ -67,18 +68,17 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 	}
 
 	@Override
-	public Budget updateBudget(Budget budget, Long vehicleId) {
-		BudgetEntity budgetEntity = new BudgetEntity();
-		VehicleEntity vehicleEntity = new VehicleEntity();
-		vehicleEntity.setVehicleId(vehicleId);
+	public Map<Long, Budget> updateBudget(Budget budget, Long budgetId) {
 		
-		budgetEntity.setAmount(budget.getAmount());
-		budgetEntity.setBudgetStatus(budget.getBudgetStatus());
-		budgetEntity.setOpeningDate(budget.getOpeningDate());
-		budgetEntity.setKm(budget.getKm());
-		budgetEntity.setVehicleEntity(vehicleEntity);
+		Optional<BudgetEntity> optional = repositoryJPA.findById(budgetId);
+		BudgetEntity budgetEntity = optional.orElse(null);
 		
-		return converter.parseBudget(budgetEntity);
+		budgetEntity.update(converter.parseEntity(budget));
+		
+		Map<Long, Budget> budgetMap = new HashMap<>();
+		budgetMap.put(budgetEntity.getBudgetId(), converter.parseBudget(budgetEntity));
+		
+		return budgetMap;
 	}
 
 	@Override

@@ -53,7 +53,7 @@ public class BudgetConverter {
 		entity.setBudgetStatus(budget.getBudgetStatus());
 		entity.setKm(budget.getKm());
 		entity.setOpeningDate(budget.getOpeningDate());
-		entity.setVehicleEntity(vehicleConverter.parseEntity(budget.getVehicle()));
+		entity.setVehicleEntity(Objects.nonNull(budget.getVehicle()) ? vehicleConverter.parseEntity(budget.getVehicle()) : null);
 		
 		return entity;
 	}
