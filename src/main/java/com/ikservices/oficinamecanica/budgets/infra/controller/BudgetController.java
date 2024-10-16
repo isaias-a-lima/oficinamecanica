@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.budgets.infra.controller;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import com.ikservices.oficinamecanica.budgets.application.usecases.ListBudgets;
 import com.ikservices.oficinamecanica.budgets.application.usecases.SaveBudget;
 import com.ikservices.oficinamecanica.budgets.application.usecases.UpdateBudget;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
+import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
@@ -162,6 +164,40 @@ public class BudgetController {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<BudgetDTO>build().addMessage(
 					environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
+		}
+	}
+	
+	@Transactional
+	@PutMapping("{budgetId}/{value}")
+	public ResponseEntity<IKRes<String>> increaseAmount(@PathVariable Long budgetId, 
+			@PathVariable BigDecimal value) {
+		try {
+			increaseAmount.execute(budgetId, value);
+			
+			return ResponseEntity.ok(IKRes.<String>build().addMessage(environment.getProperty(BudgetConstant.OPERATION_SUCCESS_MESSAGE)));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(ike.getCode()).body(IKRes.<String>build().addMessage(ike.getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<String>build().
+					addMessage(environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
+		}
+	}
+	
+	@Transactional
+	@PutMapping("changeStatus/{budgetId}/{budgetStatus}")
+	public ResponseEntity<IKRes<String>> changeStatus(@PathVariable Long budgetId, @PathVariable int budgetStatus) {
+		try {
+			changeStatus.execute(budgetId, BudgetStatusEnum.findByIndex(budgetStatus));
+			return ResponseEntity.ok(IKRes.<String>build().addMessage(environment.getProperty(BudgetConstant.OPERATION_SUCCESS_MESSAGE)));		
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(ike.getCode()).body(IKRes.<String>build().addMessage(ike.getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<String>build().
+					addMessage(environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
 		}
 	}
 }
