@@ -7,9 +7,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
-import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
-import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -19,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,10 +32,12 @@ import com.ikservices.oficinamecanica.budgets.application.usecases.SaveBudget;
 import com.ikservices.oficinamecanica.budgets.application.usecases.UpdateBudget;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
+import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKRes;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
-import com.ikservices.oficinamecanica.vehicles.infra.constants.VehicleConstant;
+import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
 
 
 @RestController
@@ -143,5 +145,13 @@ public class BudgetController {
 			return ResponseEntity.status(Integer.parseInt(Objects.requireNonNull(environment.getProperty(BudgetConstant.SAVE_ERROR_CODE)))).body(
 					IKRes.<BudgetDTO>build().addMessage(environment.getProperty(BudgetConstant.SAVE_ERROR_MESSAGE)));
 		}
+	}
+	
+	@Transactional
+	@PutMapping
+	public ResponseEntity<IKRes<BudgetDTO>> updateBudget(@RequestBody VehicleDTO vehicleDTO) {
+		
+		return null;
+		
 	}
 }
