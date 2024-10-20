@@ -151,7 +151,7 @@ AFTER workshopid;
 
 --2024-08-12 15:42 - Brazil - Mateus Lima - Alter suppliers table.
 ALTER TABLE suppliers
-ADD COLUMN type CHAR(1) NOT NULL COMMENT 'Tax payer type';
+ADD COLUMN type CHAR(1) NOT NULL COMMENT 'Tax payer type' AFTER workshopid;
 
 --2024-08-12 16:50 - Brazil - Mateus Lima - Insert suppliers into suppliers table.
 INSERT INTO suppliers(supplierid, workshopid, iddoc, name, landline, mobilephone, email, postalcode,

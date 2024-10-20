@@ -6,6 +6,13 @@ import java.util.Objects;
 
 import javax.transaction.Transactional;
 
+import com.ikservices.oficinamecanica.commons.response.IKRes;
+import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
+import com.ikservices.oficinamecanica.suppliers.infra.constants.SupplierConstants;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,12 +38,16 @@ import com.ikservices.oficinamecanica.suppliers.infra.SupplierConverter;
 @RestController
 @RequestMapping("suppliers")
 public class SupplierController {
-	private GetSupplierList getSupplierList;
-	private SupplierConverter converter;
-	private GetSupplier getSupplier;
-	private UpdateSupplier updateSupplier;
-	private SaveSupplier saveSupplier;
-	private GetNextSupplierId getNextSupplierId;
+
+	private static final Logger LOGGER = IKLoggerUtil.getLogger(SupplierController.class);
+	@Autowired
+	private Environment environment;
+	private final GetSupplierList getSupplierList;
+	private final SupplierConverter converter;
+	private final GetSupplier getSupplier;
+	private final UpdateSupplier updateSupplier;
+	private final SaveSupplier saveSupplier;
+	private final GetNextSupplierId getNextSupplierId;
 	
 	public SupplierController(GetSupplierList getSupplierList, 
 			SupplierConverter converter, GetSupplier getSupplier, UpdateSupplier updateSupplier,
@@ -49,11 +60,19 @@ public class SupplierController {
 		this.getNextSupplierId = getNextSupplierId;
 	}
 	
-	@GetMapping("workshop/{workshopId}")
-	public ResponseEntity<IKResponse<SupplierDTO>> getSupplierList(@PathVariable("workshopId") Long workshopId) {
-		List<SupplierDTO> supplierList = converter.parseDTOList(getSupplierList.execute(workshopId));
-		
-		return ResponseEntity.ok(IKResponse.<SupplierDTO>build().body(supplierList));
+	@GetMapping("/{workshopId}")
+	public ResponseEntity<IKRes<SupplierDTO>> getSupplierList(@PathVariable("workshopId") Long workshopId) {
+		try {
+			List<SupplierDTO> supplierList = converter.parseDTOList(getSupplierList.execute(workshopId));
+
+			return ResponseEntity.ok(IKRes.<SupplierDTO>build().body(supplierList));
+
+		} catch (IKException ike) {
+			return ResponseEntity.status(ike.getCode()).body(IKRes.<SupplierDTO>build().addMessage(ike.getMessage()));
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<SupplierDTO>build().addMessage(environment.getProperty(SupplierConstants.SUPPLIER_SERVER_ERROR_MESSAGE)));
+		}
 	}
 	
 	@GetMapping("/{workshopId}/{id}")
