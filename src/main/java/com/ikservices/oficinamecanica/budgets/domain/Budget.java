@@ -20,6 +20,6 @@ public class Budget {
 	Vehicle vehicle;
 	LocalDate openingDate;
 	Long km;
-	Character budgetStatus;
+	BudgetStatusEnum budgetStatus;
 	BigDecimal amount;
 }

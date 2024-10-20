@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
+import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
 
@@ -22,7 +23,7 @@ public class BudgetDTO {
 	VehicleDTO vehicle;
 	String openingDate;
 	Long km;
-	Character budgetStatus;
+	BudgetStatusEnum budgetStatus;
 	String amount;
 	Long budgetId;
 

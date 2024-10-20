@@ -5,4 +5,14 @@ public enum BudgetStatusEnum {
 	APPROVED,
 	EXPIRED,
 	CANCELLED;
+	
+	public static BudgetStatusEnum findByIndex(int index) {
+		for(BudgetStatusEnum value : BudgetStatusEnum.values()) {
+			if(value.ordinal() == index) {
+				return value;
+			}
+		}
+		
+		return null;
+	}
 }

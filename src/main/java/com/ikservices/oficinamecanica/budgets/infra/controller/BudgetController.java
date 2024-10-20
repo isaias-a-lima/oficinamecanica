@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.budgets.infra.controller;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -7,9 +8,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
-import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
-import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,11 +32,14 @@ import com.ikservices.oficinamecanica.budgets.application.usecases.ListBudgets;
 import com.ikservices.oficinamecanica.budgets.application.usecases.SaveBudget;
 import com.ikservices.oficinamecanica.budgets.application.usecases.UpdateBudget;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
+import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
+import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKRes;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
-import com.ikservices.oficinamecanica.vehicles.infra.constants.VehicleConstant;
+import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
 
 
 @RestController
@@ -142,6 +146,58 @@ public class BudgetController {
 			LOGGER.error(loggerID + " - " + e.getMessage(), e);
 			return ResponseEntity.status(Integer.parseInt(Objects.requireNonNull(environment.getProperty(BudgetConstant.SAVE_ERROR_CODE)))).body(
 					IKRes.<BudgetDTO>build().addMessage(environment.getProperty(BudgetConstant.SAVE_ERROR_MESSAGE)));
+		}
+	}
+	
+	@Transactional
+	@PutMapping
+	public ResponseEntity<IKRes<BudgetDTO>> updateBudget(@RequestBody BudgetDTO budgetDTO) {
+		
+		try {
+			Map<Long, Budget> budgetMap = updateBudget.execute(converter.parseBudget(budgetDTO), budgetDTO.getBudgetId());
+			
+			return ResponseEntity.ok(IKRes.<BudgetDTO>build().body(converter.parseBudgetDTO(budgetMap, null)));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(ike.getCode()).body(IKRes.<BudgetDTO>build().addMessage(ike.getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<BudgetDTO>build().addMessage(
+					environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
+		}
+	}
+	
+	@Transactional
+	@PutMapping("{budgetId}/{value}")
+	public ResponseEntity<IKRes<String>> increaseAmount(@PathVariable Long budgetId, 
+			@PathVariable BigDecimal value) {
+		try {
+			increaseAmount.execute(budgetId, value);
+			
+			return ResponseEntity.ok(IKRes.<String>build().addMessage(environment.getProperty(BudgetConstant.OPERATION_SUCCESS_MESSAGE)));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(ike.getCode()).body(IKRes.<String>build().addMessage(ike.getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<String>build().
+					addMessage(environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
+		}
+	}
+	
+	@Transactional
+	@PutMapping("changeStatus/{budgetId}/{budgetStatus}")
+	public ResponseEntity<IKRes<String>> changeStatus(@PathVariable Long budgetId, @PathVariable int budgetStatus) {
+		try {
+			changeStatus.execute(budgetId, BudgetStatusEnum.findByIndex(budgetStatus));
+			return ResponseEntity.ok(IKRes.<String>build().addMessage(environment.getProperty(BudgetConstant.OPERATION_SUCCESS_MESSAGE)));		
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(ike.getCode()).body(IKRes.<String>build().addMessage(ike.getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<String>build().
+					addMessage(environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
 		}
 	}
 }

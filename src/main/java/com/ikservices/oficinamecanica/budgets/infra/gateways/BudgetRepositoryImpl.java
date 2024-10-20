@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import com.ikservices.oficinamecanica.budgets.application.gateways.BudgetRepository;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
+import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetRepositoryJPA;
@@ -67,33 +70,36 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 	}
 
 	@Override
-	public Budget updateBudget(Budget budget, Long vehicleId) {
-		BudgetEntity budgetEntity = new BudgetEntity();
-		VehicleEntity vehicleEntity = new VehicleEntity();
-		vehicleEntity.setVehicleId(vehicleId);
+	public Map<Long, Budget> updateBudget(Budget budget, Long budgetId) {
 		
-		budgetEntity.setAmount(budget.getAmount());
-		budgetEntity.setBudgetStatus(budget.getBudgetStatus());
-		budgetEntity.setOpeningDate(budget.getOpeningDate());
-		budgetEntity.setKm(budget.getKm());
-		budgetEntity.setVehicleEntity(vehicleEntity);
+		Optional<BudgetEntity> optional = repositoryJPA.findById(budgetId);
+		BudgetEntity budgetEntity = optional.orElse(null);
 		
-		return converter.parseBudget(budgetEntity);
+		budgetEntity.update(converter.parseEntity(budget));
+		
+		Map<Long, Budget> budgetMap = new HashMap<>();
+		budgetMap.put(budgetEntity.getBudgetId(), converter.parseBudget(budgetEntity));
+		
+		return budgetMap;
 	}
 
 	@Override
-	public void changeStatus(Long budgetId, Character budgetStatus) {
-		BudgetEntity budgetEntity = new BudgetEntity();
-		budgetEntity.setBudgetId(budgetId);
+	public void changeStatus(Long budgetId, BudgetStatusEnum budgetStatus) {
+		Optional<BudgetEntity> optional = repositoryJPA.findById(budgetId);
+		BudgetEntity budgetEntity = optional.orElse(null);
 		
-		budgetEntity.setBudgetStatus(budgetStatus);
+		if(Objects.nonNull(budgetEntity)) {
+			budgetEntity.setBudgetStatus(budgetStatus);	
+		}
 	}
 
 	@Override
 	public void increaseAmount(Long budgetId, BigDecimal value) {
-		BudgetEntity budgetEntity = new BudgetEntity();
-		budgetEntity.setBudgetId(budgetId);
+		Optional<BudgetEntity> optional = repositoryJPA.findById(budgetId);
+		BudgetEntity budgetEntity = optional.orElse(null);
 		
-		budgetEntity.setAmount(budgetEntity.getAmount().add(value));
+		if(Objects.nonNull(budgetEntity)) {
+			budgetEntity.setAmount(budgetEntity.getAmount().add(value));
+		}
 	}	
 }

@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.persistence.*;
 
+import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 
 import lombok.AllArgsConstructor;
@@ -41,7 +42,8 @@ public class BudgetEntity {
 	private Long km;
 	
 	@Column(name = "BSTATUS")
-	private Character budgetStatus;
+	@Enumerated(EnumType.ORDINAL)
+	private BudgetStatusEnum budgetStatus;
 	
 	@Column(name = "AMOUNT")
 	private BigDecimal amount;
