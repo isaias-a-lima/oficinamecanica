@@ -20,8 +20,8 @@ public class Vehicle {
 	String brand;
 	String model;
 	String color;
-	String fuel;
-	String transmission;
+	FuelEnum fuel;
+	TransmissionEnum transmission;
 	String manufacturing;
 	String engine;
 	String observations;

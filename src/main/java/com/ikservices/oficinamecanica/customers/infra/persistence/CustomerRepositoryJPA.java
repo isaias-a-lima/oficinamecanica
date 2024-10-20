@@ -18,7 +18,7 @@ public interface CustomerRepositoryJPA extends JpaRepository<CustomerEntity, Cus
 
     @Query(
             "SELECT c FROM CustomerEntity c JOIN c.vehicles v WHERE c.id.workshopId = :workshopId " +
-                    "AND v.plate = :plate"
+                    "AND REGEXP_REPLACE(v.plate, '[^A-Za-z0-9]', '') = REGEXP_REPLACE(:plate, '[^A-Za-z0-9]', '')"
     )
     public List<CustomerEntity> findByVehicles(@Param("workshopId") Long workshopId, @Param("plate") String plate);
 }

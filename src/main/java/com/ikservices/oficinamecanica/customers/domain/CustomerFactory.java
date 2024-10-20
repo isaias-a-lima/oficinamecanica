@@ -23,13 +23,13 @@ public class CustomerFactory {
         return new CustomerFactory(workshopId, docId, name, type);
     }
 
-    public CustomerSetPhone setLandline(Integer countryCode, Integer stateCode, Integer phoneNumber) {
+    public CustomerSetPhone setLandline(String countryCode, String stateCode, String phoneNumber) {
         customer.setLandline(new PhoneVO(countryCode, stateCode, phoneNumber));
         return new CustomerSetPhone();
     }
 
     public class CustomerSetPhone {
-        public CustomerSetEmail setMobilePhone(Integer countryCode, Integer stateCode, Integer phoneNumber) {
+        public CustomerSetEmail setMobilePhone(String countryCode, String stateCode, String phoneNumber) {
             customer.setMobilePhone(new PhoneVO(countryCode, stateCode, phoneNumber));
             return new CustomerSetEmail();
         }

@@ -7,6 +7,7 @@ import com.ikservices.oficinamecanica.commons.response.IKMessages;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
+import com.ikservices.oficinamecanica.customers.application.SearchCriteria;
 import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRepository;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.infra.constants.CustomerConstants;
@@ -30,13 +31,13 @@ public class ListCustomers {
         this.ikMessages = ikMessages;
     }
 
-    public List<Customer> execute(Long workshopId, int criteria, String search) {
+    public List<Customer> execute(Long workshopId, SearchCriteria criteria, String search) {
         List<Customer> customerList = null;
         String loggerID = IKLoggerUtil.getLoggerID();
-        String errorMessage = String.format("ERROR_ID: %s, workshopId: %d, criteria: %d, search: %s", loggerID, workshopId, criteria, search);
+        String errorMessage = String.format("ERROR_ID: %s, workshopId: %d, criteria: %s, search: %s", loggerID, workshopId, criteria, search);
 
         try {
-            if (criteria == 4) {
+            if (criteria == SearchCriteria.PLATE) {
                 customerList = repository.getCustomerByVehicles(workshopId, search);
             } else {
                 customerList = repository.getCustomerList(workshopId, criteria, validSearch(criteria, search));
@@ -52,14 +53,14 @@ public class ListCustomers {
         return customerList;
     }
 
-    private String validSearch(int criteria, String search) {
+    private String validSearch(SearchCriteria criteria, String search) {
         switch (criteria) {
-            case 1:
+            case DOCUMENT:
                 IdentificationDocumentVO doc = new IdentificationDocumentVO(search);
                 return doc.getDocument();
-            case 2:
+            case NAME:
                 return search;
-            case 3:
+            case PHONE:
                 return PhoneVO.parsePhoneVO(search).getFullPhone();
             default:
                 throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.WARNING, "Escolha um critério válido.");

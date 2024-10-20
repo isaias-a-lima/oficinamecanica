@@ -7,6 +7,8 @@ import com.ikservices.oficinamecanica.customers.domain.CustomerId;
 import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.customers.infra.controller.CustomerDTO;
 import com.ikservices.oficinamecanica.vehicles.application.VehicleException;
+import com.ikservices.oficinamecanica.vehicles.domain.FuelEnum;
+import com.ikservices.oficinamecanica.vehicles.domain.TransmissionEnum;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
 import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleResponse;
@@ -59,9 +61,9 @@ public class VehicleConverter {
 		}
 		
 		VehicleEntity entity = new VehicleEntity();
-		entity.setIdDoc(vehicle.getCustomer().getId().getDocId().getDocument());
-		entity.setWorkshopId(vehicle.getCustomer().getId().getWorkshopId());
-		entity.setCustomerEntity(customerConverter.parseEntity(vehicle.getCustomer()));
+		entity.setIdDoc(Objects.nonNull(vehicle.getCustomer()) ? vehicle.getCustomer().getId().getDocId().getDocument() : null);
+		entity.setWorkshopId(Objects.nonNull(vehicle.getCustomer()) ? vehicle.getCustomer().getId().getWorkshopId() : null);
+		entity.setCustomerEntity(Objects.nonNull(vehicle.getCustomer()) ? customerConverter.parseEntity(vehicle.getCustomer()) : null);
 		entity.setEngine(vehicle.getEngine());
 		entity.setManufacturing(vehicle.getManufacturing());
 		entity.setModel(vehicle.getModel());
@@ -128,8 +130,8 @@ public class VehicleConverter {
 		vehicle.setManufacturing(dto.getManufacturing());
 		vehicle.setModel(dto.getModel());
 		vehicle.setColor(dto.getColor());
-		vehicle.setFuel(dto.getFuel());
-		vehicle.setTransmission(dto.getTransmission());
+		vehicle.setFuel(FuelEnum.getByIndex(dto.getFuel()));
+		vehicle.setTransmission(TransmissionEnum.getByIndex(dto.getTransmission()));
 		vehicle.setPlate(dto.getPlate());
 		vehicle.setObservations(dto.getObservations());
 		
@@ -154,8 +156,8 @@ public class VehicleConverter {
 		vehicle.setManufacturing(dto.getManufacturing());
 		vehicle.setModel(dto.getModel());
 		vehicle.setColor(dto.getColor());
-		vehicle.setFuel(dto.getFuel());
-		vehicle.setTransmission(dto.getTransmission());
+		vehicle.setFuel(FuelEnum.getByIndex(dto.getFuel()));
+		vehicle.setTransmission(TransmissionEnum.getByIndex(dto.getTransmission()));
 		vehicle.setPlate(dto.getPlate());
 		vehicle.setObservations(dto.getObservations());
 
@@ -177,8 +179,8 @@ public class VehicleConverter {
 		dto.setManufacturing(vehicle.getManufacturing());
 		dto.setModel(vehicle.getModel());
 		dto.setColor(vehicle.getColor());
-		dto.setFuel(vehicle.getFuel());
-		dto.setTransmission(vehicle.getTransmission());
+		dto.setFuel(Objects.nonNull(vehicle.getFuel()) ? vehicle.getFuel().ordinal(): null);
+		dto.setTransmission(Objects.nonNull(vehicle.getTransmission()) ? vehicle.getTransmission().ordinal() : null);
 		dto.setObservations(vehicle.getObservations());
 		dto.setPlate(vehicle.getPlate());
 	
