@@ -7,6 +7,7 @@ import com.ikservices.oficinamecanica.commons.response.IKRes;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
+import com.ikservices.oficinamecanica.customers.application.SearchCriteria;
 import com.ikservices.oficinamecanica.customers.application.usecases.*;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.domain.CustomerId;
@@ -50,9 +51,14 @@ public class CustomerController {
 
         List<CustomerDTO> customerList = null;
         try {
-            customerList = converter.parseCustomerDTOList(listCustomers.execute(workshopId, criteria, search));
+            customerList = converter.parseCustomerDTOList(listCustomers.execute(workshopId, SearchCriteria.findByOrdinal(criteria), search));
         } catch (IKException ike) {
+            LOGGER.error(ike.getMessage(), ike);
             return ResponseEntity.status(ike.getCode()).body(IKResponse.<CustomerDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            //TODO Corrigir origim da mensagem de erro para vir da properties
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<CustomerDTO>build().addMessage(IKMessageType.ERROR, e.getMessage()));
         }
         return ResponseEntity.ok(IKResponse.<CustomerDTO>build().body(customerList));
     }

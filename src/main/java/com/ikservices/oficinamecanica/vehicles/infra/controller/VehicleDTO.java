@@ -2,6 +2,7 @@ package com.ikservices.oficinamecanica.vehicles.infra.controller;
 
 import com.ikservices.oficinamecanica.customers.infra.controller.CustomerDTO;
 
+import com.ikservices.oficinamecanica.vehicles.domain.TransmissionEnum;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -23,6 +24,9 @@ public class VehicleDTO implements Serializable {
 	String plate;
 	String brand;
 	String model;
+	String color;
+	Integer fuel;
+	Integer transmission;
 	String manufacturing;
 	String engine;
 	String observations;
@@ -32,6 +36,9 @@ public class VehicleDTO implements Serializable {
 		this.plate = vehicle.getPlate();
 		this.brand = vehicle.getBrand();
 		this.model = vehicle.getModel();
+		this.color = vehicle.getColor();
+		this.fuel = Objects.nonNull(vehicle.getFuel()) ? vehicle.getFuel().ordinal() : null;
+		this.transmission = Objects.nonNull(vehicle.getTransmission()) ? vehicle.getTransmission().ordinal() : null;
 		this.manufacturing = vehicle.getManufacturing();
 		this.engine = vehicle.getEngine();
 		this.observations = vehicle.getObservations();

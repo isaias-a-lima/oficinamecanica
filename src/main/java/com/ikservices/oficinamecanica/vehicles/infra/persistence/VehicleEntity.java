@@ -8,6 +8,8 @@ import javax.persistence.*;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 
+import com.ikservices.oficinamecanica.vehicles.domain.FuelEnum;
+import com.ikservices.oficinamecanica.vehicles.domain.TransmissionEnum;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -46,6 +48,17 @@ public class VehicleEntity {
 	
 	@Column(name = "MODEL")
 	private String model;
+
+	@Column(name = "COLOR")
+	private String color;
+
+	@Column(name = "FUEL")
+	@Enumerated(EnumType.ORDINAL)
+	private FuelEnum fuel;
+
+	@Column(name = "TRANSMISSION")
+	@Enumerated(EnumType.ORDINAL)
+	private TransmissionEnum transmission;
 	
 	@Column(name = "MANUFACTURING")
 	private String manufacturing;
@@ -71,6 +84,15 @@ public class VehicleEntity {
 		}
 		if(Objects.nonNull(entity.getModel())) {
 			this.model = entity.getModel();
+		}
+		if(Objects.nonNull(entity.getColor())) {
+			this.color = entity.getColor();
+		}
+		if(Objects.nonNull(entity.getFuel())) {
+			this.fuel = entity.getFuel();
+		}
+		if(Objects.nonNull(entity.getTransmission())) {
+			this.transmission = entity.getTransmission();
 		}
 		if(Objects.nonNull(entity.getManufacturing())) {
 			this.manufacturing = entity.getManufacturing();

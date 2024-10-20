@@ -2,6 +2,7 @@ package com.ikservices.oficinamecanica.customers.infra.gateway;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
+import com.ikservices.oficinamecanica.customers.application.SearchCriteria;
 import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRepository;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.domain.CustomerId;
@@ -58,8 +59,8 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     }
 
     @Override
-    public List<Customer> getCustomerList(Long workshopId, int criteria, String search) {
-        return converter.parseCustomerList(repository.findAllByWorkshopId(workshopId, criteria, search));
+    public List<Customer> getCustomerList(Long workshopId, SearchCriteria criteria, String search) {
+        return converter.parseCustomerList(repository.findAllByWorkshopId(workshopId, criteria.ordinal(), search));
     }
 
     @Override

@@ -12,7 +12,7 @@ public class EmailVO {
     private final String mailAddress;
 
     public EmailVO(String mailAddress) {
-        if (Objects.nonNull(mailAddress) && !mailAddress.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+        if (Objects.nonNull(mailAddress) && !mailAddress.isEmpty() && !mailAddress.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
             throw new IKException("E-mail inválido.");
         }
         this.mailAddress = mailAddress;

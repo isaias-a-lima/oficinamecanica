@@ -39,6 +39,9 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 		entity.setPlate(vehicle.getPlate());
 		entity.setBrand(vehicle.getBrand());
 		entity.setModel(vehicle.getModel());
+		entity.setColor(vehicle.getColor());
+		entity.setFuel(vehicle.getFuel());
+		entity.setTransmission(vehicle.getTransmission());
 		entity.setManufacturing(vehicle.getManufacturing());
 		entity.setEngine(vehicle.getEngine());
 		entity.setObservations(vehicle.getObservations());
