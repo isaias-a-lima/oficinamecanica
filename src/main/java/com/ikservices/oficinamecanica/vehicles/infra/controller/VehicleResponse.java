@@ -40,8 +40,8 @@ public class VehicleResponse implements Serializable {
 		this.brand = vehicle.getBrand();
 		this.model = vehicle.getModel();
 		this.color = vehicle.getColor();
-		this.fuel = Objects.nonNull(vehicle.getFuel()) ? vehicle.getFuel().ordinal() : null;
-		this.transmission = Objects.nonNull(vehicle.getTransmission()) ? vehicle.getTransmission().ordinal() : null;
+		this.fuel = Objects.nonNull(vehicle.getFuel()) ? vehicle.getFuel().ordinal() : 0;
+		this.transmission = Objects.nonNull(vehicle.getTransmission()) ? vehicle.getTransmission().ordinal() : 0;
 		this.manufacturing = vehicle.getManufacturing();
 		this.engine = vehicle.getEngine();
 		this.observations = vehicle.getObservations();

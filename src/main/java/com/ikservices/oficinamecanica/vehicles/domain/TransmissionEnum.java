@@ -3,8 +3,8 @@ package com.ikservices.oficinamecanica.vehicles.domain;
 public enum TransmissionEnum {
     NONE,
     MANUAL,
-    AUTOMATICO,
-    SEM_CAMBIO;
+    AUTOMATIC,
+    OTHERS;
 
     public static TransmissionEnum getByIndex(int index) {
         for (TransmissionEnum e : TransmissionEnum.values()) {
