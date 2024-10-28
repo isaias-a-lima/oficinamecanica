@@ -63,8 +63,8 @@ public class SupplierRepositoryImpl implements SupplierRepository {
 	}
 
 	@Override
-	public List<Supplier> getSupplierList(Long workshopId) {
-		return this.converter.parseSupplierList(repository.findAllByWorkshopId(workshopId));
+	public List<Supplier> getSupplierList(Long workshopId, String search) {
+		return this.converter.parseSupplierList(repository.findAllByWorkshopId(workshopId, search));
 	}
 
 	@Override
