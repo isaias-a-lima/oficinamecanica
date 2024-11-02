@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.transaction.Transactional;
 
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKRes;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.suppliers.infra.constants.SupplierConstants;
@@ -94,10 +95,15 @@ public class SupplierController {
 			URI uri = uriBuilder.path("suppliers/{workshopId}/{id}").
 					buildAndExpand(supplier.getSupplierId().getWorkshopid(),
 							supplier.getSupplierId().getId()).toUri();
-			return ResponseEntity.created(uri).body(IKResponse.<SupplierDTO>build().body(converter.parseDTO(supplier)));
+			return ResponseEntity.created(uri).body(IKResponse.<SupplierDTO>build().body(converter.parseDTO(supplier))
+                    .addMessage(IKMessageType.SUCCESS, environment.getProperty(SupplierConstants.SUPPLIER_SAVE_SUCCESS_MESSAGE)));
 		}catch(IKException ike) {
+            LOGGER.error(ike.getMessage(), ike);
 			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
 			return ResponseEntity.status(code).body(IKResponse.<SupplierDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
-		}
+		} catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<SupplierDTO>build().addMessage(environment.getProperty(SupplierConstants.SUPPLIER_SERVER_ERROR_MESSAGE)));
+        }
 	}
 }
