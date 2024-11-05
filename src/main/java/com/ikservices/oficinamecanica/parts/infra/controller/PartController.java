@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -77,11 +78,11 @@ public class PartController {
 	}
 	
 	@GetMapping("/workshop/{id}")
-	public ResponseEntity<IKResponse<List<PartDTO>>> getPartList(@PathVariable("id") Long workshopId) {
+	public ResponseEntity<IKResponse<List<PartDTO>>> getPartList(@PathVariable("id") Long workshopId, @RequestParam(name = "search") String search) {
 		try {
 			List<PartDTO> partsList = null;
 			
-			partsList = converter.parseDTOList(getPartsList.execute(workshopId));
+			partsList = converter.parseDTOList(getPartsList.execute(workshopId, search));
 			
 			return ResponseEntity.ok(IKResponse.<List<PartDTO>>build().body(partsList));			
 		}catch(IKException ike) {

@@ -8,8 +8,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface PartRepositoryJPA extends JpaRepository<PartEntity, PartEntityId>{
 
-	@Query("SELECT p FROM PartEntity p WHERE p.workshopEntity.id = :workshopId")
-	public List<PartEntity> findAllByWorkshopId(@Param("workshopId") Long workshopId);
+	@Query("SELECT p FROM PartEntity p WHERE p.workshopEntity.id = :workshopId AND description LIKE CONCAT('%', :search, '%')")
+	public List<PartEntity> findAllByWorkshopId(@Param("workshopId") Long workshopId, @Param("search") String search);
 	
 	@Query("SELECT CASE WHEN MAX(p.id.id) IS NULL THEN 1 ELSE (MAX(p.id.id) + 1) END FROM PartEntity p WHERE p.workshopEntity.id = :workshopId")
 	public Long getNextPartId(@Param("workshopId") Long workshopId);

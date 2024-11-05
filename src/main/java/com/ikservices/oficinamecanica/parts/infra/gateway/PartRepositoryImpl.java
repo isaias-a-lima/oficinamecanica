@@ -60,8 +60,8 @@ public class PartRepositoryImpl implements PartRepository{
 	}
 
 	@Override
-	public List<Part> getPartsList(Long workshopId) {
-		return this.converter.parsePartsList(repository.findAllByWorkshopId(workshopId));
+	public List<Part> getPartsList(Long workshopId, String search) {
+		return this.converter.parsePartsList(repository.findAllByWorkshopId(workshopId, search));
 	}
 
 	@Override
