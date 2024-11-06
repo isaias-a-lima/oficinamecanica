@@ -63,26 +63,50 @@ public class SupplierController {
 			return ResponseEntity.ok(IKRes.<SupplierDTO>build().body(supplierList));
 
 		} catch (IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
 			return ResponseEntity.status(ike.getCode()).body(IKRes.<SupplierDTO>build().addMessage(ike.getMessage()));
 
 		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<SupplierDTO>build().addMessage(environment.getProperty(SupplierConstants.SUPPLIER_SERVER_ERROR_MESSAGE)));
 		}
 	}
 	
 	@GetMapping("/{workshopId}/{id}")
-	public ResponseEntity<IKResponse<SupplierDTO>> getSupplier(@PathVariable Long workshopId,
-			@PathVariable Long id) {
-		Supplier supplier = getSupplier.execute(new SupplierId(id, workshopId));
-		return ResponseEntity.ok(IKResponse.<SupplierDTO>build().body(converter.parseDTO(supplier)));
+	public ResponseEntity<IKResponse<SupplierDTO>> getSupplier(@PathVariable Long workshopId, @PathVariable Long id) {
+		try {
+			Supplier supplier = getSupplier.execute(new SupplierId(id, workshopId));
+			return ResponseEntity.ok(IKResponse.<SupplierDTO>build().body(converter.parseDTO(supplier)));
+		} catch (IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(ike.getCode()).body(IKResponse.<SupplierDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<SupplierDTO>build().addMessage(IKMessageType.ERROR, environment.getProperty(SupplierConstants.SUPPLIER_SERVER_ERROR_MESSAGE))
+			);
+		}
 	}
 	
 	@PutMapping
 	@Transactional
 	public ResponseEntity<IKResponse<SupplierDTO>> updateSupplier(@RequestBody SupplierDTO dto) {
-		Supplier supplier = updateSupplier.execute(converter.parseSupplier(dto));
-		return ResponseEntity.ok(IKResponse.<SupplierDTO>build().body(converter.parseDTO(supplier)));
-	}
+        try {
+            Supplier supplier = updateSupplier.execute(converter.parseSupplier(dto));
+            return ResponseEntity.ok(
+                    IKResponse.<SupplierDTO>build().body(
+                            converter.parseDTO(supplier)).addMessage(IKMessageType.SUCCESS, environment.getProperty(SupplierConstants.SUPPLIER_UPDATE_SUCCESS_MESSAGE)));
+        } catch (IKException ike) {
+            LOGGER.error(ike.getMessage(), ike);
+            return ResponseEntity.status(ike.getCode()).body(
+                    IKResponse.<SupplierDTO>build().addMessage(IKMessageType.WARNING, ike.getMessage())
+            );
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    IKResponse.<SupplierDTO>build().addMessage(IKMessageType.ERROR, environment.getProperty(SupplierConstants.SUPPLIER_SERVER_ERROR_MESSAGE)));
+        }
+    }
 	
 	@PostMapping
 	public ResponseEntity<IKResponse<SupplierDTO>> saveSupplier(@RequestBody SupplierDTO dto, UriComponentsBuilder uriBuilder) {
