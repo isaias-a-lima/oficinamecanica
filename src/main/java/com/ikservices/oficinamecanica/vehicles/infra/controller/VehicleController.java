@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
@@ -68,10 +69,20 @@ public class VehicleController {
 	@GetMapping("{workshopId}/{customerId}")
 	public ResponseEntity<IKResponse<VehicleResponse>> listVehicles(@PathVariable Long workshopId, 
 			@PathVariable String customerId) {
-		List<VehicleResponse> vehicleList = converter.
-				parseResponseList(listVehicles.execute(new IdentificationDocumentVO(customerId), workshopId));
-		
-		return ResponseEntity.ok(IKResponse.<VehicleResponse>build().body(vehicleList));
+		try {
+			List<VehicleResponse> vehicleList = converter.
+					parseResponseList(listVehicles.execute(new IdentificationDocumentVO(customerId), workshopId));
+			
+			return ResponseEntity.ok(IKResponse.<VehicleResponse>build().body(vehicleList));			
+		} catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(ike.getCode()).body(
+					IKResponse.<VehicleResponse>build().addMessage(ike.getMessage()));
+		} catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<VehicleResponse>build().addMessage(environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+		}
 	}
 	
 	@GetMapping("{vehicleId}")
@@ -92,7 +103,8 @@ public class VehicleController {
 			return ResponseEntity.status(e.getCode()).body(IKResponse.<VehicleDTO>build().addMessage(e.getIKMessageType(), e.getMessage()));
 		} catch (EntityNotFoundException e) {
 			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(IKResponse.<VehicleDTO>build().addMessage(IKMessageType.WARNING, "Veículo não encontrado"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(IKResponse.<VehicleDTO>build().addMessage(IKMessageType.WARNING, 
+					environment.getProperty(VehicleConstant.NOT_FOUND_MESSAGE)));
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<VehicleDTO>build().addMessage(IKMessageType.WARNING, environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
