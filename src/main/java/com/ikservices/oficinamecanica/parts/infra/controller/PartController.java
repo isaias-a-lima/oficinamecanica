@@ -107,6 +107,7 @@ public class PartController {
 			return ResponseEntity.created(uri).body(IKResponse.<PartDTO>build().body(new PartDTO(part)));
 		}catch(IKException ike) {
 			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
+			LOGGER.error(ike.getMessage(), ike);
 			return ResponseEntity.status(code).body(IKResponse.<PartDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
 		}catch(Exception e) {
 			LOGGER.error(environment.getProperty(PartConstant.OPERATION_ERROR_MESSAGE));
@@ -122,6 +123,7 @@ public class PartController {
 			return ResponseEntity.ok(IKResponse.<PartDTO>build().body(new PartDTO(part)));			
 		}catch(IKException ike) {
 			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
+			LOGGER.error(ike.getMessage(), ike);
 			return ResponseEntity.status(code).body(IKResponse.<PartDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
 		}catch(Exception e) {
 			LOGGER.error(environment.getProperty(PartConstant.OPERATION_ERROR_MESSAGE));
