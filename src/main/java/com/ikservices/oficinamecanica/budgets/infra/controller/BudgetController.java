@@ -78,6 +78,10 @@ public class BudgetController {
 
 			return ResponseEntity.ok(IKRes.<BudgetDTO>build().body(budgetDTOList));
 
+		} catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(ike.getCode()).body(
+					IKRes.<BudgetDTO>build().addMessage(ike.getMessage()));
 		} catch (Exception e) {
 			String messageError = "VehicleId: " + vehicleId + " - " + e.getMessage();
 			LOGGER.error(messageError, e);
@@ -106,12 +110,15 @@ public class BudgetController {
 					environment.getProperty(BudgetConstant.GET_ERROR_MESSAGE)
 			);
 
-		}catch(IKException e) {
-			return ResponseEntity.status(e.getCode()).body(IKRes.<BudgetDTO>build().addMessage(e.getMessage()));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(ike.getCode()).body(IKRes.<BudgetDTO>build().addMessage(ike.getMessage()));
 		}catch (EntityNotFoundException e) {
+			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(Integer.parseInt(Objects.requireNonNull(environment.getProperty(BudgetConstant.GET_NOT_FOUND_CODE)))).body(
 					IKRes.<BudgetDTO>build().addMessage(environment.getProperty(BudgetConstant.GET_NOT_FOUND_MESSAGE)));
 		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(Integer.parseInt(Objects.requireNonNull(environment.getProperty(BudgetConstant.GET_ERROR_CODE)))).body(
 					IKRes.<BudgetDTO>build().addMessage(environment.getProperty(BudgetConstant.GET_ERROR_MESSAGE)));
 		}
