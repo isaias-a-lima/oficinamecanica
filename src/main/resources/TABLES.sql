@@ -216,3 +216,17 @@ VALUES(1, 1, '2024-10-07', 1000, 00, 0);
 
 INSERT INTO budgets(budgetid, vehicleid, openingdate, km, bstatus, amount)
 VALUES(2, 1, '2024-10-06', 1000, 00, 0);
+
+--2024-11-11 17:25 - Brazil - Mateus Lima - Create budget-items-services table.
+CREATE TABLE BUDG_ITEM_SERV (
+serviceitemid BIGINT NOT NULL AUTO_INCREMENT COMMENT "Service item identification number",
+budgetid BIGINT NOT NULL COMMENT "Budget identification number",
+serviceid INT(11) NOT NULL COMMENT "Service identification number",
+quantity INT NOT NULL COMMENT "Services quantity",
+cost DECIMAL(10, 2) NOT NULL COMMENT "Services cost",
+discount DECIMAL(3, 2) NOT NULL COMMENT "Service discount",
+PRIMARY KEY (serviceitemid),
+CONSTRAINT fk_budgets_budg_item_serv FOREIGN KEY (budgetid) REFERENCES budgets(budgetid),
+CONSTRAINT fk_services_budg_item_serv FOREIGN KEY (serviceid) REFERENCES services(serviceid)
+)COMMENT = "BUDG_ITEM_SERV";
+
