@@ -230,3 +230,18 @@ CONSTRAINT fk_budgets_budg_item_serv FOREIGN KEY (budgetid) REFERENCES budgets(b
 CONSTRAINT fk_services_budg_item_serv FOREIGN KEY (serviceid) REFERENCES services(serviceid)
 )COMMENT = "BUDG_ITEM_SERV";
 
+--2024-16-11 15:55 - Brazil - Mateus Lima - Drop budget-items-services table.
+DROP TABLE BUDG_ITEM_SERV;
+
+--2024-16-11 15:55 - Brazil - Mateus Lima - Drop budget-items-services table.
+CREATE TABLE BUDG_ITEM_SERV (
+serviceitemid BIGINT NOT NULL COMMENT "Service item identification number",
+budgetid BIGINT NOT NULL COMMENT "Budget identification number",
+serviceid INT(11) NOT NULL COMMENT "Service identification number",
+quantity INT NOT NULL COMMENT "Services quantity",
+cost DECIMAL(10, 2) NOT NULL COMMENT "Services cost",
+discount DECIMAL(3, 2) NOT NULL COMMENT "Service discount",
+PRIMARY KEY (serviceitemid, budgetId),
+CONSTRAINT fk_budgets_budg_item_serv FOREIGN KEY (budgetid) REFERENCES budgets(budgetid),
+CONSTRAINT fk_services_budg_item_serv FOREIGN KEY (serviceid) REFERENCES services(serviceid)
+)COMMENT = "BUDG_ITEM_SERV";
