@@ -1,14 +1,10 @@
 package com.ikservices.oficinamecanica.customers.infra.config;
 
-import com.ikservices.oficinamecanica.commons.response.IKMessages;
 import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRepository;
 import com.ikservices.oficinamecanica.customers.application.usecases.*;
-import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
-import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerMessages;
 import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerRepositoryImpl;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerRepositoryJPA;
 import com.ikservices.oficinamecanica.users.infra.UserConverter;
-import com.ikservices.oficinamecanica.vehicles.infra.VehicleConverter;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,18 +24,13 @@ public class CustomerConfig {
     }
 
     @Bean
-    public ListCustomers listCustomers(CustomerRepository repository, CustomerMessages customerProperties) {
-        return new ListCustomers(repository, customerProperties);
+    public ListCustomers listCustomers(CustomerRepository repository) {
+        return new ListCustomers(repository);
     }
 
     @Bean
     public GetCustomer getCustomer(CustomerRepository repository) {
         return new GetCustomer(repository);
-    }
-
-    @Bean
-    public CustomerMessages customerMessages() {
-        return new CustomerMessages(environment);
     }
 
     @Bean

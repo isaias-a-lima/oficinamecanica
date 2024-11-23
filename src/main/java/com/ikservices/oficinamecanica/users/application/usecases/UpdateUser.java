@@ -4,12 +4,12 @@ import com.ikservices.oficinamecanica.users.application.gateways.UserProperties;
 import com.ikservices.oficinamecanica.users.application.gateways.UserRepository;
 import com.ikservices.oficinamecanica.users.domain.User;
 
-public class AtualizarUsuario {
+public class UpdateUser {
 
     private final UserRepository repository;
     private final UserProperties properties;
 
-    public AtualizarUsuario(UserRepository repository, UserProperties properties) {
+    public UpdateUser(UserRepository repository, UserProperties properties) {
         this.repository = repository;
         this.properties = properties;
     }

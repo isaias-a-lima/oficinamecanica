@@ -55,12 +55,13 @@ public class VehicleConverter {
 		return vehicle;
 	}
 	
-	public VehicleEntity parseEntity(Vehicle vehicle) {
+	public VehicleEntity parseEntity(Vehicle vehicle, Long vehicleId) {
 		if(Objects.isNull(vehicle)) {
 			throw new VehicleException("Null object");
 		}
 		
 		VehicleEntity entity = new VehicleEntity();
+		entity.setVehicleId(Objects.nonNull(vehicleId) ? vehicleId : null);
 		entity.setIdDoc(Objects.nonNull(vehicle.getCustomer()) ? vehicle.getCustomer().getId().getDocId().getDocument() : null);
 		entity.setWorkshopId(Objects.nonNull(vehicle.getCustomer()) ? vehicle.getCustomer().getId().getWorkshopId() : null);
 		entity.setCustomerEntity(Objects.nonNull(vehicle.getCustomer()) ? customerConverter.parseEntity(vehicle.getCustomer()) : null);
@@ -101,7 +102,7 @@ public class VehicleConverter {
 
 				for (Map.Entry<Long, Vehicle> entry : vehicleMap.entrySet()) {
 
-					VehicleEntity vehicleEntity = this.parseEntity(entry.getValue());
+					VehicleEntity vehicleEntity = this.parseEntity(entry.getValue(), entry.getKey());
 					vehicleEntity.setVehicleId(entry.getKey());
 
 					vehicleEntityList.add(vehicleEntity);

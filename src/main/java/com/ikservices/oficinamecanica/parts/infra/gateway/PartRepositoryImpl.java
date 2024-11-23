@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.springframework.http.HttpStatus;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
+import com.ikservices.oficinamecanica.parts.application.PartBusinessConstant;
+import com.ikservices.oficinamecanica.parts.infra.constants.PartConstant;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
@@ -33,8 +35,7 @@ public class PartRepositoryImpl implements PartRepository{
 				findById(new PartEntityId(part.getPartId().getId(), 
 						part.getPartId().getWorkshopId()));
 		if(optional.isPresent()) {
-			throw new IKException(HttpStatus.FOUND.value(), 
-					IKMessageType.WARNING, "Peça já cadastrada.");
+			throw new IKException(new IKMessage(PartBusinessConstant.ERROR_CODE, IKMessageType.WARNING.getCode(), PartConstant.SAVE_ALREADY_MESSAGE));
 		}
 		PartEntity savedEntity = repository.save(converter.parseEntity(part));
 		return converter.parsePart(savedEntity);

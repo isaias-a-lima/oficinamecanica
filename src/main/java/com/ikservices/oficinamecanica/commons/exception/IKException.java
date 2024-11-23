@@ -1,14 +1,13 @@
 package com.ikservices.oficinamecanica.commons.exception;
 
-import com.ikservices.oficinamecanica.commons.response.IKMessageType;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class IKException extends RuntimeException{
-    private Integer code;
-    private IKMessageType IKMessageType;
+    private IKMessage ikMessage;
 
     public IKException(String message) {
         super(message);
@@ -18,15 +17,13 @@ public class IKException extends RuntimeException{
         super(message, cause);
     }
 
-    public IKException(Integer code, IKMessageType IKMessageType, String message) {
-        super(message);
-        this.code = code;
-        this.IKMessageType = IKMessageType;
+    public IKException(IKMessage ikMessage) {
+        super(ikMessage.getMessage());
+        this.ikMessage = ikMessage;
     }
 
-    public IKException(Integer code, IKMessageType IKMessageType, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code;
-        this.IKMessageType = IKMessageType;
+    public IKException(IKMessage ikMessage,  Throwable cause) {
+        super(ikMessage.getMessage(), cause);
+        this.ikMessage = ikMessage;
     }
 }

@@ -61,7 +61,7 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 		VehicleEntity entity = optional.orElse(null);
 		
 		if(Objects.nonNull(entity)) {
-			entity.update(converter.parseEntity(vehicle));
+			entity.update(converter.parseEntity(vehicle, vehicleId));
 		}
 		
 		Map<Long, Vehicle> vehicleMap = new HashMap<>();

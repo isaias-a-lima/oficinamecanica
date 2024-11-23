@@ -2,10 +2,11 @@ package com.ikservices.oficinamecanica.parts.infra.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 
 import javax.transaction.Transactional;
 
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
+import com.ikservices.oficinamecanica.parts.application.PartBusinessConstant;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -33,8 +34,6 @@ import com.ikservices.oficinamecanica.parts.domain.Part;
 import com.ikservices.oficinamecanica.parts.domain.PartId;
 import com.ikservices.oficinamecanica.parts.infra.PartConverter;
 import com.ikservices.oficinamecanica.parts.infra.constants.PartConstant;
-import com.ikservices.oficinamecanica.services.infra.constants.ServiceConstant;
-import com.ikservices.oficinamecanica.services.infra.controller.ServiceDTO;
 
 @RestController
 @RequestMapping("/parts")
@@ -70,10 +69,12 @@ public class PartController {
 			return ResponseEntity.ok(IKResponse.<PartDTO>build().body(new PartDTO(part)));			
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(ike.getCode()).body(IKResponse.<PartDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<PartDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
-			LOGGER.error(environment.getProperty(PartConstant.OPERATION_ERROR_MESSAGE));
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<PartDTO>build().addMessage(environment.getProperty(PartConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<PartDTO>build().addMessage(PartBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(PartConstant.GET_ERROR_MESSAGE)));
 		}
 	}
 	
@@ -87,10 +88,12 @@ public class PartController {
 			return ResponseEntity.ok(IKResponse.<List<PartDTO>>build().body(partsList));			
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(ike.getCode()).body(IKResponse.<List<PartDTO>>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<List<PartDTO>>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
-			LOGGER.error(environment.getProperty(PartConstant.OPERATION_ERROR_MESSAGE));
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<List<PartDTO>>build().addMessage(environment.getProperty(PartConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<List<PartDTO>>build().addMessage(PartBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(PartConstant.LIST_ERROR_MESSAGE)));
 		}
 	}
 	
@@ -104,14 +107,16 @@ public class PartController {
 			part = savePart.execute(converter.parsePart(dto));		
 			URI uri = uriBuilder.path("parts/{workshopId}/{id}").buildAndExpand(part.getPartId().getWorkshopId(), 
 					part.getPartId().getId()).toUri();
-			return ResponseEntity.created(uri).body(IKResponse.<PartDTO>build().body(new PartDTO(part)));
+			return ResponseEntity.created(uri).body(IKResponse.<PartDTO>build().body(
+					new PartDTO(part)).addMessage(PartBusinessConstant.SUCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(PartConstant.SAVE_SUCCESS_MESSAGE)));
 		}catch(IKException ike) {
-			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(code).body(IKResponse.<PartDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<PartDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
-			LOGGER.error(environment.getProperty(PartConstant.OPERATION_ERROR_MESSAGE));
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<PartDTO>build().addMessage(environment.getProperty(PartConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<PartDTO>build().addMessage(PartBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(PartConstant.SAVE_ERROR_MESSAGE)));
 		}
 	}
 	
@@ -120,14 +125,16 @@ public class PartController {
 	public ResponseEntity<IKResponse<PartDTO>> updatePart(@RequestBody PartDTO dto) {
 		try {
 			Part part = updatePart.execute(converter.parsePart(dto));
-			return ResponseEntity.ok(IKResponse.<PartDTO>build().body(new PartDTO(part)));			
+			return ResponseEntity.ok(IKResponse.<PartDTO>build().body(
+					new PartDTO(part)).addMessage(PartBusinessConstant.SUCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(PartConstant.UPDATE_SUCCESS_MESSAGE)));
 		}catch(IKException ike) {
-			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(code).body(IKResponse.<PartDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<PartDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
-			LOGGER.error(environment.getProperty(PartConstant.OPERATION_ERROR_MESSAGE));
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<PartDTO>build().addMessage(environment.getProperty(PartConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<PartDTO>build().addMessage(PartBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(PartConstant.UPDATE_ERROR_MESSAGE)));
 		}
 	}
 }

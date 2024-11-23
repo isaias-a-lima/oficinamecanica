@@ -25,7 +25,7 @@ public class NumberUtil {
     }
 
     public static String parseStringMoney(BigDecimal valor) {
-        NumberFormat numberFormat = DecimalFormat.getCurrencyInstance(Constants.LOCALE);
+        NumberFormat numberFormat = DecimalFormat.getCurrencyInstance(Constants.getLOCALE());
 
         if (Objects.isNull(valor)) {
             return numberFormat.format(0.0);

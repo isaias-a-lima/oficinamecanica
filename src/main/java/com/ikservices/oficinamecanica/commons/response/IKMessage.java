@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class IKMessage {
-    private Integer code;
-    private IKMessageType IKMessageType;
+    private String code;
+    private Integer type;
     private String message;
 }

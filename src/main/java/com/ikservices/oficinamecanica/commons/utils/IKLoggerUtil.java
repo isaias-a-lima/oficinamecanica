@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 public class IKLoggerUtil {
@@ -26,5 +27,16 @@ public class IKLoggerUtil {
         } catch (JsonProcessingException e) {
             return "json_object_not_created";
         }
+    }
+
+    //TODO To finish this method
+    public static String generateInParamsMessage(List<Object> objects) {
+        String type = "";
+        String name = "";
+        for (Object object : objects) {
+            type = objects.getClass().getTypeName();
+            name = objects.getClass().getName();
+        }
+        return "Testing";
     }
 }
