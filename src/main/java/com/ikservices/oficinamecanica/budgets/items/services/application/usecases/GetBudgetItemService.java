@@ -1,9 +1,8 @@
 package com.ikservices.oficinamecanica.budgets.items.services.application.usecases;
 
-import java.util.Map;
-
 import com.ikservices.oficinamecanica.budgets.items.services.application.gateways.BudgetItemServiceRepository;
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemService;
+import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntityId;
 
 public class GetBudgetItemService {
 	private final BudgetItemServiceRepository repository;
@@ -12,7 +11,7 @@ public class GetBudgetItemService {
 		this.repository = repository;
 	}
 	
-	public Map<Long, BudgetItemService> execute(Long itemId) {
+	public BudgetItemService execute(BudgetItemServiceEntityId itemId) {
 		return repository.getBudgetItemService(itemId);
 	}
 }
