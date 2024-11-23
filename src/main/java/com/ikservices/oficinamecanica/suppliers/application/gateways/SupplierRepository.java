@@ -9,6 +9,6 @@ public interface SupplierRepository {
 	Supplier saveSupplier(Supplier supplier);
 	Supplier updateSupplier(Supplier supplier);
 	Supplier getSupplier(SupplierId supplierId);
-	List<Supplier> getSupplierList(Long workshopId);
+	List<Supplier> getSupplierList(Long workshopId, String search);
 	Long getNextSupplierId(Long workshopId);
 }

@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.springframework.http.HttpStatus;
+import com.ikservices.oficinamecanica.commons.constants.Constants;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
+import com.ikservices.oficinamecanica.suppliers.infra.constants.SupplierConstants;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
@@ -33,8 +35,7 @@ public class SupplierRepositoryImpl implements SupplierRepository {
 				supplier.getSupplierId().getWorkshopid()));
 		
 		if(optional.isPresent()) {
-			throw new IKException(HttpStatus.FOUND.value(), IKMessageType.WARNING, 
-					"Fornecedor já cadastrado.");
+			throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), SupplierConstants.SUPPLIER_SAVE_ALREADY_RECORDED_MESSAGE));
 		}
 		
 		SupplierEntity savedEntity = repository.save(converter.parseEntity(supplier));
@@ -63,8 +64,8 @@ public class SupplierRepositoryImpl implements SupplierRepository {
 	}
 
 	@Override
-	public List<Supplier> getSupplierList(Long workshopId) {
-		return this.converter.parseSupplierList(repository.findAllByWorkshopId(workshopId));
+	public List<Supplier> getSupplierList(Long workshopId, String search) {
+		return this.converter.parseSupplierList(repository.findAllByWorkshopId(workshopId, search));
 	}
 
 	@Override

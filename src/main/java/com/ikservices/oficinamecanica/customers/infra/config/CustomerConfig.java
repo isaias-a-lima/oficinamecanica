@@ -1,13 +1,7 @@
 package com.ikservices.oficinamecanica.customers.infra.config;
 
-import com.ikservices.oficinamecanica.commons.response.IKMessages;
 import com.ikservices.oficinamecanica.customers.application.gateways.CustomerRepository;
-import com.ikservices.oficinamecanica.customers.application.usecases.GetCustomer;
-import com.ikservices.oficinamecanica.customers.application.usecases.ListCustomers;
-import com.ikservices.oficinamecanica.customers.application.usecases.SaveCustomer;
-import com.ikservices.oficinamecanica.customers.application.usecases.UpdateCustomer;
-import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
-import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerMessages;
+import com.ikservices.oficinamecanica.customers.application.usecases.*;
 import com.ikservices.oficinamecanica.customers.infra.gateway.CustomerRepositoryImpl;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerRepositoryJPA;
 import com.ikservices.oficinamecanica.users.infra.UserConverter;
@@ -25,28 +19,18 @@ public class CustomerConfig {
     Environment environment;
 
     @Bean
-    public CustomerRepository customerRepository(CustomerRepositoryJPA customerRepositoryJPA, CustomerConverter converter) {
-        return new CustomerRepositoryImpl(customerRepositoryJPA, converter);
+    public CustomerRepository customerRepository(CustomerRepositoryJPA customerRepositoryJPA) {
+        return new CustomerRepositoryImpl(customerRepositoryJPA);
     }
 
     @Bean
-    public CustomerConverter customerConverter(WorkshopConverter workshopConverter) {
-        return new CustomerConverter(workshopConverter);
-    }
-
-    @Bean
-    public ListCustomers listCustomers(CustomerRepository repository, CustomerMessages customerProperties) {
-        return new ListCustomers(repository, customerProperties);
+    public ListCustomers listCustomers(CustomerRepository repository) {
+        return new ListCustomers(repository);
     }
 
     @Bean
     public GetCustomer getCustomer(CustomerRepository repository) {
         return new GetCustomer(repository);
-    }
-
-    @Bean
-    public CustomerMessages customerMessages() {
-        return new CustomerMessages(environment);
     }
 
     @Bean
@@ -63,5 +47,10 @@ public class CustomerConfig {
     @Bean
     public WorkshopConverter workshopConverter(UserConverter userConverter) {
         return new WorkshopConverter(userConverter);
+    }
+
+    @Bean
+    public GetCustomerByVeclicle getCustomerByVeclicle(CustomerRepository repository) {
+        return new GetCustomerByVeclicle(repository);
     }
 }

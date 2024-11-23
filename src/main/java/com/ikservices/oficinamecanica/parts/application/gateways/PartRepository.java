@@ -9,6 +9,6 @@ public interface PartRepository {
 	Part savePart(Part part);
 	Part updatePart(Part part);
 	Part getPart(PartId partId);
-	List<Part> getPartsList(Long workshopId);
+	List<Part> getPartsList(Long workshopId, String search);
 	Long getNextPartId(Long workshopId);
 }

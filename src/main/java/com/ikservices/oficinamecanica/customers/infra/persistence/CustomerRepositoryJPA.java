@@ -15,4 +15,10 @@ public interface CustomerRepositoryJPA extends JpaRepository<CustomerEntity, Cus
                     "OR (3 = :criteria AND c.mobilePhone LIKE concat('%', :search, '%')))"
     )
     public List<CustomerEntity> findAllByWorkshopId(@Param("workshopId") Long workshopId, @Param("criteria") int criteria, @Param("search") String search);
+
+    @Query(
+            "SELECT c FROM CustomerEntity c JOIN c.vehicles v WHERE c.id.workshopId = :workshopId " +
+                    "AND REGEXP_REPLACE(v.plate, '[^A-Za-z0-9]', '') = REGEXP_REPLACE(:plate, '[^A-Za-z0-9]', '')"
+    )
+    public List<CustomerEntity> findByVehicles(@Param("workshopId") Long workshopId, @Param("plate") String plate);
 }

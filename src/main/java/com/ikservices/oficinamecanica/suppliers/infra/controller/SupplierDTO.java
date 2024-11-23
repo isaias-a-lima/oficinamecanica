@@ -23,7 +23,7 @@ public class SupplierDTO {
 	private String address;
 	private String city;
 	private String state;
-	private Character type;
+	private String type;
 	
 	public SupplierDTO(Supplier supplier) {
 		this.supplierId = supplier.getSupplierId().getId();
@@ -37,6 +37,6 @@ public class SupplierDTO {
 		this.address = supplier.getAddress().getStreet();
 		this.city = supplier.getAddress().getCity();
 		this.state = supplier.getAddress().getState();
-		this.type = supplier.getType().getType();
+		this.type = supplier.getType().getDescription();
 	}
 }

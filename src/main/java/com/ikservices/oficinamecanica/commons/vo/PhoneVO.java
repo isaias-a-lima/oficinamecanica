@@ -1,11 +1,12 @@
 package com.ikservices.oficinamecanica.commons.vo;
 
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
 
 import java.util.Objects;
 
@@ -13,11 +14,11 @@ import java.util.Objects;
 @Setter
 @EqualsAndHashCode
 public class PhoneVO {
-    private final Integer countryCode;
-    private final Integer stateCode;
-    private final Integer phoneNumber;
+    private final String countryCode;
+    private final String stateCode;
+    private final String phoneNumber;
 
-    public PhoneVO(Integer countryCode, Integer stateCode, Integer phoneNumber) {
+    public PhoneVO(String countryCode, String stateCode, String phoneNumber) {
         this.countryCode = countryCode;
         this.stateCode = stateCode;
         this.phoneNumber = phoneNumber;
@@ -35,9 +36,14 @@ public class PhoneVO {
 
         phone += stateCode + " ";
 
-        int phoneLength = String.valueOf(phoneNumber).length();
-        phone += phoneLength == 9 ? String.valueOf(phoneNumber).substring(0, 5) + "-" : String.valueOf(phoneNumber).substring(0, 4) + "-";
-        phone += phoneLength == 9 ? String.valueOf(phoneNumber).substring(5, phoneLength) : String.valueOf(phoneNumber).substring(4, phoneLength);
+        int phoneLength = phoneNumber.length();
+
+        if (phoneLength == 0) {
+            return "";
+        }
+
+        phone += phoneLength == 9 ? phoneNumber.substring(0, 5) + "-" : phoneNumber.substring(0, 4) + "-";
+        phone += phoneLength == 9 ? phoneNumber.substring(5, phoneLength) : phoneNumber.substring(4, phoneLength);
 
         return phone;
     }
@@ -53,7 +59,7 @@ public class PhoneVO {
     public static PhoneVO parsePhoneVO(String fullPhone) {
 
         if (Objects.isNull(fullPhone) || fullPhone.isEmpty()) {
-            return new PhoneVO(null, null, null);
+            return new PhoneVO("", "", "");
         }
 
         if (fullPhone.length() >= 16) {
@@ -62,12 +68,12 @@ public class PhoneVO {
 
             if (valid) {
                 String[] phoneArray = fullPhone.split(" ");
-                Integer countryCode = Integer.parseInt(phoneArray[0].replace("+", ""));
-                Integer stateCode = Integer.parseInt(phoneArray[1]);
-                Integer phoneNumber = Integer.parseInt(phoneArray[2].replace("-", ""));
+                String countryCode = phoneArray[0].replace("+", "");
+                String stateCode = phoneArray[1];
+                String phoneNumber = phoneArray[2].replace("-", "");
                 return new PhoneVO(countryCode, stateCode, phoneNumber);
             }
         }
-        throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.WARNING, "O número de telefone deve ter o seguinte formato: +XX XX XXXX-XXXX");
+        throw new IKException( new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), Constants.getPHONE_VO_ERROR_MESSAGE()));
     }
 }

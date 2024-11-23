@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.vehicles.infra.interceptor;
 
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleResponse;
@@ -14,6 +15,7 @@ public class VehicleInterceptor {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<IKResponse<VehicleResponse>> badRequest() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(IKResponse.<VehicleResponse>build().addMessage(IKMessageType.WARNING, "Parâmetro inválido."));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                IKResponse.<VehicleResponse>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING, Constants.getINVALID_PARAM_MESSAGE()));
     }
 }

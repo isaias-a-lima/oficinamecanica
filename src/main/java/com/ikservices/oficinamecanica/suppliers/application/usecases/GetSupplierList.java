@@ -12,7 +12,7 @@ public class GetSupplierList {
 		this.repository = repository;
 	}
 	
-	public List<Supplier> execute(Long workshopId) {
-		return repository.getSupplierList(workshopId);
+	public List<Supplier> execute(Long workshopId, String search) {
+		return repository.getSupplierList(workshopId, search);
 	}
 }

@@ -2,12 +2,13 @@ package com.ikservices.oficinamecanica.vehicles.infra.gateway;
 
 import java.util.*;
 
-import org.springframework.http.HttpStatus;
+import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
-import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
-import com.ikservices.oficinamecanica.customers.infra.CustomerConverter;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.vehicles.application.gateways.VehicleRepository;
@@ -17,16 +18,13 @@ import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleRepositoryJPA;
 
 public class VehicleRepositoryImpl implements VehicleRepository {
-	
-	private final VehicleConverter converter;
+	@Autowired
+	@Lazy
+	private VehicleConverter converter;
 	private final VehicleRepositoryJPA repository;
-	private final CustomerConverter customerConverter;
 	
-	public VehicleRepositoryImpl(VehicleConverter converter, 
-			VehicleRepositoryJPA repository, CustomerConverter customerConverter) {
-		this.converter = converter;
+	public VehicleRepositoryImpl(VehicleRepositoryJPA repository) {
 		this.repository = repository;
-		this.customerConverter = customerConverter;
 	}
 
 	@Override
@@ -35,10 +33,15 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 		ce.setId(new CustomerEntityId(vehicle.getCustomer().getId().getWorkshopId(), vehicle.getCustomer().getId().getDocId().getDocument()));
 
 		VehicleEntity entity = new VehicleEntity();
+		entity.setWorkshopId(ce.getId().getWorkshopId());
+		entity.setIdDoc(ce.getId().getDocId());
 		entity.setCustomerEntity(ce);
 		entity.setPlate(vehicle.getPlate());
 		entity.setBrand(vehicle.getBrand());
 		entity.setModel(vehicle.getModel());
+		entity.setColor(vehicle.getColor());
+		entity.setFuel(vehicle.getFuel());
+		entity.setTransmission(vehicle.getTransmission());
 		entity.setManufacturing(vehicle.getManufacturing());
 		entity.setEngine(vehicle.getEngine());
 		entity.setObservations(vehicle.getObservations());
@@ -58,7 +61,7 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 		VehicleEntity entity = optional.orElse(null);
 		
 		if(Objects.nonNull(entity)) {
-			entity.update(converter.parseEntity(vehicle));
+			entity.update(converter.parseEntity(vehicle, vehicleId));
 		}
 		
 		Map<Long, Vehicle> vehicleMap = new HashMap<>();

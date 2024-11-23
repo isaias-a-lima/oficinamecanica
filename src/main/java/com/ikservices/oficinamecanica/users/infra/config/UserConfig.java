@@ -59,8 +59,8 @@ public class UserConfig {
     }
 
     @Bean
-    public AtualizarUsuario atualizarUsuario(UserRepository repository, UserProperties properties) {
-        return new AtualizarUsuario(repository, properties);
+    public UpdateUser atualizarUsuario(UserRepository repository, UserProperties properties) {
+        return new UpdateUser(repository, properties);
     }
 
     @Bean

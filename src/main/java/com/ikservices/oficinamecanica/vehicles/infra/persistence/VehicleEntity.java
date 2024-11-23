@@ -1,21 +1,15 @@
 package com.ikservices.oficinamecanica.vehicles.infra.persistence;
 
+import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
+import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity;
-import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopEntity;
 
+import com.ikservices.oficinamecanica.vehicles.domain.FuelEnum;
+import com.ikservices.oficinamecanica.vehicles.domain.TransmissionEnum;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,10 +28,16 @@ public class VehicleEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "VEHICLEID")
 	private Long vehicleId;
+
+	@Column(name = "IDDOC")
+	private String idDoc;
+
+	@Column(name = "WORKSHOPID")
+	private Long workshopId;
 	
 	@ManyToOne
-	@JoinColumn(name = "IDDOC", referencedColumnName = "DOCID")
-	@JoinColumn(name = "WORKSHOPID", referencedColumnName = "WORKSHOPID")
+	@JoinColumn(name = "IDDOC", referencedColumnName = "DOCID", updatable = false, insertable = false)
+	@JoinColumn(name = "WORKSHOPID", referencedColumnName = "WORKSHOPID", updatable = false, insertable = false)
 	private CustomerEntity customerEntity;
 	
 	@Column(name = "PLATE")
@@ -48,6 +48,17 @@ public class VehicleEntity {
 	
 	@Column(name = "MODEL")
 	private String model;
+
+	@Column(name = "COLOR")
+	private String color;
+
+	@Column(name = "FUEL")
+	@Enumerated(EnumType.ORDINAL)
+	private FuelEnum fuel;
+
+	@Column(name = "TRANSMISSION")
+	@Enumerated(EnumType.ORDINAL)
+	private TransmissionEnum transmission;
 	
 	@Column(name = "MANUFACTURING")
 	private String manufacturing;
@@ -60,6 +71,9 @@ public class VehicleEntity {
 	
 	@Column(name = "ACTIVE")
 	private Boolean active;
+
+	@OneToMany(mappedBy = "vehicleEntity")
+	private List<BudgetEntity> budgetList;
 	
 	public void update(VehicleEntity entity) {
 		if(Objects.nonNull(entity.getPlate())) {
@@ -70,6 +84,15 @@ public class VehicleEntity {
 		}
 		if(Objects.nonNull(entity.getModel())) {
 			this.model = entity.getModel();
+		}
+		if(Objects.nonNull(entity.getColor())) {
+			this.color = entity.getColor();
+		}
+		if(Objects.nonNull(entity.getFuel())) {
+			this.fuel = entity.getFuel();
+		}
+		if(Objects.nonNull(entity.getTransmission())) {
+			this.transmission = entity.getTransmission();
 		}
 		if(Objects.nonNull(entity.getManufacturing())) {
 			this.manufacturing = entity.getManufacturing();

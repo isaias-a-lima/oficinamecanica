@@ -120,7 +120,7 @@ public class SupplierConverter {
 		address.setStreet(dto.getAddress());
 		supplier.setAddress(address);
 		
-		supplier.setType(TaxPayerEnum.getByType(dto.getType()));
+		supplier.setType(TaxPayerEnum.getByDescription(dto.getType()));
 		
 		return supplier;
 	}
@@ -143,7 +143,7 @@ public class SupplierConverter {
 		dto.setPostalCode(supplier.getAddress().getFormattedPostalCode());
 		dto.setCity(supplier.getAddress().getCity());
 		dto.setState(supplier.getAddress().getState());
-		dto.setType(supplier.getType().getType());
+		dto.setType(supplier.getType().getDescription());
 		
 		return dto;
 	}

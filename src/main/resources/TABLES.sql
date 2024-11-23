@@ -151,7 +151,7 @@ AFTER workshopid;
 
 --2024-08-12 15:42 - Brazil - Mateus Lima - Alter suppliers table.
 ALTER TABLE suppliers
-ADD COLUMN type CHAR(1) NOT NULL COMMENT 'Tax payer type';
+ADD COLUMN type CHAR(1) NOT NULL COMMENT 'Tax payer type' AFTER workshopid;
 
 --2024-08-12 16:50 - Brazil - Mateus Lima - Insert suppliers into suppliers table.
 INSERT INTO suppliers(supplierid, workshopid, iddoc, name, landline, mobilephone, email, postalcode,
@@ -174,24 +174,45 @@ workshopid BIGINT NOT NULL COMMENT "Workshop identification number",
 plate VARCHAR(50) NOT NULL COMMENT "Plate number",
 brand VARCHAR(50) NOT NULL COMMENT "Brand name",
 model VARCHAR(50) NOT NULL COMMENT "Vehicle model",
+color VARCHAR(50) NULL COMMENT "Vehicle color",
+fuel VARCHAR(30) NULL COMMENT "Fuel type",
+transmission VARCHAR(30) COMMENT "Transmission type",
 manufacturing VARCHAR(9) NOT NULL COMMENT "Manufacturing year and model year",
 engine VARCHAR(50) NOT NULL COMMENT "Vehicle engine",
 observations VARCHAR(255) NOT NULL COMMENT "Vehicle observations",
 active BOOL NOT NULL COMMENT "Identify if there is an active vehicle",
 PRIMARY KEY(vehicleid),
-CONSTRAINT fk_customers
-_vehicles FOREIGN KEY(workshopid, iddoc) REFERENCES customers(workshopid, docid)
+CONSTRAINT fk_customers_vehicles FOREIGN KEY(workshopid, iddoc) REFERENCES customers(workshopid, docid)
 )COMMENT = "Vehicles registration";
 
 --2024-09-04 16:24 - Brazil - Mateus Lima - Insert vehicles into vehicles table.
-INSERT INTO vehicles(vehicleid, iddoc, workshopid, plate, brand, model, manufacturing,
+INSERT INTO vehicles(vehicleid, iddoc, workshopid, plate, brand, model, color, fuel, transmission, manufacturing,
 engine, observations, active) VALUES(1, "22233344455", 1, "T1O2F8", "Volkswagen",
-"polo", "2003", "1.6 103cv", "nenhuma", 1);
+"polo", "Azul", "Gasolina", "Manual" "2003", "1.6 103cv", "nenhuma", 1);
 
-INSERT INTO vehicles(iddoc, workshopid, plate, brand, model, manufacturing,
+INSERT INTO vehicles(iddoc, workshopid, plate, brand, model, olor, fuel, transmission, manufacturing,
 engine, observations, active) VALUES("55566677788", 1, "T1O2F8", "Volkswagen",
-"Polo", "2003/2004", "Mi 1.6 103cv", "nenhuma", true);
+"Polo", "Vermelho", "Gasolina", "Manual" "2003/2004", "Mi 1.6 103cv", "nenhuma", true);
 
 --2024-09-05 16:37 - Brazil - Mateus Lima - Update customer adress.
 UPDATE customers set address = "Rua teste", city = "Testelândia", state = "SP", 
 postalcode = "02323000" WHERE workshopid = 1;
+
+--2024-09-26 15:10 - Brazil - Mateus Lima - Create budgets table.
+CREATE TABLE BUDGETS(
+budgetid BIGINT NOT NULL AUTO_INCREMENT COMMENT "Budget identification number",
+vehicleid BIGINT NOT NULL COMMENT "Vehicle identification number",
+openingdate DATE NOT NULL COMMENT "Budget opening date",
+km BIGINT NOT NULL COMMENT "kilometers traveled",
+bstatus CHAR(2) NOT NULL COMMENT "Budget status",
+amount DECIMAL(7,2) NOT NULL COMMENT "Budget amount",
+PRIMARY KEY (budgetid),
+CONSTRAINT fk_vehicles_budgets FOREIGN KEY(vehicleid) REFERENCES vehicles(vehicleid)
+)COMMENT = "Vehicles registration";
+
+--2024-10-07 17:14 - Brazil - Mateus Lima - Insert into budgets table.
+INSERT INTO budgets(budgetid, vehicleid, openingdate, km, bstatus, amount)
+VALUES(1, 1, '2024-10-07', 1000, 00, 0);
+
+INSERT INTO budgets(budgetid, vehicleid, openingdate, km, bstatus, amount)
+VALUES(2, 1, '2024-10-06', 1000, 00, 0);

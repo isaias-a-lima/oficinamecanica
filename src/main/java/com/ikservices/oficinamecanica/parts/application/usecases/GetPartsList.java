@@ -12,7 +12,7 @@ public class GetPartsList {
 		this.repository = repository;
 	}
 	
-	public List<Part> execute(Long workshopId) {
-		return this.repository.getPartsList(workshopId);
+	public List<Part> execute(Long workshopId, String search) {
+		return this.repository.getPartsList(workshopId, search);
 	}
 }
