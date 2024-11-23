@@ -4,8 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.users.application.UserException;
-import com.ikservices.oficinamecanica.users.infra.constants.UserConstants;
 import com.ikservices.oficinamecanica.users.infra.persistence.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +54,6 @@ public class TokenService {
     }
 
     private Instant dateExpiration() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of(Objects.requireNonNull(environment.getProperty(UserConstants.TIME_ZONE))));
+        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of(Constants.getTIME_ZONE()));
     }
 }

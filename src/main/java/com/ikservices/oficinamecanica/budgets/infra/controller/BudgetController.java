@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
+import com.ikservices.oficinamecanica.budgets.application.BudgetBusinessConstant;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
+import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -37,9 +39,7 @@ import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
-import com.ikservices.oficinamecanica.commons.response.IKRes;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
-import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
 
 
 @RestController
@@ -72,27 +72,26 @@ public class BudgetController {
 	}
 	
 	@GetMapping("list/{vehicleId}")
-	public ResponseEntity<IKRes<BudgetDTO>> listBudgets(@PathVariable Long vehicleId) {
+	public ResponseEntity<IKResponse<BudgetDTO>> listBudgets(@PathVariable Long vehicleId) {
 		try {
 			List<BudgetDTO> budgetDTOList = converter.parseBudgetDTOList(listBudgets.execute(vehicleId), vehicleId);
 
-			return ResponseEntity.ok(IKRes.<BudgetDTO>build().body(budgetDTOList));
+			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(budgetDTOList));
 
 		} catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(ike.getCode()).body(
-					IKRes.<BudgetDTO>build().addMessage(ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<BudgetDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		} catch (Exception e) {
-			String messageError = "VehicleId: " + vehicleId + " - " + e.getMessage();
-			LOGGER.error(messageError, e);
+			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-					IKRes.<BudgetDTO>build().addMessage(environment.getProperty(BudgetConstant.LIST_ERROR_MESSAGE))
+					IKResponse.<BudgetDTO>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetConstant.LIST_ERROR_MESSAGE))
 			);
 		}
 	}
 	
 	@GetMapping("get/{budgetId}")
-	public ResponseEntity<IKRes<BudgetDTO>> getBudget(@PathVariable Long budgetId) {
+	public ResponseEntity<IKResponse<BudgetDTO>> getBudget(@PathVariable Long budgetId) {
 		try {
 			Map<Long, Map<Long, Budget>> outertMap = getBudget.execute(budgetId);
 
@@ -101,110 +100,114 @@ public class BudgetController {
 			for (Map.Entry<Long, Map<Long, Budget>> innerMapEntries : outerMapEntries) {
 				Long vehicleId = innerMapEntries.getKey();
 				Budget budget = innerMapEntries.getValue().get(budgetId);
-				return ResponseEntity.ok(IKRes.<BudgetDTO>build().body(new BudgetDTO(budget, budgetId, vehicleId)));
+				return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(new BudgetDTO(budget, budgetId, vehicleId)));
 			}
 
-			throw new IKException(
-					Integer.parseInt(Objects.requireNonNull(environment.getProperty(BudgetConstant.GET_ERROR_CODE))),
-					IKMessageType.getByCode(Integer.parseInt(Objects.requireNonNull(environment.getProperty(BudgetConstant.GET_ERROR_TYPE)))),
-					environment.getProperty(BudgetConstant.GET_ERROR_MESSAGE)
-			);
+			throw new IKException(new IKMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.WARNING.getCode(), environment.getProperty(BudgetConstant.GET_ERROR_MESSAGE)));
 
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(ike.getCode()).body(IKRes.<BudgetDTO>build().addMessage(ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<BudgetDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch (EntityNotFoundException e) {
 			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.status(Integer.parseInt(Objects.requireNonNull(environment.getProperty(BudgetConstant.GET_NOT_FOUND_CODE)))).body(
-					IKRes.<BudgetDTO>build().addMessage(environment.getProperty(BudgetConstant.GET_NOT_FOUND_MESSAGE)));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+					IKResponse.<BudgetDTO>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.WARNING, environment.getProperty(BudgetConstant.GET_NOT_FOUND_MESSAGE)));
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.status(Integer.parseInt(Objects.requireNonNull(environment.getProperty(BudgetConstant.GET_ERROR_CODE)))).body(
-					IKRes.<BudgetDTO>build().addMessage(environment.getProperty(BudgetConstant.GET_ERROR_MESSAGE)));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<BudgetDTO>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetConstant.GET_ERROR_MESSAGE)));
 		}
 	}
 	
 	@PostMapping()
-	public ResponseEntity<IKRes<BudgetDTO>> saveBudget(@RequestBody BudgetDTO budgetDTO, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<IKResponse<BudgetDTO>> saveBudget(@RequestBody BudgetDTO budgetDTO, UriComponentsBuilder uriBuilder) {
 		String budgetJSON = IKLoggerUtil.parseJSON(budgetDTO);
 		String loggerID = IKLoggerUtil.getLoggerID();
 		try {
 			Map<Long, Budget> budgetMap = saveBudget.execute(converter.parseBudget(budgetDTO), budgetDTO.vehicle.getVehicleId());
 			
-			ResponseEntity<IKRes<BudgetDTO>> responseEntity = null;
+			ResponseEntity<IKResponse<BudgetDTO>> responseEntity = null;
 			
 			for(Long budgetId : budgetMap.keySet()) {
 				URI uri = uriBuilder.path("budgets/{budgetId}").buildAndExpand(budgetId).toUri();
 				
-				responseEntity = ResponseEntity.created(uri).body(IKRes.<BudgetDTO>build().body(
+				responseEntity = ResponseEntity.created(uri).body(IKResponse.<BudgetDTO>build().body(
 						converter.parseBudgetDTO(budgetMap, budgetDTO.getVehicle().getVehicleId()))
-						.addMessage(environment.getProperty(BudgetConstant.SAVE_SUCCESS_MESSAGE)));
+						.addMessage(BudgetBusinessConstant.SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.SAVE_SUCCESS_MESSAGE)));
 			}
 			
 			return responseEntity;
 			
 		}catch(IKException ike) {
-			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
 			LOGGER.error(loggerID + " - " + budgetJSON);
 			LOGGER.error(loggerID + " - " + ike.getMessage(), ike);
-			return ResponseEntity.status(code).body(IKRes.<BudgetDTO>build().addMessage(ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<BudgetDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
 			LOGGER.error(loggerID + " - " + budgetJSON);
 			LOGGER.error(loggerID + " - " + e.getMessage(), e);
-			return ResponseEntity.status(Integer.parseInt(Objects.requireNonNull(environment.getProperty(BudgetConstant.SAVE_ERROR_CODE)))).body(
-					IKRes.<BudgetDTO>build().addMessage(environment.getProperty(BudgetConstant.SAVE_ERROR_MESSAGE)));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<BudgetDTO>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetConstant.SAVE_ERROR_MESSAGE)));
 		}
 	}
 	
 	@Transactional
 	@PutMapping
-	public ResponseEntity<IKRes<BudgetDTO>> updateBudget(@RequestBody BudgetDTO budgetDTO) {
-		
+	public ResponseEntity<IKResponse<BudgetDTO>> updateBudget(@RequestBody BudgetDTO budgetDTO) {
+		String budgetJSON = IKLoggerUtil.parseJSON(budgetDTO);
+		String loggerID = IKLoggerUtil.getLoggerID();
 		try {
 			Map<Long, Budget> budgetMap = updateBudget.execute(converter.parseBudget(budgetDTO), budgetDTO.getBudgetId());
 			
-			return ResponseEntity.ok(IKRes.<BudgetDTO>build().body(converter.parseBudgetDTO(budgetMap, null)));
+			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(converter.parseBudgetDTO(budgetMap, null))
+					.addMessage(BudgetBusinessConstant.SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.UPDATE_SUCCESS_MESSAGE)));
 		}catch(IKException ike) {
-			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(ike.getCode()).body(IKRes.<BudgetDTO>build().addMessage(ike.getMessage()));
+			LOGGER.error(loggerID + " - " + budgetJSON);
+			LOGGER.error(loggerID + " - " + ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<BudgetDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<BudgetDTO>build().addMessage(
-					environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
+			LOGGER.error(loggerID + " - " + budgetJSON);
+			LOGGER.error(loggerID + " - " + e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<BudgetDTO>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetConstant.UPDATE_ERROR_MESSAGE)));
 		}
 	}
 	
 	@Transactional
 	@PutMapping("{budgetId}/{value}")
-	public ResponseEntity<IKRes<String>> increaseAmount(@PathVariable Long budgetId, 
-			@PathVariable BigDecimal value) {
+	public ResponseEntity<IKResponse<String>> increaseAmount(@PathVariable Long budgetId, @PathVariable BigDecimal value) {
 		try {
 			increaseAmount.execute(budgetId, value);
 			
-			return ResponseEntity.ok(IKRes.<String>build().addMessage(environment.getProperty(BudgetConstant.OPERATION_SUCCESS_MESSAGE)));
+			return ResponseEntity.ok(IKResponse.<String>build()
+					.addMessage(BudgetBusinessConstant.SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.OPERATION_SUCCESS_MESSAGE)));
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(ike.getCode()).body(IKRes.<String>build().addMessage(ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<String>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<String>build().
-					addMessage(environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<String>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
 		}
 	}
 	
 	@Transactional
 	@PutMapping("changeStatus/{budgetId}/{budgetStatus}")
-	public ResponseEntity<IKRes<String>> changeStatus(@PathVariable Long budgetId, @PathVariable int budgetStatus) {
+	public ResponseEntity<IKResponse<String>> changeStatus(@PathVariable Long budgetId, @PathVariable int budgetStatus) {
 		try {
 			changeStatus.execute(budgetId, BudgetStatusEnum.findByIndex(budgetStatus));
-			return ResponseEntity.ok(IKRes.<String>build().addMessage(environment.getProperty(BudgetConstant.OPERATION_SUCCESS_MESSAGE)));		
+			return ResponseEntity.ok(IKResponse.<String>build().addMessage(BudgetBusinessConstant.SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.OPERATION_SUCCESS_MESSAGE)));
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(ike.getCode()).body(IKRes.<String>build().addMessage(ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<String>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<String>build().
-					addMessage(environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<String>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
 		}
 	}
 }

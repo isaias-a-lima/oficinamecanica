@@ -3,20 +3,18 @@ package com.ikservices.oficinamecanica.commons.response;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 public class IKResponse<T> implements Serializable {
 
     private T obj;
     private List<T> objList;
-    private final Map<IKMessageType, String> messages;
-    private String message;
+    private final List<IKMessage> messages;
 
     private IKResponse() {
-        this.messages = new HashMap<>();
+        this.messages = new ArrayList<>();
     }
 
     public static <T> IKResponse<T> build() {
@@ -33,14 +31,8 @@ public class IKResponse<T> implements Serializable {
         return this;
     }
 
-    public IKResponse<T> addMessage(IKMessageType type, String message) {
-        this.messages.entrySet().removeIf(entry -> entry.getKey() == null);
-        this.messages.put(type, message);
-        return this;
-    }
-
-    public IKResponse<T> addMessage(String message) {
-        this.message = message;
+    public IKResponse<T> addMessage(String code, IKMessageType type, String message) {
+        this.messages.add(new IKMessage(code, type.getCode(), message));
         return this;
     }
 }

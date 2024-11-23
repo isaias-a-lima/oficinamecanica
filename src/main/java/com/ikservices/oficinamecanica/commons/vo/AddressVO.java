@@ -1,12 +1,13 @@
 package com.ikservices.oficinamecanica.commons.vo;
 
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
 
 import java.util.Objects;
 
@@ -18,7 +19,7 @@ public class AddressVO {
     @Setter
     private String street;
     @Setter
-    private Integer number;
+    private java.lang.Integer number;
     @Setter
     private String complement;
     @Setter
@@ -33,7 +34,7 @@ public class AddressVO {
     public void setPostalCode(String code) {
 
         if (Objects.nonNull(code) && !code.isEmpty() && code.length() < 8) {
-            throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.WARNING, "Invalid postal code.");
+            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), Constants.getADDRESS_VO_INVALID_POSTAL_CODE_MESSAGE()));
         }
         this.postalCode = Objects.nonNull(code) ? code.replaceAll("[^0-9]", "") : null;
     }
@@ -46,7 +47,7 @@ public class AddressVO {
         }
 
         if (postalCode.length() < 8) {
-            throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.WARNING, "Invalid postal code.");
+            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), Constants.getADDRESS_VO_INVALID_POSTAL_CODE_MESSAGE()));
         }
 
         codeAux = postalCode.replaceAll("[^0-9]", "");
@@ -61,7 +62,7 @@ public class AddressVO {
 
     public String getPartialAddress() {
         if (Objects.isNull(street) || street.isEmpty()) {
-            throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.WARNING, "Invalid street.");
+            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), Constants.getADDRESS_VO_INVALID_STREET_MESSAGE()));
         }
 
         String addressAux = street;

@@ -1,11 +1,12 @@
 package com.ikservices.oficinamecanica.commons.vo;
 
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
 
 import java.util.Objects;
 
@@ -73,6 +74,6 @@ public class PhoneVO {
                 return new PhoneVO(countryCode, stateCode, phoneNumber);
             }
         }
-        throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.WARNING, "O número de telefone deve ter o seguinte formato: +XX XX XXXX-XXXX");
+        throw new IKException( new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), Constants.getPHONE_VO_ERROR_MESSAGE()));
     }
 }

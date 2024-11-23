@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.springframework.http.HttpStatus;
+import com.ikservices.oficinamecanica.commons.constants.Constants;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
+import com.ikservices.oficinamecanica.services.infra.constants.ServiceConstant;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
@@ -31,7 +33,7 @@ public class ServiceRepositoryImpl implements ServiceRepository{
 	public Service saveService(Service service) {
 		Optional<ServiceEntity> optional = repository.findById(new ServiceEntityId(service.getId().getId(), service.getId().getWorkshopId()));
 		if(optional.isPresent()) {
-			throw new IKException(HttpStatus.FOUND.value(), IKMessageType.WARNING, "Serviço já cadastrado.");
+			throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), ServiceConstant.SAVE_ALREADY_RECORDED_MESSAGE));
 		}
 		ServiceEntity savedEntity = repository.save(converter.parseEntity(service));
 		return converter.parseService(savedEntity);
