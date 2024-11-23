@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import com.ikservices.oficinamecanica.commons.response.IKRes;
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
@@ -70,18 +69,17 @@ public class VehicleController {
 	public ResponseEntity<IKResponse<VehicleResponse>> listVehicles(@PathVariable Long workshopId, 
 			@PathVariable String customerId) {
 		try {
-			List<VehicleResponse> vehicleList = converter.
-					parseResponseList(listVehicles.execute(new IdentificationDocumentVO(customerId), workshopId));
+			List<VehicleResponse> vehicleList = converter.parseResponseList(listVehicles.execute(new IdentificationDocumentVO(customerId), workshopId));
 			
 			return ResponseEntity.ok(IKResponse.<VehicleResponse>build().body(vehicleList));			
 		} catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(ike.getCode()).body(
-					IKResponse.<VehicleResponse>build().addMessage(ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<VehicleResponse>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		} catch(Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-					IKResponse.<VehicleResponse>build().addMessage(environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+					IKResponse.<VehicleResponse>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(VehicleConstant.LIST_ERROR_MESSAGE)));
 		}
 	}
 	
@@ -95,85 +93,89 @@ public class VehicleController {
 				break;
 			}
 			if (Objects.isNull(response)) {
-				throw new IKException(HttpStatus.BAD_GATEWAY.value(), IKMessageType.WARNING, environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE));
+				throw new EntityNotFoundException(VehicleConstant.NOT_FOUND_MESSAGE);
 			}
 			return ResponseEntity.ok(IKResponse.<VehicleDTO>build().body(response));
 		} catch (IKException e) {
 			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.status(e.getCode()).body(IKResponse.<VehicleDTO>build().addMessage(e.getIKMessageType(), e.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<VehicleDTO>build().addMessage(e.getIkMessage().getCode(), IKMessageType.getByCode(e.getIkMessage().getType()), e.getIkMessage().getMessage()));
 		} catch (EntityNotFoundException e) {
 			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(IKResponse.<VehicleDTO>build().addMessage(IKMessageType.WARNING, 
-					environment.getProperty(VehicleConstant.NOT_FOUND_MESSAGE)));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+					IKResponse.<VehicleDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING, environment.getProperty(VehicleConstant.NOT_FOUND_MESSAGE)));
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<VehicleDTO>build().addMessage(IKMessageType.WARNING, environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<VehicleDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING, environment.getProperty(VehicleConstant.GET_ERROR_MESSAGE)));
 		}
 	}
 	
 	@PostMapping()
-	public ResponseEntity<IKRes<VehicleResponse>> saveVehicle(@RequestBody VehicleDTO vehicleDTO, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<IKResponse<VehicleResponse>> saveVehicle(@RequestBody VehicleDTO vehicleDTO, UriComponentsBuilder uriBuilder) {
 
 		try {
 			Map<Long, Vehicle> vehicleMap = saveVehicle.execute(converter.parseVehicle(vehicleDTO));
 			VehicleResponse response = null;
-			ResponseEntity<IKRes<VehicleResponse>> responseEntity = null;
+			ResponseEntity<IKResponse<VehicleResponse>> responseEntity = null;
 
 			for (Long vehicleId : vehicleMap.keySet()) {
 				response = new VehicleResponse(vehicleMap.get(vehicleId), vehicleId);
 
 				URI uri = uriBuilder.path("vehicles/{vehicleId}").buildAndExpand(vehicleId).toUri();
 
-				responseEntity = ResponseEntity.created(uri).body(IKRes.<VehicleResponse>build().
-						body(new VehicleResponse(vehicleMap.get(vehicleId), vehicleId)).addMessage(environment.getProperty(VehicleConstant.SAVE_SUCCESS_MESSAGE)));
+				responseEntity = ResponseEntity.created(uri).body(IKResponse.<VehicleResponse>build().body(new VehicleResponse(vehicleMap.get(vehicleId), vehicleId))
+						.addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(VehicleConstant.SAVE_SUCCESS_MESSAGE)));
 			}
 
 			return responseEntity;
 
 		}catch(IKException ike) {
-			LOGGER.error(environment.getProperty(VehicleConstant.OPERATION_ERROR_MESSAGE), ike);
-			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
-			return ResponseEntity.status(code).body(IKRes.<VehicleResponse>build().addMessage(ike.getMessage()));
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<VehicleResponse>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		} catch (Exception e) {
-            LOGGER.error(environment.getProperty(VehicleConstant.OPERATION_ERROR_MESSAGE), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<VehicleResponse>build().addMessage(environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+            LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<VehicleResponse>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(VehicleConstant.SAVE_ERROR_MESSAGE)));
 		}
 	}
 	
 	@Transactional
 	@DeleteMapping("{vehicleId}")
-	public ResponseEntity<IKRes<VehicleResponse>> deleteVehicle(@PathVariable
-			Long vehicleId) {
+	public ResponseEntity<IKResponse<VehicleResponse>> deleteVehicle(@PathVariable Long vehicleId) {
 		
 		try {
 			deleteVehicle.execute(vehicleId);
-			return ResponseEntity.status(HttpStatus.OK).
-					body(IKRes.<VehicleResponse>build().addMessage(environment.getProperty(VehicleConstant.DELETE_SUCCESS_MESSAGE)));
+			return ResponseEntity.status(HttpStatus.OK).body(IKResponse.<VehicleResponse>build().addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(VehicleConstant.DELETE_SUCCESS_MESSAGE)));
 		} catch(IKException ike) {
-			LOGGER.error(environment.getProperty(VehicleConstant.OPERATION_ERROR_MESSAGE), ike);
-			return ResponseEntity.status(ike.getCode()).
-					body(IKRes.<VehicleResponse>build().addMessage(ike.getMessage()));
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(IKResponse.<VehicleResponse>build()
+					.addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		} catch(Exception e) {
-			LOGGER.error(environment.getProperty(VehicleConstant.OPERATION_ERROR_MESSAGE), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<VehicleResponse>build().addMessage(environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<VehicleResponse>build()
+					.addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(VehicleConstant.DELETE_ERROR_MESSAGE)));
 		}
 	}
 	
 	@Transactional
 	@PutMapping()
-	public ResponseEntity<IKRes<VehicleResponse>> updateVehicle(@RequestBody VehicleDTO vehicleDTO) {
+	public ResponseEntity<IKResponse<VehicleResponse>> updateVehicle(@RequestBody VehicleDTO vehicleDTO) {
 		
 		try {
 			Map<Long, Vehicle> vehicleMap = updateVehicle.execute(vehicleDTO.getVehicleId(), converter.parseVehicle(vehicleDTO));
-			return ResponseEntity.ok(IKRes.<VehicleResponse>build().
-					body(new VehicleResponse(vehicleMap.get(vehicleDTO.getVehicleId()), vehicleDTO.getVehicleId())).addMessage(environment.getProperty(VehicleConstant.UPDATE_SUCCESS_MESSAGE)));
+			return ResponseEntity.ok(IKResponse.<VehicleResponse>build().
+					body(new VehicleResponse(vehicleMap.get(vehicleDTO.getVehicleId()), vehicleDTO.getVehicleId()))
+					.addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(VehicleConstant.UPDATE_SUCCESS_MESSAGE)));
 		} catch(IKException ike) {
-			LOGGER.error(environment.getProperty(VehicleConstant.OPERATION_ERROR_MESSAGE), ike);
-			return ResponseEntity.status(ike.getCode()).
-					body(IKRes.<VehicleResponse>build().addMessage(ike.getMessage()));	
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(IKResponse.<VehicleResponse>build()
+					.addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		} catch(Exception e) {
-			LOGGER.error(environment.getProperty(VehicleConstant.OPERATION_ERROR_MESSAGE), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<VehicleResponse>build().addMessage(environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<VehicleResponse>build()
+					.addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(VehicleConstant.UPDATE_ERROR_MESSAGE)));
 		}
 	}
 }

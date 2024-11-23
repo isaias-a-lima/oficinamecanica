@@ -1,30 +1,31 @@
 package com.ikservices.oficinamecanica.commons.vo;
 
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 import java.util.Objects;
 
 @Getter
 public class IdentificationDocumentVO {
 
-    private TaxPayerEnum taxPayerEnum;
+    private final TaxPayerEnum taxPayerEnum;
 
-    private String document;
+    private final String document;
 
     public IdentificationDocumentVO(TaxPayerEnum taxPayerEnum, String document) {
         if (Objects.isNull(taxPayerEnum) || Objects.isNull(document)) {
-            throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.ERROR, "Null object.");
+            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR.getCode(), Constants.getNULL_PARAM_MESSAGE()));
         }
 
         document = document.replaceAll("\\D", "");
 
         if (TaxPayerEnum.COMPANY_PERSON.equals(taxPayerEnum) && document.length() != 14 ||
                 TaxPayerEnum.PHYSICAL_PERSON.equals(taxPayerEnum) && document.length() != 11) {
-            throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.ERROR, "Documento inválido.");
+            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR.getCode(), Constants.getIDENTIFICATION_DOCUMENT_VO_INVALID_MESSAGE()));
         }
         this.taxPayerEnum = taxPayerEnum;
         this.document = document;
@@ -43,10 +44,10 @@ public class IdentificationDocumentVO {
                     this.document = document;
                     break;
                 default:
-                    throw new IKException(HttpStatus.BAD_REQUEST.value(), IKMessageType.ERROR, "Documento inválido.");
+                    throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR.getCode(), Constants.getIDENTIFICATION_DOCUMENT_VO_INVALID_MESSAGE()));
             }
         } else {
-            throw new IKException(HttpStatus.INTERNAL_SERVER_ERROR.value(), IKMessageType.ERROR, "Null object.");
+            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR.getCode(), Constants.getNULL_PARAM_MESSAGE()));
         }
     }
 

@@ -14,11 +14,7 @@ public class RemoverUsuario {
         this.properties = properties;
     }
 
-    public String execute(Long cpf) throws UserException {
-        boolean isRemoved = repository.removeUser(cpf);
-        if (isRemoved) {
-            return properties.getSuccessUserRemoved();
-        }
-        return properties.getErrorFailureInOperation();
+    public Boolean execute(Long cpf) throws UserException {
+        return repository.removeUser(cpf);
     }
 }

@@ -2,12 +2,11 @@ package com.ikservices.oficinamecanica.suppliers.infra.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 
 import javax.transaction.Transactional;
 
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
-import com.ikservices.oficinamecanica.commons.response.IKRes;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.suppliers.infra.constants.SupplierConstants;
 import org.slf4j.Logger;
@@ -20,7 +19,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
-import com.ikservices.oficinamecanica.parts.infra.controller.PartDTO;
 import com.ikservices.oficinamecanica.suppliers.application.usecases.GetNextSupplierId;
 import com.ikservices.oficinamecanica.suppliers.application.usecases.GetSupplier;
 import com.ikservices.oficinamecanica.suppliers.application.usecases.GetSupplierList;
@@ -56,19 +54,21 @@ public class SupplierController {
 	}
 	
 	@GetMapping("/{workshopId}")
-	public ResponseEntity<IKRes<SupplierDTO>> getSupplierList(@PathVariable("workshopId") Long workshopId, @RequestParam(name = "search") String search) {
+	public ResponseEntity<IKResponse<SupplierDTO>> getSupplierList(@PathVariable("workshopId") Long workshopId, @RequestParam(name = "search") String search) {
 		try {
 			List<SupplierDTO> supplierList = converter.parseDTOList(getSupplierList.execute(workshopId, search));
 
-			return ResponseEntity.ok(IKRes.<SupplierDTO>build().body(supplierList));
+			return ResponseEntity.ok(IKResponse.<SupplierDTO>build().body(supplierList));
 
 		} catch (IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(ike.getCode()).body(IKRes.<SupplierDTO>build().addMessage(ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<SupplierDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKRes.<SupplierDTO>build().addMessage(environment.getProperty(SupplierConstants.SUPPLIER_SERVER_ERROR_MESSAGE)));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<SupplierDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(SupplierConstants.SUPPLIER_LIST_ERROR_MESSAGE)));
 		}
 	}
 	
@@ -79,11 +79,12 @@ public class SupplierController {
 			return ResponseEntity.ok(IKResponse.<SupplierDTO>build().body(converter.parseDTO(supplier)));
 		} catch (IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(ike.getCode()).body(IKResponse.<SupplierDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<SupplierDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-					IKResponse.<SupplierDTO>build().addMessage(IKMessageType.ERROR, environment.getProperty(SupplierConstants.SUPPLIER_SERVER_ERROR_MESSAGE))
+					IKResponse.<SupplierDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(SupplierConstants.SUPPLIER_GET_ERROR_MESSAGE))
 			);
 		}
 	}
@@ -93,18 +94,16 @@ public class SupplierController {
 	public ResponseEntity<IKResponse<SupplierDTO>> updateSupplier(@RequestBody SupplierDTO dto) {
         try {
             Supplier supplier = updateSupplier.execute(converter.parseSupplier(dto));
-            return ResponseEntity.ok(
-                    IKResponse.<SupplierDTO>build().body(
-                            converter.parseDTO(supplier)).addMessage(IKMessageType.SUCCESS, environment.getProperty(SupplierConstants.SUPPLIER_UPDATE_SUCCESS_MESSAGE)));
+            return ResponseEntity.ok(IKResponse.<SupplierDTO>build().body(converter.parseDTO(supplier))
+					.addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(SupplierConstants.SUPPLIER_UPDATE_SUCCESS_MESSAGE)));
         } catch (IKException ike) {
             LOGGER.error(ike.getMessage(), ike);
-            return ResponseEntity.status(ike.getCode()).body(
-                    IKResponse.<SupplierDTO>build().addMessage(IKMessageType.WARNING, ike.getMessage())
-            );
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+                    IKResponse.<SupplierDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    IKResponse.<SupplierDTO>build().addMessage(IKMessageType.ERROR, environment.getProperty(SupplierConstants.SUPPLIER_SERVER_ERROR_MESSAGE)));
+                    IKResponse.<SupplierDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(SupplierConstants.SUPPLIER_UPDATE_ERROR_MESSAGE)));
         }
     }
 	
@@ -120,14 +119,15 @@ public class SupplierController {
 					buildAndExpand(supplier.getSupplierId().getWorkshopid(),
 							supplier.getSupplierId().getId()).toUri();
 			return ResponseEntity.created(uri).body(IKResponse.<SupplierDTO>build().body(converter.parseDTO(supplier))
-                    .addMessage(IKMessageType.SUCCESS, environment.getProperty(SupplierConstants.SUPPLIER_SAVE_SUCCESS_MESSAGE)));
+                    .addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(SupplierConstants.SUPPLIER_SAVE_SUCCESS_MESSAGE)));
 		}catch(IKException ike) {
             LOGGER.error(ike.getMessage(), ike);
-			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
-			return ResponseEntity.status(code).body(IKResponse.<SupplierDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(IKResponse.<SupplierDTO>build()
+					.addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		} catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<SupplierDTO>build().addMessage(environment.getProperty(SupplierConstants.SUPPLIER_SERVER_ERROR_MESSAGE)));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<SupplierDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(SupplierConstants.SUPPLIER_SAVE_ERROR_MESSAGE)));
         }
 	}
 }

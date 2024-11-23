@@ -2,12 +2,11 @@ package com.ikservices.oficinamecanica.services.infra.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 
-import javax.persistence.Convert;
-import javax.persistence.Converter;
 import javax.transaction.Transactional;
 
+import com.ikservices.oficinamecanica.commons.constants.Constants;
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
-import com.ikservices.oficinamecanica.commons.response.IKRes;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.services.application.usecases.GetNextServiceId;
@@ -29,9 +27,6 @@ import com.ikservices.oficinamecanica.services.domain.Service;
 import com.ikservices.oficinamecanica.services.domain.ServiceId;
 import com.ikservices.oficinamecanica.services.infra.ServiceConverter;
 import com.ikservices.oficinamecanica.services.infra.constants.ServiceConstant;
-import com.ikservices.oficinamecanica.vehicles.infra.constants.VehicleConstant;
-import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
-import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleResponse;
 
 @RestController
 @RequestMapping("/services")
@@ -66,10 +61,12 @@ public class ServiceController {
 			return ResponseEntity.ok(IKResponse.<ServiceDTO>build().body(new ServiceDTO(service)));	
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(ike.getCode()).body(IKResponse.<ServiceDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<ServiceDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
-			LOGGER.error(environment.getProperty(ServiceConstant.OPERATION_ERROR_MESSAGE));
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<ServiceDTO>build().addMessage(environment.getProperty(ServiceConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<ServiceDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(ServiceConstant.GET_ERROR_MESSAGE)));
 		}
 	}
 	
@@ -79,11 +76,13 @@ public class ServiceController {
 			List<ServiceDTO> serviceList = converter.parseServiceDTOList(listServices.execute(workshopId, search));
 			return ResponseEntity.ok(IKResponse.<ServiceDTO>build().body(serviceList));
 		} catch (IKException ike) {
-			LOGGER.error(environment.getProperty(ServiceConstant.OPERATION_ERROR_MESSAGE));
-			return ResponseEntity.status(ike.getCode()).body(IKResponse.<ServiceDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<ServiceDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		} catch (Exception e) {
-			LOGGER.error(environment.getProperty(ServiceConstant.OPERATION_ERROR_MESSAGE));
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<ServiceDTO>build().addMessage(environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<ServiceDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(ServiceConstant.LIST_ERROR_MESSAGE)));
 		}
 	}
 	
@@ -97,14 +96,16 @@ public class ServiceController {
 			
 			URI uri = uriBuilder.path("/services/{workshopId}/{id}").buildAndExpand(savedService.getId().getWorkshopId(),
 					savedService.getId().getId()).toUri();
-			return ResponseEntity.created(uri).body(IKResponse.<ServiceDTO>build().body(new ServiceDTO(savedService)));
+			return ResponseEntity.created(uri).body(IKResponse.<ServiceDTO>build().body(new ServiceDTO(savedService))
+					.addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(ServiceConstant.SAVE_SUCCESS_MESSAGE)));
 		} catch(IKException ike) {
-			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
-			LOGGER.error(environment.getProperty(ServiceConstant.OPERATION_ERROR_MESSAGE));
-			return ResponseEntity.status(code).body(IKResponse.<ServiceDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<ServiceDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
-			LOGGER.error(environment.getProperty(ServiceConstant.OPERATION_ERROR_MESSAGE));
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<ServiceDTO>build().addMessage(environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<ServiceDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(ServiceConstant.SAVE_ERROR_MESSAGE)));
 		}
 	}
 	
@@ -113,14 +114,16 @@ public class ServiceController {
 	public ResponseEntity<IKResponse<ServiceDTO>> updateService(@RequestBody ServiceDTO serviceDTO){
 		try {
 			Service service = updateService.execute(converter.parseService(serviceDTO));
-			return ResponseEntity.ok(IKResponse.<ServiceDTO>build().body(new ServiceDTO(service)));			
+			return ResponseEntity.ok(IKResponse.<ServiceDTO>build().body(new ServiceDTO(service))
+					.addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(ServiceConstant.UPDATE_SUCCESS_MESSAGE)));
 		}catch(IKException ike) {
-			int code = Objects.nonNull(ike.getCode()) ? ike.getCode() : 500;
-			LOGGER.error(environment.getProperty(ServiceConstant.OPERATION_ERROR_MESSAGE));
-			return ResponseEntity.status(code).body(IKResponse.<ServiceDTO>build().addMessage(ike.getIKMessageType(), ike.getMessage()));
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<ServiceDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
-			LOGGER.error(environment.getProperty(ServiceConstant.OPERATION_ERROR_MESSAGE));
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<ServiceDTO>build().addMessage(environment.getProperty(VehicleConstant.DEFAULT_SERVER_ERROR_MESSAGE)));
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<ServiceDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(ServiceConstant.UPDATE_ERROR_MESSAGE)));
 		}
 	}
 }

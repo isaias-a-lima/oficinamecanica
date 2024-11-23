@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.ikservices.oficinamecanica.commons.constants.Constants;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
-import org.hibernate.service.spi.ServiceException;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.services.domain.Service;
@@ -15,7 +16,6 @@ import com.ikservices.oficinamecanica.services.infra.controller.ServiceDTO;
 import com.ikservices.oficinamecanica.services.infra.persistence.ServiceEntity;
 import com.ikservices.oficinamecanica.services.infra.persistence.ServiceEntityId;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConverter;
-import org.springframework.http.HttpStatus;
 
 public class ServiceConverter {
 	
@@ -27,7 +27,7 @@ public class ServiceConverter {
 	
 	public Service parseService(ServiceEntity entity) {
 		if(Objects.isNull(entity)) {
-			throw new IKException(HttpStatus.BAD_GATEWAY.value(), IKMessageType.WARNING, "Nenhum serviço.");
+			throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), Constants.getNULL_PARAM_MESSAGE()));
 		}
 		
 		Service service = new Service();
@@ -42,7 +42,7 @@ public class ServiceConverter {
 	
 	public ServiceEntity parseEntity(Service service) {
 		if(Objects.isNull(service)) {
-			throw new IKException(HttpStatus.BAD_GATEWAY.value(), IKMessageType.WARNING, "Nenhum serviço.");
+			throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), Constants.getNULL_PARAM_MESSAGE()));
 		}
 		
 		ServiceEntity entity = new ServiceEntity();
@@ -60,7 +60,7 @@ public class ServiceConverter {
 	
 	public ServiceDTO parseDTO(Service service) {
 		if(Objects.isNull(service)) {
-			throw new IKException(HttpStatus.BAD_GATEWAY.value(), IKMessageType.WARNING, "Nenhum serviço.");
+			throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), Constants.getNULL_PARAM_MESSAGE()));
 		}
 		
 		ServiceDTO dto = new ServiceDTO();
@@ -108,7 +108,7 @@ public class ServiceConverter {
 
 	public Service parseService(ServiceDTO serviceDTO) {
 		if(Objects.isNull(serviceDTO)) {
-			throw new IKException(HttpStatus.BAD_GATEWAY.value(), IKMessageType.WARNING, "Nenhum serviço.");
+			throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), Constants.getNULL_PARAM_MESSAGE()));
 		}
 		
 		Service service = new Service();

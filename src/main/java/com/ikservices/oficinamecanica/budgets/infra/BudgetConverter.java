@@ -1,24 +1,19 @@
 package com.ikservices.oficinamecanica.budgets.infra;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-
-import org.springframework.stereotype.Component;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetDTO;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
-import com.ikservices.oficinamecanica.customers.infra.controller.CustomerDTO;
 import com.ikservices.oficinamecanica.vehicles.infra.VehicleConverter;
 import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
+import org.springframework.stereotype.Component;
+
+
 
 @Component
 public class BudgetConverter {
@@ -53,7 +48,7 @@ public class BudgetConverter {
 		entity.setBudgetStatus(budget.getBudgetStatus());
 		entity.setKm(budget.getKm());
 		entity.setOpeningDate(budget.getOpeningDate());
-		entity.setVehicleEntity(Objects.nonNull(budget.getVehicle()) ? vehicleConverter.parseEntity(budget.getVehicle()) : null);
+		entity.setVehicleEntity(Objects.nonNull(budget.getVehicle()) ? vehicleConverter.parseEntity(budget.getVehicle(), null) : null);
 		
 		return entity;
 	}
