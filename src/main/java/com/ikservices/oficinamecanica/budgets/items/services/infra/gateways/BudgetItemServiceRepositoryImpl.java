@@ -1,12 +1,14 @@
 package com.ikservices.oficinamecanica.budgets.items.services.infra.gateways;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.budgets.items.services.application.gateways.BudgetItemServiceRepository;
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemService;
+import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemServiceId;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.BudgetItemServiceConverter;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntity;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntityId;
@@ -15,39 +17,44 @@ import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.B
 public class BudgetItemServiceRepositoryImpl implements BudgetItemServiceRepository {
 	
 	private BudgetItemServiceConverter converter;
-	private BudgetItemServiceRepositoryJPA budgetItemRepositoryJPA;
+	private BudgetItemServiceRepositoryJPA repositoryJPA;
 	
-	public BudgetItemServiceRepositoryImpl(BudgetItemServiceConverter converter, BudgetItemServiceRepositoryJPA repositoryJPA) {
+	public BudgetItemServiceRepositoryImpl(BudgetItemServiceConverter converter, 
+			BudgetItemServiceRepositoryJPA repositoryJPA) {
 		this.converter = converter;
-		this.budgetItemRepositoryJPA = budgetItemRepositoryJPA;
+		this.repositoryJPA = repositoryJPA;
 	}
 	
 	@Override
 	public List<BudgetItemService> listBudgetItemServices(Long budgetId) {
 		BudgetEntity budgetEntity = new BudgetEntity();
 		budgetEntity.setBudgetId(budgetId);
-		return converter.parseDomainList(budgetItemRepositoryJPA.findAllByBudgetEntity(budgetEntity));
+		return converter.parseDomainList(repositoryJPA.findAllByBudgetEntity(budgetEntity));
 	}
 
 	@Override
-	public BudgetItemService getBudgetItemService(BudgetItemServiceEntityId itemId) {
-		BudgetItemServiceEntity itemEntity = budgetItemRepositoryJPA.getById(itemId);
-		
-		BudgetItemService item = converter.parseDomain(itemEntity);
-		
-		return item;
+	public BudgetItemService getBudgetItemService(BudgetItemServiceId itemId) {
+		if(Objects.nonNull(itemId)) {
+			BudgetItemServiceEntity itemEntity = repositoryJPA.getById(new BudgetItemServiceEntityId(
+					itemId.getId(), itemId.getBudgetId()));			
+			
+			BudgetItemService item = converter.parseDomain(itemEntity);
+			
+			return item;
+		}
+		return null;
 	}
 
 	@Override
 	public BudgetItemService saveBudgetItemService(BudgetItemService item) {
-		BudgetItemServiceEntity savedEntity = budgetItemRepositoryJPA.save(converter.parseEntity(item));
+		BudgetItemServiceEntity savedEntity = repositoryJPA.save(converter.parseEntity(item));
 
 		return converter.parseDomain(savedEntity);
 	}
 
 	@Override
 	public BudgetItemService updateBudgetItemService(BudgetItemService item) {
-		 Optional<BudgetItemServiceEntity> optional = budgetItemRepositoryJPA.findById(
+		 Optional<BudgetItemServiceEntity> optional = repositoryJPA.findById(
 				new BudgetItemServiceEntityId(item.getItemId().getId(), item.getItemId().getBudgetId()));
 		
 		 BudgetItemServiceEntity entity = optional.orElse(null);
@@ -58,8 +65,7 @@ public class BudgetItemServiceRepositoryImpl implements BudgetItemServiceReposit
 	}
 
 	@Override
-	public void deleteBudgetItemService(BudgetItemServiceEntityId itemId) {
-		// TODO Auto-generated method stub
-		
+	public void deleteBudgetItemService(BudgetItemServiceId itemId) {
+		repositoryJPA.deleteById(new BudgetItemServiceEntityId(itemId.getId(), itemId.getBudgetId()));
 	}	
 }

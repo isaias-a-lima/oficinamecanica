@@ -245,3 +245,7 @@ PRIMARY KEY (serviceitemid, budgetId),
 CONSTRAINT fk_budgets_budg_item_serv FOREIGN KEY (budgetid) REFERENCES budgets(budgetid),
 CONSTRAINT fk_services_budg_item_serv FOREIGN KEY (serviceid) REFERENCES services(serviceid)
 )COMMENT = "BUDG_ITEM_SERV";
+
+--2024-25-11 17:18 - Brazil - Mateus Lima - Insert into budget-item-services table.
+INSERT INTO BUDG_ITEM_SERV(serviceitemid, budgetid, serviceid, quantity, cost, discount)
+VALUES(1, 2, 3, 1, 90, 10);

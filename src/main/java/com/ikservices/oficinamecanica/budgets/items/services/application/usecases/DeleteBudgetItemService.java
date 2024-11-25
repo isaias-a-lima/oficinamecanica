@@ -1,7 +1,7 @@
 package com.ikservices.oficinamecanica.budgets.items.services.application.usecases;
 
 import com.ikservices.oficinamecanica.budgets.items.services.application.gateways.BudgetItemServiceRepository;
-import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntityId;
+import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemServiceId;
 
 public class DeleteBudgetItemService {
 	private final BudgetItemServiceRepository repository;
@@ -10,7 +10,7 @@ public class DeleteBudgetItemService {
 		this.repository = repository;
 	}
 	
-	public void execute(BudgetItemServiceEntityId itemId) {
+	public void execute(BudgetItemServiceId itemId) {
 		this.repository.deleteBudgetItemService(itemId);
 	}
 }

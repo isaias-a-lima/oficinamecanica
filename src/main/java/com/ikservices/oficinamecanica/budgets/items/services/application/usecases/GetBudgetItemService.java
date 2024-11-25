@@ -2,7 +2,7 @@ package com.ikservices.oficinamecanica.budgets.items.services.application.usecas
 
 import com.ikservices.oficinamecanica.budgets.items.services.application.gateways.BudgetItemServiceRepository;
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemService;
-import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntityId;
+import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemServiceId;
 
 public class GetBudgetItemService {
 	private final BudgetItemServiceRepository repository;
@@ -11,7 +11,7 @@ public class GetBudgetItemService {
 		this.repository = repository;
 	}
 	
-	public BudgetItemService execute(BudgetItemServiceEntityId itemId) {
+	public BudgetItemService execute(BudgetItemServiceId itemId) {
 		return repository.getBudgetItemService(itemId);
 	}
 }
