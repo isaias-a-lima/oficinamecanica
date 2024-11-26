@@ -12,4 +12,5 @@ public interface BudgetItemServiceRepository {
 	BudgetItemService saveBudgetItemService(BudgetItemService item);
 	BudgetItemService updateBudgetItemService(BudgetItemService item);
 	public void deleteBudgetItemService(BudgetItemServiceId itemId);
+	public Long getNextItemId(Long budgetId);
 }

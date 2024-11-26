@@ -67,5 +67,10 @@ public class BudgetItemServiceRepositoryImpl implements BudgetItemServiceReposit
 	@Override
 	public void deleteBudgetItemService(BudgetItemServiceId itemId) {
 		repositoryJPA.deleteById(new BudgetItemServiceEntityId(itemId.getId(), itemId.getBudgetId()));
+	}
+
+	@Override
+	public Long getNextItemId(Long budgetId) {
+		return this.repositoryJPA.getNextItemId(budgetId);
 	}	
 }

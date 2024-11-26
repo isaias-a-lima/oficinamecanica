@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 import com.ikservices.oficinamecanica.budgets.items.services.application.gateways.BudgetItemServiceRepository;
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.DeleteBudgetItemService;
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.GetBudgetItemService;
+import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.GetNextItemId;
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.ListBudgetItemServices;
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.SaveBudgetItemService;
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.UpdateBudgetItemService;
@@ -51,5 +52,10 @@ public class BudgetItemServiceConfig {
 	@Bean
 	DeleteBudgetItemService deleteBudgetItemService(BudgetItemServiceRepository repository) {
 		return new DeleteBudgetItemService(repository);
+	}
+	
+	@Bean
+	GetNextItemId getNextItemId(BudgetItemServiceRepository repository) {
+		return new GetNextItemId(repository);
 	}
 }

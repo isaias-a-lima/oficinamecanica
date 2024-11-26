@@ -1,5 +1,8 @@
 package com.ikservices.oficinamecanica.budgets.items.services.infra.controller;
 
+import java.net.URI;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -7,12 +10,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.DeleteBudgetItemService;
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.GetBudgetItemService;
+import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.GetNextItemId;
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.ListBudgetItemServices;
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.SaveBudgetItemService;
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.UpdateBudgetItemService;
@@ -20,7 +26,6 @@ import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemSe
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemServiceId;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.BudgetItemServiceConverter;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.constants.BudgetItemServiceConstant;
-import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntityId;
 import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
@@ -28,7 +33,7 @@ import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 
 @RestController
-@RequestMapping("/items")
+@RequestMapping("/budget/service-items")
 public class BudgetItemServiceController {
 
 	private static final Logger LOGGER = IKLoggerUtil.getLogger(BudgetItemServiceController.class);
@@ -42,17 +47,20 @@ public class BudgetItemServiceController {
 	private final SaveBudgetItemService saveBudgetItemService;
 	private final UpdateBudgetItemService updateBudgetItemService;
 	private final DeleteBudgetItemService deleteBudgetItemService;
+	private final GetNextItemId getNextItemId;
 	
 	public BudgetItemServiceController(BudgetItemServiceConverter converter, 
 			GetBudgetItemService getBudgetItemService, ListBudgetItemServices listBudgetItemServices,
 			SaveBudgetItemService saveBudgetItemService, UpdateBudgetItemService updateBudgetItemService,
-			DeleteBudgetItemService deleteBudgetItemService) {
+			DeleteBudgetItemService deleteBudgetItemService,
+			GetNextItemId getNextItemId) {
 		this.converter = converter;
 		this.getBudgetItemService = getBudgetItemService;
 		this.listBudgetItemServices = listBudgetItemServices;
 		this.saveBudgetItemService = saveBudgetItemService;
 		this.updateBudgetItemService = updateBudgetItemService;
 		this.deleteBudgetItemService = deleteBudgetItemService;
+		this.getNextItemId = getNextItemId;
 	}
 	
 	@GetMapping("/{itemId}/{budgetId}")
@@ -71,6 +79,49 @@ public class BudgetItemServiceController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 					IKResponse.<BudgetItemServiceResponseDTO>build().addMessage(
 							Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetItemServiceConstant.GET_ERROR_MESSAGE)));
+		}
+	}
+	
+	@GetMapping("/{budgetId}")
+	public ResponseEntity<IKResponse<BudgetItemServiceResponseDTO>> listBudgetItemServices(@PathVariable Long budgetId) {
+		try {
+			List<BudgetItemService> itemList = listBudgetItemServices.execute(budgetId);
+			return ResponseEntity.ok(IKResponse.<BudgetItemServiceResponseDTO>build().body(converter.parseItemListToResponseList(itemList)));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(IKResponse.<BudgetItemServiceResponseDTO>build().addMessage(
+					ike.getIkMessage().getCode(), 
+					IKMessageType.getByCode(ike.getIkMessage().getType()), 
+					ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<BudgetItemServiceResponseDTO>build().addMessage(
+							Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetItemServiceConstant.GET_ERROR_MESSAGE)));
+		}
+	}
+	
+	@PostMapping()
+	public ResponseEntity<IKResponse<BudgetItemServiceResponseDTO>> saveBudgetItemServices(@RequestBody BudgetItemServiceRequestDTO item, UriComponentsBuilder uriBuilder) {
+		try {
+			Long nextItemId = getNextItemId.execute(item.getBudgetId());
+			item.setItemId(nextItemId);
+			BudgetItemService savedItem = saveBudgetItemService.execute(converter.parseRequestDTO(item));
+			
+			URI uri = uriBuilder.path("budget/service-items/{itemId}/{budgetId}").buildAndExpand(savedItem.getItemId().getId(), 
+					savedItem.getItemId().getBudgetId()).toUri();
+			return ResponseEntity.created(uri).body(IKResponse.<BudgetItemServiceResponseDTO>build().body(converter.parseItemToDTO(savedItem)));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(IKResponse.<BudgetItemServiceResponseDTO>build()
+					.addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), 
+							ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<BudgetItemServiceResponseDTO>build().addMessage(
+							Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, 
+							environment.getProperty(BudgetItemServiceConstant.SAVE_ERROR_MESSAGE)));
 		}
 	}
 }

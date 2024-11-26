@@ -7,12 +7,14 @@ import java.util.Objects;
 import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetDTO;
 import org.springframework.stereotype.Component;
 
+import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemService;
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemServiceId;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.controller.BudgetItemServiceRequestDTO;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.controller.BudgetItemServiceResponseDTO;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntity;
+import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntityId;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.services.domain.Service;
 import com.ikservices.oficinamecanica.services.domain.ServiceId;
@@ -35,10 +37,10 @@ public class BudgetItemServiceConverter {
 		
 		BudgetItemService item = new BudgetItemService();
 		item.setItemId(new BudgetItemServiceId(entity.getId().getId(), entity.getId().getBudgetId()));
-		item.setDiscount(entity.getDiscount());
-		item.setQuantity(entity.getQuantity());
 		item.setService(serviceConverter.parseService(entity.getServiceEntity()));
 		item.setBudget(budgetConverter.parseBudget(entity.getBudgetEntity()));
+		item.setDiscount(entity.getDiscount());
+		item.setQuantity(entity.getQuantity());
 		
 		return item;
 	}
@@ -50,11 +52,12 @@ public class BudgetItemServiceConverter {
 		
 		BudgetItemServiceEntity entity = new BudgetItemServiceEntity();
 		
-		entity.setBudgetEntity(budgetConverter.parseEntity(item.getBudget()));
+		entity.setId(new BudgetItemServiceEntityId(item.getItemId().getId(), item.getItemId().getBudgetId()));
+		entity.setBudgetEntity(Objects.nonNull(item.getBudget()) ? budgetConverter.parseEntity(item.getBudget()) : null);
+		entity.setServiceEntity(Objects.nonNull(item.getService()) ? serviceConverter.parseEntity(item.getService()) : null);
+		entity.setQuantity(item.getQuantity());
 		entity.setCost(item.getService().getCost());
 		entity.setDiscount(item.getDiscount());
-		entity.setQuantity(item.getQuantity());
-		entity.setServiceEntity(serviceConverter.parseEntity(item.getService()));
 		
 		return entity;
 	}
@@ -84,18 +87,24 @@ public class BudgetItemServiceConverter {
 	}
 	
 	public BudgetItemService parseRequestDTO(BudgetItemServiceRequestDTO requestDTO) {
-		if(Objects.nonNull(requestDTO)) {
+		if(Objects.isNull(requestDTO)) {
 			throw new IKException("Null object.");
 		}
 		
 		BudgetItemService item = new BudgetItemService();
-		item.setDiscount(requestDTO.getDiscount());
+		
 		item.setItemId(new BudgetItemServiceId(requestDTO.getItemId(), requestDTO.getBudgetId()));
-		item.setQuantity(requestDTO.getQuantity());
 		
 		Service service = new Service();
 		ServiceId serviceId = new ServiceId();
 		serviceId.setId(requestDTO.getServiceId());
+		service.setId(serviceId);
+		
+		item.setService(service);
+		
+		item.setQuantity(requestDTO.getQuantity());
+		
+		item.setDiscount(requestDTO.getDiscount());
 		
 		return item;
 	}
