@@ -1,8 +1,6 @@
 package com.ikservices.oficinamecanica.parts.infra;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import com.ikservices.oficinamecanica.parts.application.PartException;
 import com.ikservices.oficinamecanica.parts.domain.Part;
@@ -58,7 +56,7 @@ public class PartConverter {
 	public List<Part> parsePartsList(List<PartEntity> partEntityList){
 		List<Part> partsList = new ArrayList<>();
 		
-		if(Objects.nonNull(partsList) && partsList.isEmpty()) {
+		if(Objects.nonNull(partEntityList) && !partEntityList.isEmpty()) {
 			for (PartEntity entity : partEntityList) {
 				partsList.add(this.parsePart(entity));
 			}
@@ -70,7 +68,7 @@ public class PartConverter {
 	public List<PartEntity> parsePartEntityList(List<Part> partsList) {
 		List<PartEntity> partEntityList = new ArrayList<>();
 		
-		if(Objects.nonNull(partEntityList) && partEntityList.isEmpty()) {
+		if(Objects.nonNull(partsList) && !partsList.isEmpty()) {
 			for (Part part : partsList) {
 				partEntityList.add(this.parseEntity(part));
 			}
@@ -123,5 +121,25 @@ public class PartConverter {
 		}
 		
 		return partDTOList;
+	}
+
+	public Set<PartDTO> parseDTOSet(Set<Part> partsList) {
+		Set<PartDTO> partDTOset = new HashSet<>();
+		if(Objects.nonNull(partsList) && !partsList.isEmpty()) {
+			for (Part part : partsList) {
+				partDTOset.add(this.parseDTO(part));
+			}
+		}
+		return partDTOset;
+	}
+
+	public Set<Part> parsePartsSet(Set<PartEntity> partsEntity) {
+		Set<Part> parts = new HashSet<>();
+		if (Objects.nonNull(partsEntity) && !partsEntity.isEmpty()) {
+			for (PartEntity partEntity : partsEntity) {
+				parts.add(this.parsePart(partEntity));
+			}
+		}
+		return parts;
 	}
 }

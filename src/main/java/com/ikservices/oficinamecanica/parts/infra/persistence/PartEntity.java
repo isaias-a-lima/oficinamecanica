@@ -2,14 +2,11 @@ package com.ikservices.oficinamecanica.parts.infra.persistence;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.ikservices.oficinamecanica.suppliers.infra.persistence.SupplierEntity;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopEntity;
 
 import lombok.AllArgsConstructor;
@@ -31,6 +28,8 @@ public class PartEntity {
 	@ManyToOne
 	@JoinColumn(name = "WORKSHOPID", insertable = false, updatable = false)
 	private WorkshopEntity workshopEntity;
+	@ManyToMany(mappedBy = "parts", cascade = CascadeType.ALL)
+	private Set<SupplierEntity> suppliers;
 	@Column(name = "DESCRIPTION")
 	private String description;
 	@Column(name = "COST")

@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.suppliers.infra.config;
 
+import com.ikservices.oficinamecanica.parts.infra.PartConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,8 +30,8 @@ public class SupplierConfig {
 	}
 	
 	@Bean
-	public SupplierConverter supplierConverter(WorkshopConverter workshopConverter) {
-		return new SupplierConverter(workshopConverter);
+	public SupplierConverter supplierConverter(WorkshopConverter workshopConverter, PartConverter partConverter) {
+		return new SupplierConverter(workshopConverter, partConverter);
 	}
 	
 	@Bean

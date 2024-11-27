@@ -79,21 +79,21 @@ public class PartController {
 	}
 	
 	@GetMapping("/workshop/{id}")
-	public ResponseEntity<IKResponse<List<PartDTO>>> getPartList(@PathVariable("id") Long workshopId, @RequestParam(name = "search") String search) {
+	public ResponseEntity<IKResponse<PartDTO>> getPartList(@PathVariable("id") Long workshopId, @RequestParam(name = "search") String search) {
 		try {
 			List<PartDTO> partsList = null;
 			
 			partsList = converter.parseDTOList(getPartsList.execute(workshopId, search));
 			
-			return ResponseEntity.ok(IKResponse.<List<PartDTO>>build().body(partsList));			
+			return ResponseEntity.ok(IKResponse.<PartDTO>build().body(partsList));
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
-					IKResponse.<List<PartDTO>>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+					IKResponse.<PartDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-					IKResponse.<List<PartDTO>>build().addMessage(PartBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(PartConstant.LIST_ERROR_MESSAGE)));
+					IKResponse.<PartDTO>build().addMessage(PartBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(PartConstant.LIST_ERROR_MESSAGE)));
 		}
 	}
 	
