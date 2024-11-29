@@ -3,17 +3,7 @@ package com.ikservices.oficinamecanica.budgets.items.services.infra.persistence;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.services.infra.persistence.ServiceEntity;
@@ -38,11 +28,12 @@ public class BudgetItemServiceEntity {
 	@ManyToOne
 	@JoinColumn(name = "BUDGETID", referencedColumnName = "BUDGETID", updatable = false, insertable = false)
 	private BudgetEntity budgetEntity;
-
-	@Column(name = "SERVICEID")
-	private Long serviceId;
 	
-	@OneToOne
+	@ManyToOne
+	@JoinColumns({
+			@JoinColumn(name = "SERVICEID_PART1", referencedColumnName = "SERVICEID", updatable = false, insertable = false),
+			@JoinColumn(name = "SERVICEID_PART2", referencedColumnName = "WORKSHOPID", updatable = false, insertable = false)
+	})
 	private ServiceEntity serviceEntity;
 	
 	@Column(name = "QUANTITY")

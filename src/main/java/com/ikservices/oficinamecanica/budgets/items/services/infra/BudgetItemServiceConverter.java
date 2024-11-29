@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetDTO;
 import org.springframework.stereotype.Component;
 
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
@@ -33,6 +34,7 @@ public class BudgetItemServiceConverter {
 		}
 		
 		BudgetItemService item = new BudgetItemService();
+		item.setItemId(new BudgetItemServiceId(entity.getId().getId(), entity.getId().getBudgetId()));
 		item.setDiscount(entity.getDiscount());
 		item.setQuantity(entity.getQuantity());
 		item.setService(serviceConverter.parseService(entity.getServiceEntity()));
@@ -53,7 +55,6 @@ public class BudgetItemServiceConverter {
 		entity.setDiscount(item.getDiscount());
 		entity.setQuantity(item.getQuantity());
 		entity.setServiceEntity(serviceConverter.parseEntity(item.getService()));
-		entity.setServiceId(item.getService().getId().getId());
 		
 		return entity;
 	}
@@ -100,16 +101,18 @@ public class BudgetItemServiceConverter {
 	}
 	
 	public BudgetItemServiceResponseDTO parseItemToDTO(BudgetItemService item) {
-		if(Objects.nonNull(item)) {
+		if(Objects.isNull(item)) {
 			throw new IKException("Null Object.");
 		}
 		
 		BudgetItemServiceResponseDTO responseDTO = new BudgetItemServiceResponseDTO();
+		responseDTO.setItemId(item.getItemId().getId());
+		responseDTO.setBudget(new BudgetDTO(item.getBudget(), item.getItemId().getBudgetId(), null));
 		responseDTO.setCost(item.getService().getCost());
 		responseDTO.setDiscount(item.getDiscount());
 		responseDTO.setQuantity(item.getQuantity());
-		responseDTO.setServiceDTO(serviceConverter.parseDTO(item.getService()));
-		responseDTO.setItemId(item.getItemId().getId());
+		responseDTO.setService(serviceConverter.parseDTO(item.getService()));
+
 		
 		return responseDTO;
 	}
