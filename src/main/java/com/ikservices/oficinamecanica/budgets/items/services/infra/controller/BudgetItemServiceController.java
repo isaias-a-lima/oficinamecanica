@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -102,15 +104,18 @@ public class BudgetItemServiceController {
 	}
 	
 	@PostMapping()
+	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<IKResponse<BudgetItemServiceResponseDTO>> saveBudgetItemServices(@RequestBody BudgetItemServiceRequestDTO item, UriComponentsBuilder uriBuilder) {
 		try {
 			Long nextItemId = getNextItemId.execute(item.getBudgetId());
 			item.setItemId(nextItemId);
-			BudgetItemService savedItem = saveBudgetItemService.execute(converter.parseRequestDTO(item));
+			BudgetItemService savedItem = saveBudgetItemService.execute(converter.parseDomain(item));
 			
 			URI uri = uriBuilder.path("budget/service-items/{itemId}/{budgetId}").buildAndExpand(savedItem.getItemId().getId(), 
 					savedItem.getItemId().getBudgetId()).toUri();
+			
 			return ResponseEntity.created(uri).body(IKResponse.<BudgetItemServiceResponseDTO>build().body(converter.parseItemToDTO(savedItem)));
+			
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(IKResponse.<BudgetItemServiceResponseDTO>build()

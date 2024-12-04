@@ -29,6 +29,11 @@ public class BudgetItemServiceEntity {
 	@JoinColumn(name = "BUDGETID", referencedColumnName = "BUDGETID", updatable = false, insertable = false)
 	private BudgetEntity budgetEntity;
 	
+	@Column(name = "SERVICEID_PART1")
+	private Long serviceId;
+	@Column(name = "SERVICEID_PART2")
+	private Long workshopId;
+	
 	@ManyToOne
 	@JoinColumns({
 			@JoinColumn(name = "SERVICEID_PART1", referencedColumnName = "SERVICEID", updatable = false, insertable = false),

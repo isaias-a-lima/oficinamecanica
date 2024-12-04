@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetDTO;
 import org.springframework.stereotype.Component;
 
-import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
+import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetDTO;
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemService;
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemServiceId;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.controller.BudgetItemServiceRequestDTO;
@@ -37,8 +36,8 @@ public class BudgetItemServiceConverter {
 		
 		BudgetItemService item = new BudgetItemService();
 		item.setItemId(new BudgetItemServiceId(entity.getId().getId(), entity.getId().getBudgetId()));
-		item.setService(serviceConverter.parseService(entity.getServiceEntity()));
-		item.setBudget(budgetConverter.parseBudget(entity.getBudgetEntity()));
+		item.setService(Objects.nonNull(entity.getServiceEntity()) ? serviceConverter.parseService(entity.getServiceEntity()) : null);
+		item.setBudget(Objects.nonNull(entity.getBudgetEntity()) ? budgetConverter.parseBudget(entity.getBudgetEntity()) : null);
 		item.setDiscount(entity.getDiscount());
 		item.setQuantity(entity.getQuantity());
 		
@@ -53,8 +52,15 @@ public class BudgetItemServiceConverter {
 		BudgetItemServiceEntity entity = new BudgetItemServiceEntity();
 		
 		entity.setId(new BudgetItemServiceEntityId(item.getItemId().getId(), item.getItemId().getBudgetId()));
+		
 		entity.setBudgetEntity(Objects.nonNull(item.getBudget()) ? budgetConverter.parseEntity(item.getBudget()) : null);
-		entity.setServiceEntity(Objects.nonNull(item.getService()) ? serviceConverter.parseEntity(item.getService()) : null);
+		
+		if (Objects.nonNull(item.getService())) {
+			entity.setServiceId(item.getService().getId().getId());
+			entity.setWorkshopId(item.getService().getId().getWorkshopId());			
+			entity.setServiceEntity(serviceConverter.parseEntity(item.getService()));
+		}
+		
 		entity.setQuantity(item.getQuantity());
 		entity.setCost(item.getService().getCost());
 		entity.setDiscount(item.getDiscount());
@@ -86,7 +92,7 @@ public class BudgetItemServiceConverter {
 		return itemList;
 	}
 	
-	public BudgetItemService parseRequestDTO(BudgetItemServiceRequestDTO requestDTO) {
+	public BudgetItemService parseDomain(BudgetItemServiceRequestDTO requestDTO) {
 		if(Objects.isNull(requestDTO)) {
 			throw new IKException("Null object.");
 		}
@@ -96,10 +102,8 @@ public class BudgetItemServiceConverter {
 		item.setItemId(new BudgetItemServiceId(requestDTO.getItemId(), requestDTO.getBudgetId()));
 		
 		Service service = new Service();
-		ServiceId serviceId = new ServiceId();
-		serviceId.setId(requestDTO.getServiceId());
-		service.setId(serviceId);
-		
+		service.setId(new ServiceId(requestDTO.getServiceId(), requestDTO.getWorkshopId()));
+		service.setCost(requestDTO.getCost());
 		item.setService(service);
 		
 		item.setQuantity(requestDTO.getQuantity());
@@ -116,22 +120,25 @@ public class BudgetItemServiceConverter {
 		
 		BudgetItemServiceResponseDTO responseDTO = new BudgetItemServiceResponseDTO();
 		responseDTO.setItemId(item.getItemId().getId());
-		responseDTO.setBudget(new BudgetDTO(item.getBudget(), item.getItemId().getBudgetId(), null));
-		responseDTO.setCost(item.getService().getCost());
+		responseDTO.setBudget(Objects.nonNull(item.getBudget()) ? (new BudgetDTO(item.getBudget(), item.getItemId().getBudgetId(), null)) : null);
+		if (Objects.nonNull(item.getService())) {
+			responseDTO.setService(serviceConverter.parseDTO(item.getService()));
+			responseDTO.setCost(item.getService().getCost());
+			
+		}
 		responseDTO.setDiscount(item.getDiscount());
 		responseDTO.setQuantity(item.getQuantity());
-		responseDTO.setService(serviceConverter.parseDTO(item.getService()));
 
 		
 		return responseDTO;
 	}
 	
-	public List<BudgetItemService> parseRequestDTOList(List<BudgetItemServiceRequestDTO> requestDTOList) {
+	public List<BudgetItemService> parseRequestToDomainList(List<BudgetItemServiceRequestDTO> requestDTOList) {
 		List<BudgetItemService> itemList = new ArrayList<>();
 		
 		if(Objects.nonNull(requestDTOList) && !requestDTOList.isEmpty()) {
 			for(BudgetItemServiceRequestDTO requestDTO : requestDTOList) {
-				itemList.add(this.parseRequestDTO(requestDTO));
+				itemList.add(this.parseDomain(requestDTO));
 			}
 		}
 		
