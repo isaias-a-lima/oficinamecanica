@@ -22,4 +22,13 @@ public class BudgetItemService {
 	Budget budget;
 	Integer quantity;
 	BigDecimal discount;
+	
+	public BigDecimal getTotal() {
+		//quantity * (cost - ((discount / 100) * cost));
+		BigDecimal percentage = discount.divide(BigDecimal.valueOf(100.0));
+		BigDecimal discountValue = this.service.getCost().multiply(percentage);
+		BigDecimal costValue = this.service.getCost().subtract(discountValue);
+		
+		return costValue.multiply(BigDecimal.valueOf(quantity.doubleValue()));
+	}
 }

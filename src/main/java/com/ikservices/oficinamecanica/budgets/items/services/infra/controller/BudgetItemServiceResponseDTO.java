@@ -23,4 +23,5 @@ public class BudgetItemServiceResponseDTO {
 	private Integer quantity;
 	private BigDecimal cost;
 	private BigDecimal discount;
+	private BigDecimal totalAmount;
 }

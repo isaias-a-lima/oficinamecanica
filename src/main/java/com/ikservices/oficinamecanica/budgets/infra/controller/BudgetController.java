@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ikservices.oficinamecanica.budgets.application.usecases.ChangeStatus;
+import com.ikservices.oficinamecanica.budgets.application.usecases.DecreaseAmount;
 import com.ikservices.oficinamecanica.budgets.application.usecases.GetBudget;
 import com.ikservices.oficinamecanica.budgets.application.usecases.IncreaseAmount;
 import com.ikservices.oficinamecanica.budgets.application.usecases.ListBudgets;
@@ -60,15 +61,18 @@ public class BudgetController {
 	private final UpdateBudget updateBudget;
 	private final ChangeStatus changeStatus;
 	private final IncreaseAmount increaseAmount;
+	private final DecreaseAmount decreaseAmount;
 	
 	public BudgetController(GetBudget getBudget, ListBudgets listBudgets, SaveBudget saveBudget, 
-			UpdateBudget updateBudget, ChangeStatus changeStatus, IncreaseAmount increaseAmount) {
+			UpdateBudget updateBudget, ChangeStatus changeStatus, IncreaseAmount increaseAmount,
+			DecreaseAmount decreaseAmount) {
 		this.getBudget = getBudget;
 		this.listBudgets = listBudgets;
 		this.saveBudget = saveBudget;
 		this.updateBudget = updateBudget;
 		this.changeStatus = changeStatus;
 		this.increaseAmount = increaseAmount;
+		this.decreaseAmount = decreaseAmount;
 	}
 	
 	@GetMapping("list/{vehicleId}")
@@ -200,6 +204,25 @@ public class BudgetController {
 		try {
 			changeStatus.execute(budgetId, BudgetStatusEnum.findByIndex(budgetStatus));
 			return ResponseEntity.ok(IKResponse.<String>build().addMessage(BudgetBusinessConstant.SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.OPERATION_SUCCESS_MESSAGE)));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<String>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<String>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
+		}
+	}
+	
+	@Transactional
+	@PutMapping("decreaseAmount/{budgetId}/{value}")
+	public ResponseEntity<IKResponse<String>> decreaseAmount(@PathVariable Long budgetId, 
+			@PathVariable BigDecimal value) {
+		try {
+			decreaseAmount.execute(budgetId, value);
+			return ResponseEntity.ok(IKResponse.<String>build().addMessage(BudgetBusinessConstant.SUCCESS_CODE,
+					IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.OPERATION_SUCCESS_MESSAGE)));
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(

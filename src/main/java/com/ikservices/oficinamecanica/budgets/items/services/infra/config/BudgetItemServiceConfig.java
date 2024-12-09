@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
+import com.ikservices.oficinamecanica.budgets.application.gateways.BudgetRepository;
 import com.ikservices.oficinamecanica.budgets.items.services.application.gateways.BudgetItemServiceRepository;
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.DeleteBudgetItemService;
 import com.ikservices.oficinamecanica.budgets.items.services.application.usecases.GetBudgetItemService;
@@ -40,8 +41,8 @@ public class BudgetItemServiceConfig {
 	}
 	
 	@Bean
-	SaveBudgetItemService saveBudgetItemService(BudgetItemServiceRepository repository) {
-		return new SaveBudgetItemService(repository);
+	SaveBudgetItemService saveBudgetItemService(BudgetItemServiceRepository repository, BudgetRepository budgetRepository) {
+		return new SaveBudgetItemService(repository, budgetRepository);
 	}
 	
 	@Bean
@@ -50,8 +51,9 @@ public class BudgetItemServiceConfig {
 	}
 	
 	@Bean
-	DeleteBudgetItemService deleteBudgetItemService(BudgetItemServiceRepository repository) {
-		return new DeleteBudgetItemService(repository);
+	DeleteBudgetItemService deleteBudgetItemService(BudgetItemServiceRepository repository,
+			BudgetRepository budgetRepository, BudgetItemServiceRepositoryJPA repositoryJPA) {
+		return new DeleteBudgetItemService(repository, budgetRepository, repositoryJPA);
 	}
 	
 	@Bean

@@ -14,4 +14,5 @@ public interface BudgetRepository {
 	public Map<Long, Budget> updateBudget(Budget budget, Long budgetId);
 	public void changeStatus(Long budgetId, BudgetStatusEnum budgetStatus);
 	public void increaseAmount(Long budgetId, BigDecimal value);
+	public void decreaseAmount(Long budgetId, BigDecimal value);
 }

@@ -10,7 +10,7 @@ public class UpdateBudgetItemService {
 		this.repository = repository;
 	}
 	
-	public BudgetItemService updateBudgetItemService(BudgetItemService item) {
+	public BudgetItemService execute(BudgetItemService item) {
 		return repository.updateBudgetItemService(item);
 	}
 }

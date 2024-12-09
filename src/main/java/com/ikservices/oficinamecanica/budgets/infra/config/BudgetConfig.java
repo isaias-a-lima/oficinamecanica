@@ -8,6 +8,7 @@ import org.springframework.core.env.Environment;
 
 import com.ikservices.oficinamecanica.budgets.application.gateways.BudgetRepository;
 import com.ikservices.oficinamecanica.budgets.application.usecases.ChangeStatus;
+import com.ikservices.oficinamecanica.budgets.application.usecases.DecreaseAmount;
 import com.ikservices.oficinamecanica.budgets.application.usecases.GetBudget;
 import com.ikservices.oficinamecanica.budgets.application.usecases.IncreaseAmount;
 import com.ikservices.oficinamecanica.budgets.application.usecases.ListBudgets;
@@ -57,5 +58,10 @@ public class BudgetConfig {
 	@Bean
 	IncreaseAmount increaseAmount(BudgetRepository repository) {
 		return new IncreaseAmount(repository);
+	}
+	
+	@Bean
+	DecreaseAmount decreaseAmount(BudgetRepository repository) {
+		return new DecreaseAmount(repository);
 	}
 }

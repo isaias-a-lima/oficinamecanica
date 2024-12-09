@@ -101,5 +101,15 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 		if(Objects.nonNull(budgetEntity)) {
 			budgetEntity.setAmount(budgetEntity.getAmount().add(value));
 		}
+	}
+
+	@Override
+	public void decreaseAmount(Long budgetId, BigDecimal value) {
+		Optional<BudgetEntity> optional = repositoryJPA.findById(budgetId);
+		BudgetEntity budgetEntity = optional.orElse(null);
+		
+		if(Objects.nonNull(budgetEntity)) {
+			budgetEntity.setAmount(budgetEntity.getAmount().subtract(value));
+		}
 	}	
 }
