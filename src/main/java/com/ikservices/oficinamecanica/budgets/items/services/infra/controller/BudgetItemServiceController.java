@@ -3,12 +3,13 @@ package com.ikservices.oficinamecanica.budgets.items.services.infra.controller;
 import java.net.URI;
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,6 +81,11 @@ public class BudgetItemServiceController {
 					.addMessage(ike.getIkMessage().getCode(), 
 							IKMessageType.getByCode(ike.getIkMessage().getType()), 
 							ike.getIkMessage().getMessage()));
+		}catch (EntityNotFoundException e) {
+			LOGGER.error(e.getMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+					IKResponse.<BudgetItemServiceResponseDTO>build().addMessage(
+							Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING, environment.getProperty(BudgetItemServiceConstant.GET_NOT_FOUND_MESSAGE)));
 		}catch(Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(

@@ -19,8 +19,7 @@ import com.ikservices.oficinamecanica.budgets.items.services.infra.gateways.Budg
 import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceRepositoryJPA;
 
 @Configuration
-@PropertySource(name="budget_item_service.properties", value="classpath:budget_item_service.properties",
-encoding ="utf-8")
+@PropertySource(name="budget_item_service.properties", value="classpath:budget_item_service.properties", encoding ="utf-8")
 public class BudgetItemServiceConfig {
 	@Autowired
 	Environment environment;
@@ -51,9 +50,8 @@ public class BudgetItemServiceConfig {
 	}
 	
 	@Bean
-	DeleteBudgetItemService deleteBudgetItemService(BudgetItemServiceRepository repository,
-			BudgetRepository budgetRepository, BudgetItemServiceRepositoryJPA repositoryJPA) {
-		return new DeleteBudgetItemService(repository, budgetRepository, repositoryJPA);
+	DeleteBudgetItemService deleteBudgetItemService(BudgetItemServiceRepository repository, BudgetRepository budgetRepository) {
+		return new DeleteBudgetItemService(repository, budgetRepository);
 	}
 	
 	@Bean
