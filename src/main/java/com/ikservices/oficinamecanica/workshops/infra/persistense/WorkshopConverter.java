@@ -39,7 +39,7 @@ public class WorkshopConverter {
 		entity.setDocId(workshop.getDocId());
 		entity.setName(workshop.getName());
 		entity.setImage(workshop.getImage());
-		entity.setUser(userConverter.toEntity(workshop.getUser()));
+		entity.setUser(Objects.nonNull(workshop.getUser()) ? userConverter.toEntity(workshop.getUser()) : null);
 		
 		return entity;
 	}

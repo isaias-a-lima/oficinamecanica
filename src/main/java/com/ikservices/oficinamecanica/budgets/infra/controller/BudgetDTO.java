@@ -1,6 +1,6 @@
 package com.ikservices.oficinamecanica.budgets.infra.controller;
 
-import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
@@ -28,7 +28,7 @@ public class BudgetDTO {
 	Long budgetId;
 
 	public BudgetDTO(Budget budget, Long budgetId, Long vehicleId) {
-		this.openingDate = budget.getOpeningDate().toString();
+		this.openingDate = budget.getOpeningDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		this.km = budget.getKm();
 		this.budgetStatus = budget.getBudgetStatus();
 		this.amount = NumberUtil.parseStringMoney(budget.getAmount());

@@ -49,17 +49,8 @@ public class BudgetEntity {
 	private BigDecimal amount;
 	
 	public void update(BudgetEntity entity) {
-		if(Objects.nonNull(entity.getOpeningDate())) {
-			this.openingDate = entity.getOpeningDate(); 
-		}
 		if(Objects.nonNull(entity.getKm())) {
 			this.km = entity.getKm();
-		}
-		if(Objects.nonNull(entity.getBudgetStatus())) {
-			this.budgetStatus = entity.getBudgetStatus();
-		}
-		if(Objects.nonNull(entity.getAmount())) {
-			this.amount = entity.getAmount();
 		}
 	}
 }
