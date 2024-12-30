@@ -1,15 +1,12 @@
 package com.ikservices.oficinamecanica.suppliers.infra.persistence;
 
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
+import com.ikservices.oficinamecanica.parts.infra.persistence.PartEntity;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopEntity;
 
 import lombok.AllArgsConstructor;
@@ -31,6 +28,19 @@ public class SupplierEntity {
 	@ManyToOne
 	@JoinColumn(name = "WORKSHOPID", insertable = false, updatable = false)
 	private WorkshopEntity workshopEntity;
+    @ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(
+			name = "SUPPLIERS_PARTS",
+			joinColumns = {
+					@JoinColumn(name = "SUPPLIERID", referencedColumnName = "SUPPLIERID"),
+					@JoinColumn(name = "SUPP_WORKSHOPID", referencedColumnName = "WORKSHOPID")
+			},
+			inverseJoinColumns = {
+					@JoinColumn(name = "PARTID", referencedColumnName = "PARTID"),
+					@JoinColumn(name = "PART_WORKSHOPID", referencedColumnName = "WORKSHOPID", updatable = false, insertable = false)
+			}
+	)
+	private Set<PartEntity> parts;
 	@Column(name = "IDDOC")
 	private String idDoc;
 	@Column(name = "NAME")
