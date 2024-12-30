@@ -2,6 +2,7 @@ package com.ikservices.oficinamecanica.parts.infra;
 
 import java.util.*;
 
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.parts.application.PartException;
 import com.ikservices.oficinamecanica.parts.domain.Part;
 import com.ikservices.oficinamecanica.parts.domain.PartId;
@@ -84,12 +85,13 @@ public class PartConverter {
 		PartDTO dto = new PartDTO();
 		
 		dto.setBalance(part.getBalance());
-		dto.setCost(part.getCost());
+		dto.setCost(NumberUtil.parseStringMoney(part.getCost()));
 		dto.setDescription(part.getDescription());
 		dto.setPartId(part.getPartId().getId());
 		dto.setWorkshopId(part.getPartId().getWorkshopId());
-		dto.setProfit(part.getProfit());
+		dto.setProfit(NumberUtil.parseStringPercent(part.getProfit()));
 		dto.setBrand(part.getBrand());
+		dto.setValue(NumberUtil.parseStringMoney(part.getValue()));
 		
 		return dto;
 	}
@@ -102,9 +104,9 @@ public class PartConverter {
 		Part part = new Part();
 		
 		part.setBalance(dto.getBalance());
-		part.setCost(dto.getCost());
+		part.setCost(NumberUtil.parseBigDecimal(dto.getCost()));
 		part.setDescription(dto.getDescription());
-		part.setProfit(dto.getProfit());
+		part.setProfit(NumberUtil.parseBigDecimal(dto.getProfit()));
 		part.setPartId(new PartId(dto.getPartId(), dto.getWorkshopId()));
 		part.setBrand(dto.getBrand());
 		
