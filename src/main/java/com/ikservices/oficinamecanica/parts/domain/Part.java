@@ -20,10 +20,12 @@ public class Part {
 	private PartId partId;
 	private Workshop workshop;
 	private String description;
+	private String brand;
+	private String fits;
+	private String manufacturerCode;
 	private BigDecimal cost;
 	private BigDecimal profit;
 	private Integer balance;
-	private String brand;
 
 	public BigDecimal getValue() {
 		return cost.add(cost.multiply(profit.divide(BigDecimal.valueOf(100)))).setScale(2, RoundingMode.HALF_UP);

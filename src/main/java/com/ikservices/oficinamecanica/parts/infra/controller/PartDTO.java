@@ -17,21 +17,25 @@ import lombok.Setter;
 public class PartDTO {
 	private Long partId;
 	private Long workshopId;
-	private Integer balance;
-	private String profit;
 	private String description;
-	private String cost;
 	private String brand;
+	private String fits;
+	private String manufacturerCode;
+	private String cost;
+	private String profit;
 	private String value;
+	private Integer balance;
 	
 	public PartDTO(Part part) {
 		this.partId = part.getPartId().getId();
 		this.workshopId = part.getPartId().getWorkshopId();
-		this.balance = part.getBalance();
-		this.profit = NumberUtil.parseStringPercent(part.getProfit());
-		this.cost = NumberUtil.parseStringMoney(part.getCost());
 		this.description = part.getDescription();
 		this.brand = part.getBrand();
+		this.fits = part.getFits();
+		this.manufacturerCode = part.getManufacturerCode();
+		this.cost = NumberUtil.parseStringMoney(part.getCost());
+		this.profit = NumberUtil.parseStringPercent(part.getProfit());
 		this.value = NumberUtil.parseStringMoney(part.getValue());
+		this.balance = part.getBalance();
 	}
 }

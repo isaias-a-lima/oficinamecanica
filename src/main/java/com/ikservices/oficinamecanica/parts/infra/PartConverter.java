@@ -28,6 +28,8 @@ public class PartConverter {
 		part.setPartId(new PartId(entity.getId().getId(), entity.getId().getWorkshopId()));
 		part.setWorkshop(Objects.nonNull(entity.getWorkshopEntity()) ? workshopConverter.parseWorkshop(entity.getWorkshopEntity()) : null);
 		part.setDescription(entity.getDescription());
+		part.setFits(entity.getFits());
+		part.setManufacturerCode(entity.getManufacturerCode());
 		part.setCost(entity.getCost());
 		part.setBalance(entity.getBalance());
 		part.setProfit(entity.getProfit());
@@ -47,6 +49,8 @@ public class PartConverter {
 		entity.setBalance(part.getBalance());
 		entity.setCost(part.getCost());
 		entity.setDescription(part.getDescription());
+		entity.setFits(part.getFits());
+		entity.setManufacturerCode(part.getManufacturerCode());
 		entity.setProfit(part.getProfit());
 		entity.setWorkshopEntity(Objects.nonNull(part.getWorkshop()) ? workshopConverter.parseWorkshopEntity(part.getWorkshop(), part.getPartId().getWorkshopId()): null);
 		entity.setBrand(part.getBrand());
@@ -87,6 +91,8 @@ public class PartConverter {
 		dto.setBalance(part.getBalance());
 		dto.setCost(NumberUtil.parseStringMoney(part.getCost()));
 		dto.setDescription(part.getDescription());
+		dto.setFits(part.getFits());
+		dto.setManufacturerCode(part.getManufacturerCode());
 		dto.setPartId(part.getPartId().getId());
 		dto.setWorkshopId(part.getPartId().getWorkshopId());
 		dto.setProfit(NumberUtil.parseStringPercent(part.getProfit()));
@@ -106,6 +112,8 @@ public class PartConverter {
 		part.setBalance(dto.getBalance());
 		part.setCost(NumberUtil.parseBigDecimal(dto.getCost()));
 		part.setDescription(dto.getDescription());
+		part.setFits(dto.getFits());
+		part.setManufacturerCode(dto.getManufacturerCode());
 		part.setProfit(NumberUtil.parseBigDecimal(dto.getProfit()));
 		part.setPartId(new PartId(dto.getPartId(), dto.getWorkshopId()));
 		part.setBrand(dto.getBrand());

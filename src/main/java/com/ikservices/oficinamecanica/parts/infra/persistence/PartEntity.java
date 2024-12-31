@@ -32,24 +32,31 @@ public class PartEntity {
 	private Set<SupplierEntity> suppliers;
 	@Column(name = "DESCRIPTION")
 	private String description;
+	@Column(name = "BRAND")
+	private String brand;
+	@Column(name = "FITS")
+	private String fits;
+	@Column(name = "MANUFACTURERCODE")
+	private String manufacturerCode;
 	@Column(name = "COST")
 	private BigDecimal cost;
 	@Column(name = "BALANCE")
 	private Integer balance;
 	@Column(name = "PROFIT")
 	private BigDecimal profit;
-	@Column(name = "BRAND")
-	private String brand;
 	
 	public void update(PartEntity entity) {
 		if(Objects.nonNull(entity.getDescription())) {
 			this.description = entity.getDescription();
 		}
+		if(Objects.nonNull(entity.getFits())) {
+			this.fits = entity.getFits();
+		}
+		if(Objects.nonNull(entity.getManufacturerCode())) {
+			this.manufacturerCode = entity.getManufacturerCode();
+		}
 		if(Objects.nonNull(entity.getCost())) {
 			this.cost = entity.getCost();
-		}
-		if(Objects.nonNull(entity.getBalance())){
-			this.balance = entity.getBalance();
 		}
 		if(Objects.nonNull(entity.getProfit())){
 			this.profit = entity.getProfit();

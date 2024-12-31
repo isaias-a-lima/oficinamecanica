@@ -78,11 +78,14 @@ public class PartController {
 	}
 	
 	@GetMapping("/workshop/{id}")
-	public ResponseEntity<IKResponse<PartDTO>> getPartList(@PathVariable("id") Long workshopId, @RequestParam(name = "search") String search) {
+	public ResponseEntity<IKResponse<PartDTO>> getPartList(@PathVariable("id") Long workshopId,
+														   @RequestParam(name = "description") String description,
+														   @RequestParam(name = "fits") String fits,
+														   @RequestParam(name = "manufacturerCode") String manufacturerCode) {
 		try {
 			List<PartDTO> partsList = null;
 			
-			partsList = converter.parseDTOList(getPartsList.execute(workshopId, search));
+			partsList = converter.parseDTOList(getPartsList.execute(workshopId, description, fits, manufacturerCode));
 			
 			return ResponseEntity.ok(IKResponse.<PartDTO>build().body(partsList));
 		}catch(IKException ike) {
