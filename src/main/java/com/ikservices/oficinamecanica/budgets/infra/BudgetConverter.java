@@ -65,20 +65,6 @@ public class BudgetConverter {
 		return budgetEntityList;
 	}
 	
-	public List<Map<Long, Budget>> parseBudgetList(List<BudgetEntity> budgetEntityList) {
-		List<Map<Long, Budget>> budgetList = new ArrayList<>();
-		
-		if(Objects.nonNull(budgetEntityList) && !budgetEntityList.isEmpty()) {
-			for(BudgetEntity entity : budgetEntityList) {
-				Map<Long, Budget> budgetMap = new HashMap<>();
-				budgetMap.put(entity.getBudgetId(), this.parseBudget(entity));
-				budgetList.add(budgetMap);
-			}
-		}
-		
-		return budgetList;
-	}
-	
 	public BudgetDTO parseBudgetDTO(Map<Long, Budget> budgetMap, Long vehicleId) {
 		if(Objects.isNull(budgetMap)) {
 			throw new IKException("Null object");
@@ -117,15 +103,36 @@ public class BudgetConverter {
 		return budget;
 	}
 	
-	public List<BudgetDTO> parseBudgetDTOList(List<Map<Long, Budget>> budgetList, Long vehicleId) {
+	public List<BudgetDTO> parseBudgetDTOList(List<Map<Long, Map<Long, Budget>>> budgetList) {
 		List<BudgetDTO> dtoList = new ArrayList<>();
-		
-		if(Objects.nonNull(budgetList) && !budgetList.isEmpty()) {
-			for(Map<Long, Budget> budgetMap : budgetList) {
-				dtoList.add(this.parseBudgetDTO(budgetMap, vehicleId));
+
+		for (Map<Long, Map<Long, Budget>> outerMap : budgetList) {
+			for (Long vehicleId : outerMap.keySet()) {
+				Map<Long, Budget> innerMap = outerMap.get(vehicleId);
+
+				for (Long budgetId : innerMap.keySet()) {
+					dtoList.add(parseBudgetDTO(innerMap, vehicleId));
+				}
 			}
 		}
-		
+
 		return dtoList;
+	}
+
+	public List<Map<Long, Map<Long, Budget>>> parseBudgetList(List<BudgetEntity> entities) {
+
+		List<Map<Long, Map<Long, Budget>>> budgetList = new ArrayList<>();
+
+		for (BudgetEntity entity : entities) {
+			Map<Long, Budget> mapInner = new HashMap<>();
+			mapInner.put(entity.getBudgetId(), this.parseBudget(entity));
+
+			Map<Long, Map<Long, Budget>> mapOuter = new HashMap<>();
+			mapOuter.put(entity.getVehicleId(), mapInner);
+
+			budgetList.add(mapOuter);
+		}
+
+		return budgetList;
 	}
 }

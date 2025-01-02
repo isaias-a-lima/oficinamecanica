@@ -13,7 +13,6 @@ import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetRepositoryJPA;
-import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 
 public class BudgetRepositoryImpl implements BudgetRepository {
@@ -28,10 +27,16 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 	}
 
 	@Override
-	public List<Map<Long, Budget>> listBudgets(Long vehicleId) {
+	public List<Map<Long, Map<Long, Budget>>> listBudgets(Long vehicleId) {
 		VehicleEntity vehicleEntity = new VehicleEntity();
 		vehicleEntity.setVehicleId(vehicleId);
 		return converter.parseBudgetList(repositoryJPA.findAllByVehicleEntity(vehicleEntity));
+	}
+
+	@Override
+	public List<Map<Long, Map<Long, Budget>>> listBudgets(Long workshopId, String idDoc, BudgetStatusEnum status) {
+		List<BudgetEntity> entities = repositoryJPA.getBudgetsByCustomer(workshopId, idDoc, status);
+		return converter.parseBudgetList(entities);
 	}
 
 	@Override

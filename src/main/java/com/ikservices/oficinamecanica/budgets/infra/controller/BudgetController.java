@@ -78,7 +78,26 @@ public class BudgetController {
 	@GetMapping("list/{vehicleId}")
 	public ResponseEntity<IKResponse<BudgetDTO>> listBudgets(@PathVariable Long vehicleId) {
 		try {
-			List<BudgetDTO> budgetDTOList = converter.parseBudgetDTOList(listBudgets.execute(vehicleId), vehicleId);
+			List<BudgetDTO> budgetDTOList = converter.parseBudgetDTOList(listBudgets.execute(vehicleId));
+
+			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(budgetDTOList));
+
+		} catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<BudgetDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<BudgetDTO>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetConstant.LIST_ERROR_MESSAGE))
+			);
+		}
+	}
+
+	@GetMapping("list/{workshopId}/{idDoc}/{status}")
+	public ResponseEntity<IKResponse<BudgetDTO>> listBudgetsByCustomer(@PathVariable Long workshopId, @PathVariable String idDoc, @PathVariable int status) {
+		try {
+			List<BudgetDTO> budgetDTOList = converter.parseBudgetDTOList(listBudgets.execute(workshopId, idDoc, BudgetStatusEnum.findByIndex(status)));
 
 			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(budgetDTOList));
 
