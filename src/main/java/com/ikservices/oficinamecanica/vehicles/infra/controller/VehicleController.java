@@ -86,16 +86,9 @@ public class VehicleController {
 	@GetMapping("{vehicleId}")
 	public ResponseEntity<IKResponse<VehicleDTO>> getVehicle(@PathVariable Long vehicleId) {
 		try {
-			Set<Map.Entry<Long, Vehicle>> entries = getVehicle.execute(vehicleId).entrySet();
-			VehicleDTO response = null;
-			for (Map.Entry<Long, Vehicle> entry : entries) {
-				response = new VehicleDTO(entry.getValue(), entry.getKey());
-				break;
-			}
-			if (Objects.isNull(response)) {
-				throw new EntityNotFoundException(VehicleConstant.NOT_FOUND_MESSAGE);
-			}
-			return ResponseEntity.ok(IKResponse.<VehicleDTO>build().body(response));
+			VehicleDTO vehicleDTO = converter.parseDTO(getVehicle.execute(vehicleId));
+
+			return ResponseEntity.ok(IKResponse.<VehicleDTO>build().body(vehicleDTO));
 		} catch (IKException e) {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(

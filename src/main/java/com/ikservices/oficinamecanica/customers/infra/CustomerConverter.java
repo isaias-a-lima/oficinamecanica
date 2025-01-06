@@ -32,6 +32,10 @@ public class CustomerConverter {
     private VehicleConverter vehicleConverter;
 
     public Customer parseCustomer(CustomerEntity customerEntity) {
+        return parseCustomer(customerEntity, false);
+    }
+
+    public Customer parseCustomer(CustomerEntity customerEntity, Boolean avoidStackOverflow) {
         if (Objects.isNull(customerEntity)) {
             throw new IKException("Null object.");
         }
@@ -51,7 +55,7 @@ public class CustomerConverter {
                 .setCityAndStateAndCountry(customerEntity.getCity(), customerEntity.getState(), null)
                 .build());
 
-        customer.setVehicles(vehicleConverter.parseVehicleList(customerEntity.getVehicles()));
+        customer.setVehicles(!avoidStackOverflow && Objects.nonNull(customerEntity.getVehicles()) ? vehicleConverter.parseVehicleList(customerEntity.getVehicles()) : null);
 
         return customer;
     }
@@ -88,6 +92,15 @@ public class CustomerConverter {
         return entity;
     }
 
+    public CustomerDTO parseCustomerDTO(Customer customer, Boolean avoidStackOverflow) {
+
+        if (avoidStackOverflow) {
+            customer.setVehicles(null);
+        }
+
+        return new CustomerDTO(customer);
+    }
+
     public List<CustomerDTO> parseCustomerDTOList(List<Customer> customerList) {
         List<CustomerDTO> responseList = new ArrayList<>();
         if (Objects.nonNull(customerList) && !customerList.isEmpty()) {
@@ -119,10 +132,12 @@ public class CustomerConverter {
 
         customer.setVehicles(new ArrayList<>());
 
-        for (VehicleResponse vehicleResponse : customerDTO.getVehicles()) {
-            Map<Long, Vehicle> vehicleMap = new HashMap<>();
-            vehicleMap.put(vehicleResponse.getVehicleId(), vehicleConverter.parseVehicle(vehicleResponse));
-            customer.getVehicles().add(vehicleMap);
+        if (Objects.nonNull(customerDTO.getVehicles())) {
+            for (VehicleResponse vehicleResponse : customerDTO.getVehicles()) {
+                Map<Long, Vehicle> vehicleMap = new HashMap<>();
+                vehicleMap.put(vehicleResponse.getVehicleId(), vehicleConverter.parseVehicle(vehicleResponse));
+                customer.getVehicles().add(vehicleMap);
+            }
         }
 
         return customer;

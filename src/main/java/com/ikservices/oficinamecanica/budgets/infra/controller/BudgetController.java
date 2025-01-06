@@ -10,6 +10,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import com.ikservices.oficinamecanica.budgets.application.BudgetBusinessConstant;
+import com.ikservices.oficinamecanica.budgets.application.usecases.*;
 import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import org.slf4j.Logger;
@@ -18,22 +19,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.ikservices.oficinamecanica.budgets.application.usecases.ChangeStatus;
-import com.ikservices.oficinamecanica.budgets.application.usecases.DecreaseAmount;
-import com.ikservices.oficinamecanica.budgets.application.usecases.GetBudget;
-import com.ikservices.oficinamecanica.budgets.application.usecases.IncreaseAmount;
-import com.ikservices.oficinamecanica.budgets.application.usecases.ListBudgets;
-import com.ikservices.oficinamecanica.budgets.application.usecases.SaveBudget;
-import com.ikservices.oficinamecanica.budgets.application.usecases.UpdateBudget;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
@@ -75,10 +63,11 @@ public class BudgetController {
 		this.decreaseAmount = decreaseAmount;
 	}
 	
-	@GetMapping("list/{vehicleId}")
-	public ResponseEntity<IKResponse<BudgetDTO>> listBudgets(@PathVariable Long vehicleId) {
+	@GetMapping("list/{id}/{listBy}")
+	public ResponseEntity<IKResponse<BudgetDTO>> listBudgets(@PathVariable Long id, @PathVariable ListBudgetsByEnum listBy,
+															 @RequestParam(name = "status") BudgetStatusEnum status) {
 		try {
-			List<BudgetDTO> budgetDTOList = converter.parseBudgetDTOList(listBudgets.execute(vehicleId));
+			List<BudgetDTO> budgetDTOList = converter.parseBudgetDTOList(listBudgets.execute(id, listBy, status));
 
 			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(budgetDTOList));
 
@@ -95,9 +84,9 @@ public class BudgetController {
 	}
 
 	@GetMapping("list/{workshopId}/{idDoc}/{status}")
-	public ResponseEntity<IKResponse<BudgetDTO>> listBudgetsByCustomer(@PathVariable Long workshopId, @PathVariable String idDoc, @PathVariable int status) {
+	public ResponseEntity<IKResponse<BudgetDTO>> listBudgetsByCustomer(@PathVariable Long workshopId, @PathVariable String idDoc, @PathVariable BudgetStatusEnum status) {
 		try {
-			List<BudgetDTO> budgetDTOList = converter.parseBudgetDTOList(listBudgets.execute(workshopId, idDoc, BudgetStatusEnum.findByIndex(status)));
+			List<BudgetDTO> budgetDTOList = converter.parseBudgetDTOList(listBudgets.execute(workshopId, idDoc, status));
 
 			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(budgetDTOList));
 

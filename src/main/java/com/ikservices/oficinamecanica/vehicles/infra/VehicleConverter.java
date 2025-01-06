@@ -32,15 +32,7 @@ public class VehicleConverter {
 		
 		Vehicle vehicle = new Vehicle();
 
-		Customer customer = new Customer();
-		customer.setId(
-				new CustomerId(
-						entity.getCustomerEntity().getId().getWorkshopId(),
-						new IdentificationDocumentVO(TaxPayerEnum.getByType(entity.getCustomerEntity().getType()),entity.getCustomerEntity().getId().getDocId())
-				)
-		);
-
-		vehicle.setCustomer(customer);
+		vehicle.setCustomer(customerConverter.parseCustomer(entity.getCustomerEntity(), true));
 		vehicle.setPlate(entity.getPlate());
 		vehicle.setManufacturing(entity.getManufacturing());
 		vehicle.setObservations(entity.getObservations());
@@ -165,27 +157,33 @@ public class VehicleConverter {
 		return vehicle;
 	}
 	
-	public VehicleDTO parseDTO(Vehicle vehicle) {
-		if(Objects.isNull(vehicle)) {
+	public VehicleDTO parseDTO(Map<Long, Vehicle> vehicleMap) {
+		if(Objects.isNull(vehicleMap)) {
 			throw new VehicleException("Null Object");
 		}
-		
-		VehicleDTO dto = new VehicleDTO();
-		
-		dto.setBrand(vehicle.getBrand());
-		dto.setCustomer(Objects.nonNull(vehicle.getCustomer()) ?
-				new CustomerDTO(vehicle.getCustomer()) 
-				: null);
-		dto.setEngine(vehicle.getEngine());
-		dto.setManufacturing(vehicle.getManufacturing());
-		dto.setModel(vehicle.getModel());
-		dto.setColor(vehicle.getColor());
-		dto.setFuel(Objects.nonNull(vehicle.getFuel()) ? vehicle.getFuel().ordinal(): null);
-		dto.setTransmission(Objects.nonNull(vehicle.getTransmission()) ? vehicle.getTransmission().ordinal() : null);
-		dto.setObservations(vehicle.getObservations());
-		dto.setPlate(vehicle.getPlate());
-	
-		return dto;
+
+		for (Long vehicleId : vehicleMap.keySet()) {
+			VehicleDTO dto = new VehicleDTO();
+
+			Vehicle vehicle = vehicleMap.get(vehicleId);
+
+			dto.setVehicleId(vehicleId);
+			dto.setBrand(vehicle.getBrand());
+			dto.setCustomer(Objects.nonNull(vehicle.getCustomer()) ?
+					customerConverter.parseCustomerDTO(vehicle.getCustomer(), true)
+					: null);
+			dto.setEngine(vehicle.getEngine());
+			dto.setManufacturing(vehicle.getManufacturing());
+			dto.setModel(vehicle.getModel());
+			dto.setColor(vehicle.getColor());
+			dto.setFuel(Objects.nonNull(vehicle.getFuel()) ? vehicle.getFuel().ordinal(): null);
+			dto.setTransmission(Objects.nonNull(vehicle.getTransmission()) ? vehicle.getTransmission().ordinal() : null);
+			dto.setObservations(vehicle.getObservations());
+			dto.setPlate(vehicle.getPlate());
+			return dto;
+		}
+
+		return null;
 	}
 	
 	public List<VehicleResponse> parseResponseList(List<Map<Long, Vehicle>> vehicleList) {
@@ -201,15 +199,12 @@ public class VehicleConverter {
 		
 		return vehicleResponseList;
 	}
-	
+
+	//TODO fix this method
 	public List<VehicleDTO> parseDTOList(List<Vehicle> vehicleList) {
 		List<VehicleDTO> vehicleDTOList = new ArrayList<>();
 		
-		if(Objects.nonNull(vehicleList) && !vehicleList.isEmpty()) {
-			for(Vehicle vehicle: vehicleList) {
-				vehicleDTOList.add(this.parseDTO(vehicle));
-			}
-		}
+
 		
 		return vehicleDTOList;
 	}

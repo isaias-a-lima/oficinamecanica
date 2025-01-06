@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.ikservices.oficinamecanica.budgets.application.gateways.BudgetRepository;
+import com.ikservices.oficinamecanica.budgets.application.usecases.ListBudgetsByEnum;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
@@ -27,10 +28,12 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 	}
 
 	@Override
-	public List<Map<Long, Map<Long, Budget>>> listBudgets(Long vehicleId) {
-		VehicleEntity vehicleEntity = new VehicleEntity();
-		vehicleEntity.setVehicleId(vehicleId);
-		return converter.parseBudgetList(repositoryJPA.findAllByVehicleEntity(vehicleEntity));
+	public List<Map<Long, Map<Long, Budget>>> listBudgets(Long id, ListBudgetsByEnum listBy, BudgetStatusEnum status) {
+
+		if (ListBudgetsByEnum.WORKSHOP.equals(listBy)) {
+			return converter.parseBudgetList(repositoryJPA.getBudgetsByWorkshop(id, status));
+		}
+		return converter.parseBudgetList(repositoryJPA.getBudgetsByVehicle(id, status));
 	}
 
 	@Override
