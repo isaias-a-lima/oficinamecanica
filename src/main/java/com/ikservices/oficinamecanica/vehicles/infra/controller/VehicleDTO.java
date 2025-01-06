@@ -42,6 +42,7 @@ public class VehicleDTO implements Serializable {
 		this.manufacturing = vehicle.getManufacturing();
 		this.engine = vehicle.getEngine();
 		this.observations = vehicle.getObservations();
+		this.customer = Objects.nonNull(vehicle.getCustomer()) ? new CustomerDTO(vehicle.getCustomer()) : null;
 	}
 
 	public VehicleDTO(Long vehicleId) {

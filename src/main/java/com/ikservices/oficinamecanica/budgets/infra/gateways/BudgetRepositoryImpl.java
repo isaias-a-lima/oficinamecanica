@@ -8,12 +8,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.ikservices.oficinamecanica.budgets.application.gateways.BudgetRepository;
+import com.ikservices.oficinamecanica.budgets.application.usecases.ListBudgetsByEnum;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetRepositoryJPA;
-import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 
 public class BudgetRepositoryImpl implements BudgetRepository {
@@ -28,10 +28,18 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 	}
 
 	@Override
-	public List<Map<Long, Budget>> listBudgets(Long vehicleId) {
-		VehicleEntity vehicleEntity = new VehicleEntity();
-		vehicleEntity.setVehicleId(vehicleId);
-		return converter.parseBudgetList(repositoryJPA.findAllByVehicleEntity(vehicleEntity));
+	public List<Map<Long, Map<Long, Budget>>> listBudgets(Long id, ListBudgetsByEnum listBy, BudgetStatusEnum status) {
+
+		if (ListBudgetsByEnum.WORKSHOP.equals(listBy)) {
+			return converter.parseBudgetList(repositoryJPA.getBudgetsByWorkshop(id, status));
+		}
+		return converter.parseBudgetList(repositoryJPA.getBudgetsByVehicle(id, status));
+	}
+
+	@Override
+	public List<Map<Long, Map<Long, Budget>>> listBudgets(Long workshopId, String idDoc, BudgetStatusEnum status) {
+		List<BudgetEntity> entities = repositoryJPA.getBudgetsByCustomer(workshopId, idDoc, status);
+		return converter.parseBudgetList(entities);
 	}
 
 	@Override

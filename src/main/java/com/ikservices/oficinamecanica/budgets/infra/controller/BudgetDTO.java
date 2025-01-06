@@ -23,14 +23,14 @@ public class BudgetDTO {
 	VehicleDTO vehicle;
 	String openingDate;
 	Long km;
-	BudgetStatusEnum budgetStatus;
+	Integer budgetStatus;
 	String amount;
 	Long budgetId;
 
 	public BudgetDTO(Budget budget, Long budgetId, Long vehicleId) {
 		this.openingDate = budget.getOpeningDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		this.km = budget.getKm();
-		this.budgetStatus = budget.getBudgetStatus();
+		this.budgetStatus = budget.getBudgetStatus().ordinal();
 		this.amount = NumberUtil.parseStringMoney(budget.getAmount());
 		this.budgetId = budgetId;
 		this.vehicle = Objects.nonNull(budget.getVehicle()) && Objects.nonNull(vehicleId) ? new VehicleDTO(budget.getVehicle(), vehicleId) : null;

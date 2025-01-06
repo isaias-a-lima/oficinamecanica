@@ -2,14 +2,11 @@ package com.ikservices.oficinamecanica.parts.infra.persistence;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.ikservices.oficinamecanica.suppliers.infra.persistence.SupplierEntity;
 import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopEntity;
 
 import lombok.AllArgsConstructor;
@@ -31,26 +28,35 @@ public class PartEntity {
 	@ManyToOne
 	@JoinColumn(name = "WORKSHOPID", insertable = false, updatable = false)
 	private WorkshopEntity workshopEntity;
+	@ManyToMany(mappedBy = "parts", cascade = CascadeType.ALL)
+	private Set<SupplierEntity> suppliers;
 	@Column(name = "DESCRIPTION")
 	private String description;
+	@Column(name = "BRAND")
+	private String brand;
+	@Column(name = "FITS")
+	private String fits;
+	@Column(name = "MANUFACTURERCODE")
+	private String manufacturerCode;
 	@Column(name = "COST")
 	private BigDecimal cost;
 	@Column(name = "BALANCE")
 	private Integer balance;
 	@Column(name = "PROFIT")
 	private BigDecimal profit;
-	@Column(name = "BRAND")
-	private String brand;
 	
 	public void update(PartEntity entity) {
 		if(Objects.nonNull(entity.getDescription())) {
 			this.description = entity.getDescription();
 		}
+		if(Objects.nonNull(entity.getFits())) {
+			this.fits = entity.getFits();
+		}
+		if(Objects.nonNull(entity.getManufacturerCode())) {
+			this.manufacturerCode = entity.getManufacturerCode();
+		}
 		if(Objects.nonNull(entity.getCost())) {
 			this.cost = entity.getCost();
-		}
-		if(Objects.nonNull(entity.getBalance())){
-			this.balance = entity.getBalance();
 		}
 		if(Objects.nonNull(entity.getProfit())){
 			this.profit = entity.getProfit();

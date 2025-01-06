@@ -1,6 +1,7 @@
 package com.ikservices.oficinamecanica.suppliers.infra;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,6 +10,7 @@ import com.ikservices.oficinamecanica.commons.vo.AddressVO;
 import com.ikservices.oficinamecanica.commons.vo.EmailVO;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.commons.vo.PhoneVO;
+import com.ikservices.oficinamecanica.parts.infra.PartConverter;
 import com.ikservices.oficinamecanica.suppliers.application.SupplierException;
 import com.ikservices.oficinamecanica.suppliers.domain.Supplier;
 import com.ikservices.oficinamecanica.suppliers.domain.SupplierId;
@@ -19,10 +21,12 @@ import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopConver
 
 public class SupplierConverter {
 	private final WorkshopConverter workshopConverter;
+	private final PartConverter partConverter;
 	
-	public SupplierConverter(WorkshopConverter workshopConverter) {
+	public SupplierConverter(WorkshopConverter workshopConverter, PartConverter partConverter) {
 		this.workshopConverter = workshopConverter;
-	}
+        this.partConverter = partConverter;
+    }
 	
 	public Supplier parseSupplier(SupplierEntity entity) {
 		if(Objects.isNull(entity)) {
@@ -31,6 +35,7 @@ public class SupplierConverter {
 		
 		Supplier supplier = new Supplier();
 		supplier.setSupplierId(new SupplierId(entity.getId().getId(), entity.getId().getWorkshopId()));
+		supplier.setParts(Objects.nonNull(entity.getParts()) ? partConverter.parsePartsSet(entity.getParts()) : new HashSet<>());
 		supplier.setIdDoc(new IdentificationDocumentVO(entity.getIdDoc()));
 		supplier.setName(entity.getName());
 		supplier.setLandline(PhoneVO.parsePhoneVO(entity.getLandLine()));
@@ -134,6 +139,7 @@ public class SupplierConverter {
 		
 		dto.setSupplierId(supplier.getSupplierId().getId());
 		dto.setWorkshopId(supplier.getSupplierId().getWorkshopid());
+		dto.setParts(Objects.nonNull(supplier.getParts()) ? partConverter.parseDTOSet(supplier.getParts()) : new HashSet<>());
 		dto.setIdDoc(supplier.getIdDoc().getFullDocument());
 		dto.setName(supplier.getName());
 		dto.setLandLine(supplier.getLandline().getFullPhone());

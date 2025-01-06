@@ -5,12 +5,15 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
+import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetDTO;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
+import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.vehicles.infra.VehicleConverter;
 import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
+import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleResponse;
 import org.springframework.stereotype.Component;
 
 
@@ -65,20 +68,6 @@ public class BudgetConverter {
 		return budgetEntityList;
 	}
 	
-	public List<Map<Long, Budget>> parseBudgetList(List<BudgetEntity> budgetEntityList) {
-		List<Map<Long, Budget>> budgetList = new ArrayList<>();
-		
-		if(Objects.nonNull(budgetEntityList) && !budgetEntityList.isEmpty()) {
-			for(BudgetEntity entity : budgetEntityList) {
-				Map<Long, Budget> budgetMap = new HashMap<>();
-				budgetMap.put(entity.getBudgetId(), this.parseBudget(entity));
-				budgetList.add(budgetMap);
-			}
-		}
-		
-		return budgetList;
-	}
-	
 	public BudgetDTO parseBudgetDTO(Map<Long, Budget> budgetMap, Long vehicleId) {
 		if(Objects.isNull(budgetMap)) {
 			throw new IKException("Null object");
@@ -90,13 +79,16 @@ public class BudgetConverter {
 		
 		for(Map.Entry<Long, Budget> entry : entries) {
 			dto.setAmount(NumberUtil.parseStringMoney(entry.getValue().getAmount()));
-			dto.setBudgetStatus(entry.getValue().getBudgetStatus());
+			dto.setBudgetStatus(entry.getValue().getBudgetStatus().ordinal());
 			dto.setKm(entry.getValue().getKm());
 			dto.setOpeningDate(entry.getValue().getOpeningDate().toString());
 			dto.setBudgetId(entry.getKey());
 
-			dto.setVehicle(Objects.nonNull(entry.getValue().getVehicle()) ? new VehicleDTO(entry.getValue().getVehicle(), vehicleId) : new VehicleDTO(vehicleId));
-
+			if (Objects.nonNull(entry.getValue().getVehicle())) {
+				Map<Long, Vehicle> vehicleMap = new HashMap<>();
+				vehicleMap.put(vehicleId, entry.getValue().getVehicle());
+				dto.setVehicle(vehicleConverter.parseDTO(vehicleMap));
+			}
 			break;
 		}
 		
@@ -110,22 +102,43 @@ public class BudgetConverter {
 		
 		Budget budget = new Budget();
 		budget.setAmount(NumberUtil.parseBigDecimal(dto.getAmount()));
-		budget.setBudgetStatus(dto.getBudgetStatus());
+		budget.setBudgetStatus(BudgetStatusEnum.findByIndex(dto.getBudgetStatus()));
 		budget.setKm(dto.getKm());
 		budget.setOpeningDate(LocalDate.parse(dto.getOpeningDate()));
 		
 		return budget;
 	}
 	
-	public List<BudgetDTO> parseBudgetDTOList(List<Map<Long, Budget>> budgetList, Long vehicleId) {
+	public List<BudgetDTO> parseBudgetDTOList(List<Map<Long, Map<Long, Budget>>> budgetList) {
 		List<BudgetDTO> dtoList = new ArrayList<>();
-		
-		if(Objects.nonNull(budgetList) && !budgetList.isEmpty()) {
-			for(Map<Long, Budget> budgetMap : budgetList) {
-				dtoList.add(this.parseBudgetDTO(budgetMap, vehicleId));
+
+		for (Map<Long, Map<Long, Budget>> outerMap : budgetList) {
+			for (Long vehicleId : outerMap.keySet()) {
+				Map<Long, Budget> innerMap = outerMap.get(vehicleId);
+
+				for (Long budgetId : innerMap.keySet()) {
+					dtoList.add(parseBudgetDTO(innerMap, vehicleId));
+				}
 			}
 		}
-		
+
 		return dtoList;
+	}
+
+	public List<Map<Long, Map<Long, Budget>>> parseBudgetList(List<BudgetEntity> entities) {
+
+		List<Map<Long, Map<Long, Budget>>> budgetList = new ArrayList<>();
+
+		for (BudgetEntity entity : entities) {
+			Map<Long, Budget> mapInner = new HashMap<>();
+			mapInner.put(entity.getBudgetId(), this.parseBudget(entity));
+
+			Map<Long, Map<Long, Budget>> mapOuter = new HashMap<>();
+			mapOuter.put(entity.getVehicleId(), mapInner);
+
+			budgetList.add(mapOuter);
+		}
+
+		return budgetList;
 	}
 }
