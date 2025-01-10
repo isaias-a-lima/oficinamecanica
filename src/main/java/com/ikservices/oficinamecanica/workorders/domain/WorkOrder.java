@@ -1,12 +1,10 @@
-package com.ikservices.oficinamecanica.work.orders.domain;
+package com.ikservices.oficinamecanica.workorders.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
-import com.ikservices.oficinamecanica.work.orders.domain.PayFormEnum;
-import com.ikservices.oficinamecanica.work.orders.domain.WorkOrderStatusEnum;
 
 public class WorkOrder {
 	WorkOrderId id;

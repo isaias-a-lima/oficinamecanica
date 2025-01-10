@@ -1,4 +1,4 @@
-package com.ikservices.oficinamecanica.work.orders.application;
+package com.ikservices.oficinamecanica.workorders.application;
 
 public enum SourceCriteriaEnum {
 	WORKSHOP,

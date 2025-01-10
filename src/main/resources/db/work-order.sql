@@ -15,4 +15,4 @@ PRIMARY KEY(workshopid, workorderid),
 CONSTRAINT fk_workshops_work_orders FOREIGN KEY(workshopid) REFERENCES workshops(workshopid),
 CONSTRAINT fk_vehicles_work_orders FOREIGN KEY(vehicleid) REFERENCES vehicles(vehicleid),
 CONSTRAINT fk_budgets_work_orders FOREIGN KEY(budgetid) REFERENCES budgets(budgetid)
-)COMMENT = "WORK_ORDER";
+)COMMENT = "WORK_ORDERS";

@@ -1,4 +1,4 @@
-package com.ikservices.oficinamecanica.work.orders.domain;
+package com.ikservices.oficinamecanica.workorders.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
