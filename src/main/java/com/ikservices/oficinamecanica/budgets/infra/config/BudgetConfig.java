@@ -1,5 +1,8 @@
 package com.ikservices.oficinamecanica.budgets.infra.config;
 
+import com.ikservices.oficinamecanica.budgets.items.services.application.gateways.BudgetItemServiceRepository;
+import com.ikservices.oficinamecanica.budgets.items.services.infra.BudgetItemServiceConverter;
+import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceRepositoryJPA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,8 +29,9 @@ public class BudgetConfig {
 	Environment environment;
 	
 	@Bean
-	BudgetRepository budgetRepository(BudgetConverter converter, BudgetRepositoryJPA repositoryJPA) {
-		return new BudgetRepositoryImpl(converter, repositoryJPA);
+	BudgetRepository budgetRepository(BudgetConverter converter, BudgetRepositoryJPA repositoryJPA, BudgetItemServiceConverter budgetItemServiceConverter,
+									  BudgetItemServiceRepositoryJPA itemServiceRepository) {
+		return new BudgetRepositoryImpl(converter, budgetItemServiceConverter, repositoryJPA, itemServiceRepository);
 	}
 	
 	@Bean

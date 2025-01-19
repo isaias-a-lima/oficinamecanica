@@ -3,10 +3,14 @@ package com.ikservices.oficinamecanica.budgets.infra;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
+import com.ikservices.oficinamecanica.budgets.items.services.infra.BudgetItemServiceConverter;
 import com.ikservices.oficinamecanica.vehicles.infra.VehicleConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,15 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@SpringBootTest
 public class BudgetConverterTest {
-
+    @Autowired
     private BudgetConverter subject;
-
-    @BeforeEach
-    public void setup() {
-        VehicleConverter vehicleConverter = new VehicleConverter();
-        subject = new BudgetConverter(vehicleConverter);
-    }
+    @MockBean
+    private BudgetItemServiceConverter itemServiceConverter;
 
     @Test
     public void testParseBudgetList() {

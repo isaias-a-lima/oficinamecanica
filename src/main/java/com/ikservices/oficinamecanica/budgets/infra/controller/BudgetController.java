@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 
 import com.ikservices.oficinamecanica.budgets.application.BudgetBusinessConstant;
 import com.ikservices.oficinamecanica.budgets.application.usecases.*;
@@ -19,6 +18,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -105,14 +105,11 @@ public class BudgetController {
 	@GetMapping("get/{budgetId}")
 	public ResponseEntity<IKResponse<BudgetDTO>> getBudget(@PathVariable Long budgetId) {
 		try {
-			Map<Long, Map<Long, Budget>> outertMap = getBudget.execute(budgetId);
+			Map<Long, Map<Long, Budget>> budgetAndVehicleMap = getBudget.execute(budgetId);
 
-			Set<Map.Entry<Long, Map<Long, Budget>>> outerMapEntries = outertMap.entrySet();
-
-			for (Map.Entry<Long, Map<Long, Budget>> innerMapEntries : outerMapEntries) {
-				Long vehicleId = innerMapEntries.getKey();
-				Budget budget = innerMapEntries.getValue().get(budgetId);
-				return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(new BudgetDTO(budget, budgetId, vehicleId)));
+			for (Long vehicleId : budgetAndVehicleMap.keySet()) {
+				Map<Long, Budget> budgetMap = budgetAndVehicleMap.get(vehicleId);
+				return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(converter.parseBudgetDTO(budgetMap, vehicleId, false)));
 			}
 
 			throw new IKException(new IKMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.WARNING.getCode(), environment.getProperty(BudgetConstant.GET_ERROR_MESSAGE)));
@@ -133,11 +130,12 @@ public class BudgetController {
 	}
 	
 	@PostMapping()
-	public ResponseEntity<IKResponse<BudgetDTO>> saveBudget(@RequestBody BudgetDTO budgetDTO, UriComponentsBuilder uriBuilder) {
-		String budgetJSON = IKLoggerUtil.parseJSON(budgetDTO);
+	@Transactional
+	public ResponseEntity<IKResponse<BudgetDTO>> saveBudget(@RequestBody BudgetRequest budget, UriComponentsBuilder uriBuilder) {
+		String budgetJSON = IKLoggerUtil.parseJSON(budget);
 		String loggerID = IKLoggerUtil.getLoggerID();
 		try {
-			Map<Long, Budget> budgetMap = saveBudget.execute(converter.parseBudget(budgetDTO), budgetDTO.vehicle.getVehicleId());
+			Map<Long, Budget> budgetMap = saveBudget.execute(converter.parseBudget(budget), budget.getVehicleId());
 			
 			ResponseEntity<IKResponse<BudgetDTO>> responseEntity = null;
 			
@@ -145,8 +143,9 @@ public class BudgetController {
 				URI uri = uriBuilder.path("budgets/{budgetId}").buildAndExpand(budgetId).toUri();
 				
 				responseEntity = ResponseEntity.created(uri).body(IKResponse.<BudgetDTO>build().body(
-						converter.parseBudgetDTO(budgetMap, budgetDTO.getVehicle().getVehicleId()))
+						converter.parseBudgetDTO(budgetMap, budget.getVehicleId(), false))
 						.addMessage(BudgetBusinessConstant.SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.SAVE_SUCCESS_MESSAGE)));
+				break;
 			}
 			
 			return responseEntity;
@@ -164,15 +163,16 @@ public class BudgetController {
 		}
 	}
 	
-	@Transactional
+
 	@PutMapping
-	public ResponseEntity<IKResponse<BudgetDTO>> updateBudget(@RequestBody BudgetDTO budgetDTO) {
-		String budgetJSON = IKLoggerUtil.parseJSON(budgetDTO);
+	@Transactional
+	public ResponseEntity<IKResponse<BudgetDTO>> updateBudget(@RequestBody BudgetRequest budget) {
+		String budgetJSON = IKLoggerUtil.parseJSON(budget);
 		String loggerID = IKLoggerUtil.getLoggerID();
 		try {
-			Map<Long, Budget> budgetMap = updateBudget.execute(converter.parseBudget(budgetDTO), budgetDTO.getBudgetId());
+			Map<Long, Budget> budgetMap = updateBudget.execute(converter.parseBudget(budget), budget.getBudgetId());
 			
-			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(converter.parseBudgetDTO(budgetMap, null))
+			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(converter.parseBudgetDTO(budgetMap, null, false))
 					.addMessage(BudgetBusinessConstant.SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.UPDATE_SUCCESS_MESSAGE)));
 		}catch(IKException ike) {
 			LOGGER.error(loggerID + " - " + budgetJSON);
@@ -187,8 +187,9 @@ public class BudgetController {
 		}
 	}
 	
-	@Transactional
+
 	@PutMapping("{budgetId}/{value}")
+	@Transactional
 	public ResponseEntity<IKResponse<String>> increaseAmount(@PathVariable Long budgetId, @PathVariable BigDecimal value) {
 		try {
 			increaseAmount.execute(budgetId, value);
@@ -206,8 +207,9 @@ public class BudgetController {
 		}
 	}
 	
-	@Transactional
+
 	@PutMapping("changeStatus/{budgetId}/{budgetStatus}")
+	@Transactional
 	public ResponseEntity<IKResponse<String>> changeStatus(@PathVariable Long budgetId, @PathVariable int budgetStatus) {
 		try {
 			changeStatus.execute(budgetId, BudgetStatusEnum.findByIndex(budgetStatus));
@@ -223,8 +225,9 @@ public class BudgetController {
 		}
 	}
 	
-	@Transactional
+
 	@PutMapping("decreaseAmount/{budgetId}/{value}")
+	@Transactional
 	public ResponseEntity<IKResponse<String>> decreaseAmount(@PathVariable Long budgetId, 
 			@PathVariable BigDecimal value) {
 		try {

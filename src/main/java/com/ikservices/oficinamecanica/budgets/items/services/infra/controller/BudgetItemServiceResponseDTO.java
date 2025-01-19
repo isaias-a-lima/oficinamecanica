@@ -18,7 +18,6 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class BudgetItemServiceResponseDTO {
 	private Long itemId;
-	private BudgetDTO budget;
 	private ServiceDTO service;
 	private Integer quantity;
 	private BigDecimal cost;
