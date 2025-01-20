@@ -1,6 +1,7 @@
 package com.ikservices.oficinamecanica.budgets.infra.persistence;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,7 @@ public interface BudgetRepositoryJPA extends JpaRepository<BudgetEntity, Long>{
 
 	@Query("SELECT b FROM BudgetEntity b WHERE b.vehicle.workshopId = :workshopId AND b.budgetStatus = :status")
 	public List<BudgetEntity> getBudgetsByWorkshop(@Param("workshopId") Long workshopId, @Param("status") BudgetStatusEnum status);
+
+	@Query("SELECT b FROM BudgetEntity b LEFT JOIN FETCH b.serviceItems WHERE b.budgetId = :id")
+	Optional<BudgetEntity> findByIdWithServiceItems(@Param("id") Long id);
 }

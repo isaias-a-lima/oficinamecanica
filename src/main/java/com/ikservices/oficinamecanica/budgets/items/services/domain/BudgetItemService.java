@@ -1,8 +1,10 @@
 package com.ikservices.oficinamecanica.budgets.items.services.domain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.services.domain.Service;
 
 import lombok.AllArgsConstructor;
@@ -24,11 +26,6 @@ public class BudgetItemService {
 	BigDecimal discount;
 	
 	public BigDecimal getTotal() {
-		//quantity * (cost - ((discount / 100) * cost));
-		BigDecimal percentage = discount.divide(BigDecimal.valueOf(100.0));
-		BigDecimal discountValue = this.service.getCost().multiply(percentage);
-		BigDecimal costValue = this.service.getCost().subtract(discountValue);
-		
-		return costValue.multiply(BigDecimal.valueOf(quantity.doubleValue()));
+		return NumberUtil.calcPrice(quantity, service.getCost(), discount);
 	}
 }

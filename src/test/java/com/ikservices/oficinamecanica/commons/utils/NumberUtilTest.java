@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +62,17 @@ public class NumberUtilTest {
 
             Assertions.assertEquals(key, actual);
         }
+    }
+
+    @Test
+    public void testCalcPrice() {
+        BigDecimal expected = BigDecimal.valueOf(350).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal tested = BigDecimal.ZERO;
+        tested = NumberUtil.calcPrice(4, BigDecimal.valueOf(50), BigDecimal.ZERO);
+        tested = tested.add(NumberUtil.calcPrice(1, BigDecimal.valueOf(50), BigDecimal.ZERO));
+        tested = tested.add(NumberUtil.calcPrice(1, BigDecimal.valueOf(200), BigDecimal.valueOf(50)));
+
+        Assertions.assertEquals(expected, tested);
     }
 
     private List<String> getValues() {

@@ -2,7 +2,9 @@ package com.ikservices.oficinamecanica.budgets.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
+import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemService;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 
 import lombok.AllArgsConstructor;
@@ -22,4 +24,5 @@ public class Budget {
 	Long km;
 	BudgetStatusEnum budgetStatus;
 	BigDecimal amount;
+	List<BudgetItemService> serviceItems;
 }

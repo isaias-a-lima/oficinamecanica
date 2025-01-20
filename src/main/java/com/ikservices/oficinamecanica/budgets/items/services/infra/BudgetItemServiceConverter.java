@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
@@ -21,11 +23,13 @@ import com.ikservices.oficinamecanica.services.infra.ServiceConverter;
 
 @Component
 public class BudgetItemServiceConverter {
-	private final BudgetConverter budgetConverter;
+
+	@Autowired()
+	@Lazy
+	private BudgetConverter budgetConverter;
 	private final ServiceConverter serviceConverter;
 	
-	public BudgetItemServiceConverter(BudgetConverter budgetConverter, ServiceConverter serviceConverter) {
-		this.budgetConverter = budgetConverter;
+	public BudgetItemServiceConverter(ServiceConverter serviceConverter) {
 		this.serviceConverter = serviceConverter;
 	}
 	
@@ -36,8 +40,11 @@ public class BudgetItemServiceConverter {
 		
 		BudgetItemService item = new BudgetItemService();
 		item.setItemId(new BudgetItemServiceId(entity.getId().getId(), entity.getId().getBudgetId()));
-		item.setService(Objects.nonNull(entity.getServiceEntity()) ? serviceConverter.parseService(entity.getServiceEntity()) : null);
-		item.setBudget(Objects.nonNull(entity.getBudgetEntity()) ? budgetConverter.parseBudget(entity.getBudgetEntity()) : null);
+		item.setBudget(Objects.nonNull(entity.getBudgetEntity()) ? budgetConverter.parseBudget(entity.getBudgetEntity(), true) : null);
+		if (Objects.nonNull(entity.getServiceEntity())) {
+			item.setService(serviceConverter.parseService(entity.getServiceEntity()));
+			item.getService().setCost(entity.getCost());
+		}
 		item.setDiscount(entity.getDiscount());
 		item.setQuantity(entity.getQuantity());
 		
@@ -53,7 +60,7 @@ public class BudgetItemServiceConverter {
 		
 		entity.setId(new BudgetItemServiceEntityId(item.getItemId().getId(), item.getItemId().getBudgetId()));
 		
-		entity.setBudgetEntity(Objects.nonNull(item.getBudget()) ? budgetConverter.parseEntity(item.getBudget()) : null);
+		entity.setBudgetEntity(Objects.nonNull(item.getBudget()) ? budgetConverter.parseEntity(item.getBudget(), null, null) : null);
 		
 		if (Objects.nonNull(item.getService())) {
 			entity.setServiceId(item.getService().getId().getId());
@@ -120,14 +127,13 @@ public class BudgetItemServiceConverter {
 		
 		BudgetItemServiceResponseDTO responseDTO = new BudgetItemServiceResponseDTO();
 		responseDTO.setItemId(item.getItemId().getId());
-		responseDTO.setBudget(Objects.nonNull(item.getBudget()) ? (new BudgetDTO(item.getBudget(), item.getItemId().getBudgetId(), null)) : null);
 		if (Objects.nonNull(item.getService())) {
 			responseDTO.setService(serviceConverter.parseDTO(item.getService()));
 			responseDTO.setCost(item.getService().getCost());
-			
 		}
 		responseDTO.setDiscount(item.getDiscount());
 		responseDTO.setQuantity(item.getQuantity());
+		responseDTO.setTotalAmount(item.getTotal());
 
 		
 		return responseDTO;
