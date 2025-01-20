@@ -8,6 +8,6 @@ public interface WorkOrderRepositoryJPA extends JpaRepository<WorkOrderEntity, W
 	
 	@Query("SELECT CASE WHEN MAX(w.workOrderEntityId.workOrderId) IS NULL THEN 1 "
 			+ "ELSE (MAX(w.workOrderEntityId.workOrderId) + 1) END "
-			+ "FROM WorkOrderEntity w WHERE w.workOrderEntityId.workshopId = :workshopId")
+			+ "FROM WorkOrderEntity w WHERE w.budget.vehicle.workshopId = :workshopId")
 	public Long getNextWorkOrderId(@Param("workshopId") Long workshopId);
 }

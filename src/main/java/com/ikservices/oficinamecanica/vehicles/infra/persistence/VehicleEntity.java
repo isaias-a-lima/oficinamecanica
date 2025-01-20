@@ -72,7 +72,7 @@ public class VehicleEntity {
 	@Column(name = "ACTIVE")
 	private Boolean active;
 
-	@OneToMany(mappedBy = "vehicleEntity")
+	@OneToMany(mappedBy = "vehicle")
 	private List<BudgetEntity> budgetList;
 	
 	public void update(VehicleEntity entity) {

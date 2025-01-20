@@ -1,11 +1,18 @@
 package com.ikservices.oficinamecanica.workorders.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
-public class WorkOrderId {
-	Long workshopId;
-	Long workOrderId;
+@EqualsAndHashCode
+public class WorkOrderId implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
+	private Long workOrderId;
+	private Long budgetId;
 }

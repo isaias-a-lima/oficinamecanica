@@ -10,7 +10,7 @@ public class SaveWorkOrder {
 		this.repository = repository;
 	}
 	
-	public WorkOrder execute(WorkOrder workOrder, Long vehicleId) {
-		return repository.saveWorkOrder(workOrder, vehicleId);
+	public WorkOrder execute(WorkOrder workOrder) {
+		return repository.saveWorkOrder(workOrder);
 	}
 }

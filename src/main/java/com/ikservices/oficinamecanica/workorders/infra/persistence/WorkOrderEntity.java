@@ -10,14 +10,13 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.ikservices.oficinamecanica.workorders.domain.PayFormEnum;
-import com.ikservices.oficinamecanica.workorders.domain.WorkOrderStatusEnum;
-import com.ikservices.oficinamecanica.workshops.infra.persistense.WorkshopEntity;
+import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
+import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
+import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 @Entity
 @Table(name = "WORK_ORDERS")
@@ -34,11 +32,9 @@ public class WorkOrderEntity {
 	@EmbeddedId
 	private WorkOrderEntityId workOrderEntityId;
 	
-	@JoinColumn(name = "VEHICLEID", insertable = false, updatable = false)
-	private Long vehicleId;
-	
+	@OneToOne
 	@JoinColumn(name = "BUDGETID", insertable = false, updatable = false)
-	private Long budgetId;
+	private BudgetEntity budget;
 	
 	@Column(name = "OPENINGDATE")
 	private LocalDate openingDate;
@@ -50,18 +46,18 @@ public class WorkOrderEntity {
 	@Enumerated(EnumType.ORDINAL)
 	private WorkOrderStatusEnum wostatus;
 	
-	@Column(name = "PAID")
-	private Boolean paid;
+	@Column(name = "AMOUNT")
+	private BigDecimal amount;	
 	
 	@Column(name = "PAYFORM")
 	@Enumerated(EnumType.ORDINAL)
 	private PayFormEnum payForm;
 	
-	@Column(name = "INSTALLMENTS")
-	private Integer installments;
+	@Column(name = "PAYQTY")
+	private Integer payQty;
 	
-	@Column(name = "AMOUNT")
-	private BigDecimal amount;
+	@Column(name = "PAID")
+	private Boolean paid;
 	
 	public void update(WorkOrderEntity entity) {
 		if(Objects.nonNull(entity.getKm())) {
@@ -76,11 +72,8 @@ public class WorkOrderEntity {
 		if(Objects.nonNull(entity.getPayForm())) {
 			this.payForm = entity.getPayForm();
 		}
-		if(Objects.nonNull(entity.getInstallments())) {
-			this.installments = entity.getInstallments();
-		}
-		if(Objects.nonNull(entity.getAmount())) {
-			this.amount = entity.getAmount();
+		if(Objects.nonNull(entity.getPayQty())) {
+			this.payQty = entity.getPayQty();
 		}
 	}
 }

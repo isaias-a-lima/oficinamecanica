@@ -36,7 +36,7 @@ public class BudgetConverter {
 		budget.setBudgetStatus(entity.getBudgetStatus());
 		budget.setKm(entity.getKm());
 		budget.setOpeningDate(entity.getOpeningDate());
-		budget.setVehicle(Objects.nonNull(entity.getVehicleEntity()) ? vehicleConverter.parseVehicle(entity.getVehicleEntity()) : null);
+		budget.setVehicle(Objects.nonNull(entity.getVehicle()) ? vehicleConverter.parseVehicle(entity.getVehicle()) : null);
 		
 		return budget;
 	}
@@ -51,7 +51,7 @@ public class BudgetConverter {
 		entity.setBudgetStatus(budget.getBudgetStatus());
 		entity.setKm(budget.getKm());
 		entity.setOpeningDate(budget.getOpeningDate());
-		entity.setVehicleEntity(Objects.nonNull(budget.getVehicle()) ? vehicleConverter.parseEntity(budget.getVehicle(), null) : null);
+		entity.setVehicle(Objects.nonNull(budget.getVehicle()) ? vehicleConverter.parseEntity(budget.getVehicle(), null) : null);
 		
 		return entity;
 	}

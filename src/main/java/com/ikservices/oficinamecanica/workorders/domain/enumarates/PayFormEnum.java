@@ -1,4 +1,4 @@
-package com.ikservices.oficinamecanica.workorders.domain;
+package com.ikservices.oficinamecanica.workorders.domain.enumarates;
 
 public enum PayFormEnum {
 	DEBIT,

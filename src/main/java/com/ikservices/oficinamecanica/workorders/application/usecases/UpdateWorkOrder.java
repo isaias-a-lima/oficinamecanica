@@ -11,7 +11,7 @@ public class UpdateWorkOrder {
 		this.repository = repository;
 	}
 	
-	public WorkOrder execute(WorkOrder workOrder, WorkOrderId workOrderId) {
-		return repository.updateWorkOrder(workOrder, workOrderId);
+	public WorkOrder execute(WorkOrder workOrder) {
+		return repository.updateWorkOrder(workOrder);
 	}
 }
