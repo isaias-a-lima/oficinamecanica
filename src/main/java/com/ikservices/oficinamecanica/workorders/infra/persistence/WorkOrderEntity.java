@@ -2,6 +2,7 @@ package com.ikservices.oficinamecanica.workorders.infra.persistence;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -16,6 +17,7 @@ import javax.persistence.Table;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
+import com.ikservices.oficinamecanica.workorders.infra.controller.WorkOrderInstallmentsDTO;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -58,6 +60,8 @@ public class WorkOrderEntity {
 	
 	@Column(name = "PAID")
 	private Boolean paid;
+	
+	private List<WorkOrderInstallmentEntity> installments;
 	
 	public void update(WorkOrderEntity entity) {
 		if(Objects.nonNull(entity.getKm())) {

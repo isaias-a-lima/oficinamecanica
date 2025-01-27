@@ -13,7 +13,6 @@ PRIMARY KEY(workorderid, budgetid),
 CONSTRAINT fk_budgets_work_orders FOREIGN KEY(budgetid) REFERENCES budgets(budgetid)
 )COMMENT = "WORK ORDERS";
 
-
 --2025-01-20 22:00 - Portugal - Isaias Lima - Creation of service order table.
 CREATE TABLE WO_INSTALLMENTS (
 number BIGINT NOT NULL COMMENT "Installment number",
