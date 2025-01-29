@@ -94,4 +94,9 @@ public class NumberUtil {
 
         return costValue.multiply(BigDecimal.valueOf(quantity.doubleValue())).setScale(2, RoundingMode.HALF_UP);
     }
+
+    public static String parseStringNumberWithLeftZeros(Long number, int qtyLeftZeros) {
+        String str = "%0" + qtyLeftZeros + "d";
+        return String.format(str, number);
+    }
 }
