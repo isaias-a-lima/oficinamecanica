@@ -16,6 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class WorkOrderResponseDTO {
+	//TODO The id must be a compound key similar to DOMAIN and ENTITY
 	private Long workOrderId;
 	private BudgetDTO budgetDTO;
 	private String openingDate;
@@ -25,4 +26,6 @@ public class WorkOrderResponseDTO {
 	private Integer payForm;
 	private Integer payQty;
 	private boolean paid;
+	
+	//TODO Add here the WorkOrderInstallmentsDTO list as a field 
 }
