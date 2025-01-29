@@ -1,9 +1,8 @@
 package com.ikservices.oficinamecanica.parts.infra;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.parts.application.PartException;
 import com.ikservices.oficinamecanica.parts.domain.Part;
 import com.ikservices.oficinamecanica.parts.domain.PartId;
@@ -29,6 +28,8 @@ public class PartConverter {
 		part.setPartId(new PartId(entity.getId().getId(), entity.getId().getWorkshopId()));
 		part.setWorkshop(Objects.nonNull(entity.getWorkshopEntity()) ? workshopConverter.parseWorkshop(entity.getWorkshopEntity()) : null);
 		part.setDescription(entity.getDescription());
+		part.setFits(entity.getFits());
+		part.setManufacturerCode(entity.getManufacturerCode());
 		part.setCost(entity.getCost());
 		part.setBalance(entity.getBalance());
 		part.setProfit(entity.getProfit());
@@ -48,6 +49,8 @@ public class PartConverter {
 		entity.setBalance(part.getBalance());
 		entity.setCost(part.getCost());
 		entity.setDescription(part.getDescription());
+		entity.setFits(part.getFits());
+		entity.setManufacturerCode(part.getManufacturerCode());
 		entity.setProfit(part.getProfit());
 		entity.setWorkshopEntity(Objects.nonNull(part.getWorkshop()) ? workshopConverter.parseWorkshopEntity(part.getWorkshop(), part.getPartId().getWorkshopId()): null);
 		entity.setBrand(part.getBrand());
@@ -58,7 +61,7 @@ public class PartConverter {
 	public List<Part> parsePartsList(List<PartEntity> partEntityList){
 		List<Part> partsList = new ArrayList<>();
 		
-		if(Objects.nonNull(partsList) && partsList.isEmpty()) {
+		if(Objects.nonNull(partEntityList) && !partEntityList.isEmpty()) {
 			for (PartEntity entity : partEntityList) {
 				partsList.add(this.parsePart(entity));
 			}
@@ -70,7 +73,7 @@ public class PartConverter {
 	public List<PartEntity> parsePartEntityList(List<Part> partsList) {
 		List<PartEntity> partEntityList = new ArrayList<>();
 		
-		if(Objects.nonNull(partEntityList) && partEntityList.isEmpty()) {
+		if(Objects.nonNull(partsList) && !partsList.isEmpty()) {
 			for (Part part : partsList) {
 				partEntityList.add(this.parseEntity(part));
 			}
@@ -86,12 +89,15 @@ public class PartConverter {
 		PartDTO dto = new PartDTO();
 		
 		dto.setBalance(part.getBalance());
-		dto.setCost(part.getCost());
+		dto.setCost(NumberUtil.parseStringMoney(part.getCost()));
 		dto.setDescription(part.getDescription());
+		dto.setFits(part.getFits());
+		dto.setManufacturerCode(part.getManufacturerCode());
 		dto.setPartId(part.getPartId().getId());
 		dto.setWorkshopId(part.getPartId().getWorkshopId());
-		dto.setProfit(part.getProfit());
+		dto.setProfit(NumberUtil.parseStringPercent(part.getProfit()));
 		dto.setBrand(part.getBrand());
+		dto.setValue(NumberUtil.parseStringMoney(part.getValue()));
 		
 		return dto;
 	}
@@ -104,9 +110,11 @@ public class PartConverter {
 		Part part = new Part();
 		
 		part.setBalance(dto.getBalance());
-		part.setCost(dto.getCost());
+		part.setCost(NumberUtil.parseBigDecimal(dto.getCost()));
 		part.setDescription(dto.getDescription());
-		part.setProfit(dto.getProfit());
+		part.setFits(dto.getFits());
+		part.setManufacturerCode(dto.getManufacturerCode());
+		part.setProfit(NumberUtil.parseBigDecimal(dto.getProfit()));
 		part.setPartId(new PartId(dto.getPartId(), dto.getWorkshopId()));
 		part.setBrand(dto.getBrand());
 		
@@ -123,5 +131,25 @@ public class PartConverter {
 		}
 		
 		return partDTOList;
+	}
+
+	public Set<PartDTO> parseDTOSet(Set<Part> partsList) {
+		Set<PartDTO> partDTOset = new HashSet<>();
+		if(Objects.nonNull(partsList) && !partsList.isEmpty()) {
+			for (Part part : partsList) {
+				partDTOset.add(this.parseDTO(part));
+			}
+		}
+		return partDTOset;
+	}
+
+	public Set<Part> parsePartsSet(Set<PartEntity> partsEntity) {
+		Set<Part> parts = new HashSet<>();
+		if (Objects.nonNull(partsEntity) && !partsEntity.isEmpty()) {
+			for (PartEntity partEntity : partsEntity) {
+				parts.add(this.parsePart(partEntity));
+			}
+		}
+		return parts;
 	}
 }

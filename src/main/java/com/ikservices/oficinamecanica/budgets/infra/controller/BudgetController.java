@@ -1,45 +1,35 @@
 package com.ikservices.oficinamecanica.budgets.infra.controller;
 
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
-
 import com.ikservices.oficinamecanica.budgets.application.BudgetBusinessConstant;
-import com.ikservices.oficinamecanica.commons.response.IKMessage;
-import com.ikservices.oficinamecanica.commons.response.IKResponse;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import com.ikservices.oficinamecanica.budgets.application.usecases.ChangeStatus;
-import com.ikservices.oficinamecanica.budgets.application.usecases.GetBudget;
-import com.ikservices.oficinamecanica.budgets.application.usecases.IncreaseAmount;
-import com.ikservices.oficinamecanica.budgets.application.usecases.ListBudgets;
-import com.ikservices.oficinamecanica.budgets.application.usecases.SaveBudget;
-import com.ikservices.oficinamecanica.budgets.application.usecases.UpdateBudget;
+import com.ikservices.oficinamecanica.budgets.application.usecases.*;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
+import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -60,21 +50,47 @@ public class BudgetController {
 	private final UpdateBudget updateBudget;
 	private final ChangeStatus changeStatus;
 	private final IncreaseAmount increaseAmount;
+	private final DecreaseAmount decreaseAmount;
+
+    private final CreateBudgetPDF createPDF;
 	
-	public BudgetController(GetBudget getBudget, ListBudgets listBudgets, SaveBudget saveBudget, 
-			UpdateBudget updateBudget, ChangeStatus changeStatus, IncreaseAmount increaseAmount) {
+	public BudgetController(GetBudget getBudget, ListBudgets listBudgets, SaveBudget saveBudget,
+                            UpdateBudget updateBudget, ChangeStatus changeStatus, IncreaseAmount increaseAmount,
+                            DecreaseAmount decreaseAmount, CreateBudgetPDF createPDF) {
 		this.getBudget = getBudget;
 		this.listBudgets = listBudgets;
 		this.saveBudget = saveBudget;
 		this.updateBudget = updateBudget;
 		this.changeStatus = changeStatus;
 		this.increaseAmount = increaseAmount;
-	}
+		this.decreaseAmount = decreaseAmount;
+        this.createPDF = createPDF;
+    }
 	
-	@GetMapping("list/{vehicleId}")
-	public ResponseEntity<IKResponse<BudgetDTO>> listBudgets(@PathVariable Long vehicleId) {
+	@GetMapping("list/{id}/{listBy}")
+	public ResponseEntity<IKResponse<BudgetDTO>> listBudgets(@PathVariable Long id, @PathVariable ListBudgetsByEnum listBy,
+															 @RequestParam(name = "status") BudgetStatusEnum status) {
 		try {
-			List<BudgetDTO> budgetDTOList = converter.parseBudgetDTOList(listBudgets.execute(vehicleId), vehicleId);
+			List<BudgetDTO> budgetDTOList = converter.parseBudgetDTOList(listBudgets.execute(id, listBy, status));
+
+			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(budgetDTOList));
+
+		} catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<BudgetDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<BudgetDTO>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetConstant.LIST_ERROR_MESSAGE))
+			);
+		}
+	}
+
+	@GetMapping("list/{workshopId}/{idDoc}/{status}")
+	public ResponseEntity<IKResponse<BudgetDTO>> listBudgetsByCustomer(@PathVariable Long workshopId, @PathVariable String idDoc, @PathVariable BudgetStatusEnum status) {
+		try {
+			List<BudgetDTO> budgetDTOList = converter.parseBudgetDTOList(listBudgets.execute(workshopId, idDoc, status));
 
 			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(budgetDTOList));
 
@@ -93,14 +109,11 @@ public class BudgetController {
 	@GetMapping("get/{budgetId}")
 	public ResponseEntity<IKResponse<BudgetDTO>> getBudget(@PathVariable Long budgetId) {
 		try {
-			Map<Long, Map<Long, Budget>> outertMap = getBudget.execute(budgetId);
+			Map<Long, Map<Long, Budget>> budgetAndVehicleMap = getBudget.execute(budgetId);
 
-			Set<Map.Entry<Long, Map<Long, Budget>>> outerMapEntries = outertMap.entrySet();
-
-			for (Map.Entry<Long, Map<Long, Budget>> innerMapEntries : outerMapEntries) {
-				Long vehicleId = innerMapEntries.getKey();
-				Budget budget = innerMapEntries.getValue().get(budgetId);
-				return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(new BudgetDTO(budget, budgetId, vehicleId)));
+			for (Long vehicleId : budgetAndVehicleMap.keySet()) {
+				Map<Long, Budget> budgetMap = budgetAndVehicleMap.get(vehicleId);
+				return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(converter.parseBudgetDTO(budgetMap, vehicleId, false)));
 			}
 
 			throw new IKException(new IKMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.WARNING.getCode(), environment.getProperty(BudgetConstant.GET_ERROR_MESSAGE)));
@@ -121,11 +134,12 @@ public class BudgetController {
 	}
 	
 	@PostMapping()
-	public ResponseEntity<IKResponse<BudgetDTO>> saveBudget(@RequestBody BudgetDTO budgetDTO, UriComponentsBuilder uriBuilder) {
-		String budgetJSON = IKLoggerUtil.parseJSON(budgetDTO);
+	@Transactional
+	public ResponseEntity<IKResponse<BudgetDTO>> saveBudget(@RequestBody BudgetRequest budget, UriComponentsBuilder uriBuilder) {
+		String budgetJSON = IKLoggerUtil.parseJSON(budget);
 		String loggerID = IKLoggerUtil.getLoggerID();
 		try {
-			Map<Long, Budget> budgetMap = saveBudget.execute(converter.parseBudget(budgetDTO), budgetDTO.vehicle.getVehicleId());
+			Map<Long, Budget> budgetMap = saveBudget.execute(converter.parseBudget(budget), budget.getVehicleId());
 			
 			ResponseEntity<IKResponse<BudgetDTO>> responseEntity = null;
 			
@@ -133,8 +147,9 @@ public class BudgetController {
 				URI uri = uriBuilder.path("budgets/{budgetId}").buildAndExpand(budgetId).toUri();
 				
 				responseEntity = ResponseEntity.created(uri).body(IKResponse.<BudgetDTO>build().body(
-						converter.parseBudgetDTO(budgetMap, budgetDTO.getVehicle().getVehicleId()))
+						converter.parseBudgetDTO(budgetMap, budget.getVehicleId(), false))
 						.addMessage(BudgetBusinessConstant.SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.SAVE_SUCCESS_MESSAGE)));
+				break;
 			}
 			
 			return responseEntity;
@@ -152,15 +167,16 @@ public class BudgetController {
 		}
 	}
 	
-	@Transactional
+
 	@PutMapping
-	public ResponseEntity<IKResponse<BudgetDTO>> updateBudget(@RequestBody BudgetDTO budgetDTO) {
-		String budgetJSON = IKLoggerUtil.parseJSON(budgetDTO);
+	@Transactional
+	public ResponseEntity<IKResponse<BudgetDTO>> updateBudget(@RequestBody BudgetRequest budget) {
+		String budgetJSON = IKLoggerUtil.parseJSON(budget);
 		String loggerID = IKLoggerUtil.getLoggerID();
 		try {
-			Map<Long, Budget> budgetMap = updateBudget.execute(converter.parseBudget(budgetDTO), budgetDTO.getBudgetId());
+			Map<Long, Budget> budgetMap = updateBudget.execute(converter.parseBudget(budget), budget.getBudgetId());
 			
-			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(converter.parseBudgetDTO(budgetMap, null))
+			return ResponseEntity.ok(IKResponse.<BudgetDTO>build().body(converter.parseBudgetDTO(budgetMap, null, false))
 					.addMessage(BudgetBusinessConstant.SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.UPDATE_SUCCESS_MESSAGE)));
 		}catch(IKException ike) {
 			LOGGER.error(loggerID + " - " + budgetJSON);
@@ -175,8 +191,9 @@ public class BudgetController {
 		}
 	}
 	
-	@Transactional
+
 	@PutMapping("{budgetId}/{value}")
+	@Transactional
 	public ResponseEntity<IKResponse<String>> increaseAmount(@PathVariable Long budgetId, @PathVariable BigDecimal value) {
 		try {
 			increaseAmount.execute(budgetId, value);
@@ -194,8 +211,9 @@ public class BudgetController {
 		}
 	}
 	
-	@Transactional
+
 	@PutMapping("changeStatus/{budgetId}/{budgetStatus}")
+	@Transactional
 	public ResponseEntity<IKResponse<String>> changeStatus(@PathVariable Long budgetId, @PathVariable int budgetStatus) {
 		try {
 			changeStatus.execute(budgetId, BudgetStatusEnum.findByIndex(budgetStatus));
@@ -209,5 +227,62 @@ public class BudgetController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 					IKResponse.<String>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
 		}
+	}
+	
+
+	@PutMapping("decreaseAmount/{budgetId}/{value}")
+	@Transactional
+	public ResponseEntity<IKResponse<String>> decreaseAmount(@PathVariable Long budgetId, 
+			@PathVariable BigDecimal value) {
+		try {
+			decreaseAmount.execute(budgetId, value);
+			return ResponseEntity.ok(IKResponse.<String>build().addMessage(BudgetBusinessConstant.SUCCESS_CODE,
+					IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.OPERATION_SUCCESS_MESSAGE)));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<String>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<String>build().addMessage(BudgetBusinessConstant.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(BudgetConstant.OPERATION_ERROR_MESSAGE)));
+		}
+	}
+
+    @GetMapping("budget/pdf/{budgetId}")
+    public ResponseEntity<byte[]> createBudgetPDF(@PathVariable Long budgetId, HttpServletResponse response) {
+        try {
+
+            Map<Long, Map<Long, Budget>> budget = getBudget.execute(budgetId);
+
+            byte[] file = createPDF.execute(budget);
+
+			String fileName = createPDF.getFormattedPdfName();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", fileName);
+
+			return ResponseEntity.status(HttpStatus.OK).headers(headers).body(file);
+        } catch (EntityNotFoundException e) {
+			LOGGER.info("budgetId: " + budgetId);
+            LOGGER.error(environment.getProperty(BudgetConstant.GET_NOT_FOUND_MESSAGE));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+	@GetMapping("test")
+	public ResponseEntity<String> teste() {
+		String t = getClass().getResource("/assets/images/auto_sb_banner_210x60.png").getPath();
+		File dir = new File(".");
+		StringBuilder b = new StringBuilder();
+		for (String s : dir.list()) {
+			b.append(s).append("\n\r");
+		}
+
+		return ResponseEntity.ok(t + " - " + b.toString());
 	}
 }

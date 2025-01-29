@@ -10,7 +10,7 @@
 
 	<groupId>com.ikservices</groupId>
 	<artifactId>oficinamecanica</artifactId>
-	<version>0.7.8</version>
+	<version>0.7.15</version>
 	<packaging>war</packaging>
 
 	<name>oficinamecanica</name>
@@ -66,10 +66,15 @@
 			<artifactId>java-jwt</artifactId>
 			<version>4.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.librepdf</groupId>
+			<artifactId>openpdf</artifactId>
+			<version>1.3.30</version>
+		</dependency>
 	</dependencies>
 
 	<build>
-		<finalName>${project.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

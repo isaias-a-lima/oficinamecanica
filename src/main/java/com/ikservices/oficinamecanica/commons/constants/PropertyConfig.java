@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct;
 import java.util.Locale;
 
 @Configuration
-@PropertySource(name = "users.properties", value = "classpath:autorepairshop.properties")
+@PropertySource(name = "autorepairshop.properties", value = "classpath:autorepairshop.properties", encoding = "UTF-8")
 public class PropertyConfig {
 
 
