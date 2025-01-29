@@ -1,13 +1,13 @@
-package com.ikservices.oficinamecanica.workorders.infra.persistence;
+package com.ikservices.oficinamecanica.workorders.installments.infra.persistence;
 
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
-import com.ikservices.oficinamecanica.workorders.domain.WorkOrderInstallmentId;
+import com.ikservices.oficinamecanica.workorders.installments.domain.PayTypeEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -31,5 +31,6 @@ public class WorkOrderInstallmentEntityId implements Serializable {
 	@Column(name = "BUDGETID")
 	private Long budgetId;
 	@Column(name = "PAYTYPE")
-	private Integer installmentType;
+	@Enumerated(EnumType.ORDINAL)
+	private PayTypeEnum installmentType;
 }

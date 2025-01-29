@@ -1,19 +1,13 @@
-package com.ikservices.oficinamecanica.workorders.infra.persistence;
+package com.ikservices.oficinamecanica.workorders.installments.infra.persistence;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
-import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
-import com.ikservices.oficinamecanica.workorders.domain.WorkOrderInstallmentId;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -23,12 +17,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "WO_INSTALLMENTS")
 public class WorkOrderInstallmentEntity {
 	@EmbeddedId
-	private WorkOrderInstallmentEntityId workOrderInstallmentEntityId;
+	private WorkOrderInstallmentEntityId id;
 	
 	@Column(name = "DUEDATE")
 	private LocalDate dueDate;
@@ -41,8 +35,6 @@ public class WorkOrderInstallmentEntity {
 	
 	@Column(name = "NOTE")
 	private String note;
-	
-	private List<WorkOrderInstallmentEntity> installlments;
 	
 	public void update(WorkOrderInstallmentEntity entity) {
 		if(Objects.nonNull(entity.getDueDate())) {

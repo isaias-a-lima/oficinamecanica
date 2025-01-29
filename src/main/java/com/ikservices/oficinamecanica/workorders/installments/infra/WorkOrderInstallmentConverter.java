@@ -1,14 +1,14 @@
-package com.ikservices.oficinamecanica.workorders.infra;
+package com.ikservices.oficinamecanica.workorders.installments.infra;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
-import com.ikservices.oficinamecanica.workorders.domain.WorkOrderInstallment;
-import com.ikservices.oficinamecanica.workorders.domain.WorkOrderInstallmentId;
-import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderInstallmentEntity;
-import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderInstallmentEntityId;
+import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
+import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallmentId;
+import com.ikservices.oficinamecanica.workorders.installments.infra.persistence.WorkOrderInstallmentEntity;
+import com.ikservices.oficinamecanica.workorders.installments.infra.persistence.WorkOrderInstallmentEntityId;
 
 public class WorkOrderInstallmentConverter {
 	
@@ -18,10 +18,10 @@ public class WorkOrderInstallmentConverter {
 		 }
 		 
 		 WorkOrderInstallment installment = new WorkOrderInstallment();
-		 installment.setId(new WorkOrderInstallmentId(entity.getWorkOrderInstallmentEntityId().getNumber(),
-				 entity.getWorkOrderInstallmentEntityId().getWorkOrderId(), 
-				 entity.getWorkOrderInstallmentEntityId().getBudgetId(), 
-				 entity.getWorkOrderInstallmentEntityId().getInstallmentType()));
+		 installment.setId(new WorkOrderInstallmentId(entity.getId().getNumber(),
+				 entity.getId().getWorkOrderId(), 
+				 entity.getId().getBudgetId(), 
+				 entity.getId().getInstallmentType()));
 		 installment.setDueDate(entity.getDueDate());
 		 installment.setPayValue(entity.getPayValue());
 		 installment.setPayDate(entity.getPayDate());
@@ -36,7 +36,7 @@ public class WorkOrderInstallmentConverter {
 		}
 		
 		WorkOrderInstallmentEntity entity = new WorkOrderInstallmentEntity();
-		entity.setWorkOrderInstallmentEntityId(new WorkOrderInstallmentEntityId(installment.getId().getNumber(), 
+		entity.setId(new WorkOrderInstallmentEntityId(installment.getId().getNumber(), 
 				installment.getId().getWorkOrderId(), installment.getId().getBudgetId(),
 				installment.getId().getInstallmentType()));
 		entity.setDueDate(installment.getDueDate());

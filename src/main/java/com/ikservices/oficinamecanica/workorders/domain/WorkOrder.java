@@ -9,6 +9,7 @@ import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
+import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

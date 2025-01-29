@@ -1,11 +1,6 @@
-package com.ikservices.oficinamecanica.workorders.domain;
+package com.ikservices.oficinamecanica.workorders.installments.domain;
 
 import java.io.Serializable;
-
-import com.ikservices.oficinamecanica.customers.domain.Customer;
-import com.ikservices.oficinamecanica.vehicles.domain.FuelEnum;
-import com.ikservices.oficinamecanica.vehicles.domain.TransmissionEnum;
-import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -25,6 +20,6 @@ public class WorkOrderInstallmentId implements Serializable {
 	private Long number;
 	private Long workOrderId;
 	private Long budgetId;
-	private Integer installmentType;
+	private PayTypeEnum installmentType;
 
 }

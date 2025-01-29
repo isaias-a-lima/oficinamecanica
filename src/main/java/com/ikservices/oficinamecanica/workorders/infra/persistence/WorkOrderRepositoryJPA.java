@@ -6,8 +6,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface WorkOrderRepositoryJPA extends JpaRepository<WorkOrderEntity, WorkOrderEntityId>{
 	
-	@Query("SELECT CASE WHEN MAX(w.workOrderEntityId.workOrderId) IS NULL THEN 1 "
-			+ "ELSE (MAX(w.workOrderEntityId.workOrderId) + 1) END "
+	@Query("SELECT CASE WHEN MAX(w.id.workOrderId) IS NULL THEN 1 "
+			+ "ELSE (MAX(w.id.workOrderId) + 1) END "
 			+ "FROM WorkOrderEntity w WHERE w.budget.vehicle.workshopId = :workshopId")
 	public Long getNextWorkOrderId(@Param("workshopId") Long workshopId);
 }

@@ -1,4 +1,4 @@
-package com.ikservices.oficinamecanica.workorders.domain;
+package com.ikservices.oficinamecanica.workorders.installments.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 public class WorkOrderInstallment {
 	
 	private WorkOrderInstallmentId id;

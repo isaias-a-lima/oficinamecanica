@@ -1,9 +1,9 @@
-package com.ikservices.oficinamecanica.workorders.infra.controller;
+package com.ikservices.oficinamecanica.workorders.installments.infra.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.ikservices.oficinamecanica.workorders.domain.WorkOrderInstallment;
+import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

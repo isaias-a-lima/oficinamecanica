@@ -1,4 +1,4 @@
-package com.ikservices.oficinamecanica.workorders.infra.persistence;
+package com.ikservices.oficinamecanica.workorders.installments.infra.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

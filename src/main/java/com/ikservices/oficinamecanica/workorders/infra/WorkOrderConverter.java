@@ -31,8 +31,8 @@ public class WorkOrderConverter {
 		}
 		
 		WorkOrder workOrder = new WorkOrder();
-		workOrder.setId(new WorkOrderId(entity.getWorkOrderEntityId().getWorkOrderId(), 
-				entity.getWorkOrderEntityId().getBudgetId()));
+		workOrder.setId(new WorkOrderId(entity.getId().getWorkOrderId(), 
+				entity.getId().getBudgetId()));
 		
 		if(Objects.nonNull(entity.getBudget()) && 
 				Objects.nonNull(entity.getBudget().getVehicle())) {
@@ -63,7 +63,7 @@ public class WorkOrderConverter {
 		}
 		
 		WorkOrderEntity entity = new WorkOrderEntity();
-		entity.setWorkOrderEntityId(new WorkOrderEntityId(workOrder.getId().getWorkOrderId(), 
+		entity.setId(new WorkOrderEntityId(workOrder.getId().getWorkOrderId(), 
 				workOrder.getId().getBudgetId()));
 		
 		Map<Long, Map<Long, Budget>> borderMap = workOrder.getBudget();
