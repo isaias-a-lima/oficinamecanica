@@ -2,12 +2,15 @@ package com.ikservices.oficinamecanica.workorders.infra.gateways;
 
 import java.util.List;
 
+import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.workorders.application.SourceCriteriaEnum;
 import com.ikservices.oficinamecanica.workorders.application.gateways.WorkOrderRepository;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
 import com.ikservices.oficinamecanica.workorders.infra.WorkOrderConverter;
+import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
+import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntityId;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderRepositoryJPA;
 
 public class WorkOrderRepositoryImpl implements WorkOrderRepository {
@@ -22,14 +25,29 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 
 	@Override
 	public List<WorkOrder> getWorkOrderList(SourceCriteriaEnum source, Object criteriaId, WorkOrderStatusEnum status) {
-		// TODO Auto-generated method stub
-		return null;
+		List<WorkOrderEntity> entityList = null;
+		
+		switch(source) {
+			case WORKSHOP:
+				entityList = repository.findALlByWorkshop(new Long(criteriaId.toString()), status);
+				return converter.parseWorkOrderList(entityList);
+			case CUSTOMER:
+				entityList = repository.findAllByCustomer((String)criteriaId, status);
+				return converter.parseWorkOrderList(entityList);
+			case VEHICLE:
+				entityList = repository.findAllByVehicle((Long)criteriaId, status);
+				return converter.parseWorkOrderList(entityList);
+			default:
+				throw new IKException("Not found");
+		}
 	}
 
 	@Override
 	public WorkOrder getWorkOrder(WorkOrderId workOrderId) {
-		// TODO Auto-generated method stub
-		return null;
+		WorkOrderEntity workOrderEntity = repository.getById(new WorkOrderEntityId(workOrderId.getWorkOrderId(), 
+				workOrderId.getBudgetId()));
+		
+		return converter.parseWorkOrder(workOrderEntity);
 	}
 
 	@Override

@@ -1,9 +1,8 @@
 package com.ikservices.oficinamecanica.workorders.installments.infra.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
+import java.io.Serializable;
 
-import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
+import com.ikservices.oficinamecanica.workorders.installments.domain.PayTypeEnum;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallmentId;
 
 import lombok.AllArgsConstructor;
@@ -15,11 +14,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
-public class WorkOrderInstallmentsDTO {
-	private WorkOrderInstallmentIdDTO workOrderInstallmentIdDTO;
-	private String dueDate;
-	private BigDecimal payValue;
-	private String payDate;
-	private String note;
+public class WorkOrderInstallmentIdDTO implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	private Long number;
+	private Long workOrderId;
+	private Long budgetId;
+	private PayTypeEnum installmentType;
 }

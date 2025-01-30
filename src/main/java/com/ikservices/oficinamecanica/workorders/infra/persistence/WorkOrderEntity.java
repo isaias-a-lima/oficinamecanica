@@ -49,6 +49,8 @@ public class WorkOrderEntity {
 	
 	@Column(name = "WOSTATUS")
 	@Enumerated(EnumType.ORDINAL)
+	
+	//TODO Correct wostatus camel case and refactor RepositoryJPA queries and other files affected.
 	private WorkOrderStatusEnum wostatus;
 	
 	@Column(name = "AMOUNT")

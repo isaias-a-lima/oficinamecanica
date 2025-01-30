@@ -27,3 +27,7 @@ PRIMARY KEY(number, workorderid, budgetid, paytype),
 CONSTRAINT fk_work_orders_wo_installments FOREIGN KEY(workorderid) REFERENCES work_orders(workorderid),
 CONSTRAINT fk_budgets_wo_installments FOREIGN KEY(budgetid) REFERENCES budgets(budgetid)
 )COMMENT = "WORK ORDER INSTALLMENTS";
+
+INSERT INTO WORK_ORDERS(workorderid, budgetid, openingdate, km, wostatus,
+amount, payform, payqty, paid)
+VALUES(1, 1, "31-01-2025", 17000, , 500, "D", 10, false);

@@ -142,7 +142,7 @@ public class WorkOrderConverter {
 		}
 		
 		WorkOrderResponseDTO responseDTO = new WorkOrderResponseDTO();
-		responseDTO.setWorkOrderId(workOrder.getId().getWorkOrderId());
+		responseDTO.setWorkOrderId(workOrder.getId());
 		
 		Map<Long, Map<Long, Budget>> borderMap = new HashMap<>();
 		for(Long vehicleId : borderMap.keySet()) {
@@ -160,5 +160,17 @@ public class WorkOrderConverter {
 		responseDTO.setPaid(workOrder.getPaid());
 		
 		return responseDTO;
+	}
+	
+	public List<WorkOrderResponseDTO> parseResponseDTOList(List<WorkOrder> workOrderList) {
+		List<WorkOrderResponseDTO> responseDTOList = new ArrayList<>();
+		
+		if(Objects.nonNull(workOrderList) && responseDTOList.isEmpty()) {
+			for(WorkOrder workOrder : workOrderList) {
+				responseDTOList.add(this.parseResponseDTO(workOrder));
+			}
+		}
+		
+		return responseDTOList;
 	}
 }
