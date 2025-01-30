@@ -10,6 +10,7 @@ import java.util.Optional;
 import javax.persistence.*;
 
 import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
+import com.ikservices.oficinamecanica.budgets.items.parts.infra.persistence.BudgetItemPartEntity;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntity;
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 
@@ -54,6 +55,10 @@ public class BudgetEntity {
 
 	@OneToMany(mappedBy = "budgetEntity", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BudgetItemServiceEntity> serviceItems = new ArrayList<>();
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "BUDGETID", referencedColumnName = "BUDGETID")
+	private List<BudgetItemPartEntity> partItems = new ArrayList<>();
 	
 	public void update(BudgetEntity entity) {
 		if(Objects.nonNull(entity.getKm())) {
@@ -67,6 +72,9 @@ public class BudgetEntity {
 		BigDecimal sum = BigDecimal.ZERO;
 		for (BudgetItemServiceEntity item : serviceItems) {
 			sum = sum.add(item.getTotal());
+		}
+		for (BudgetItemPartEntity partItem : partItems) {
+			sum = sum.add(partItem.getTotal());
 		}
 		this.amount = sum;
 	}
