@@ -29,7 +29,7 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 		
 		switch(source) {
 			case WORKSHOP:
-				entityList = repository.findALlByWorkshop(new Long(criteriaId.toString()), status);
+				entityList = repository.findAllByWorkshop(new Long(criteriaId.toString()), status);
 				return converter.parseWorkOrderList(entityList);
 			case CUSTOMER:
 				entityList = repository.findAllByCustomer((String)criteriaId, status);

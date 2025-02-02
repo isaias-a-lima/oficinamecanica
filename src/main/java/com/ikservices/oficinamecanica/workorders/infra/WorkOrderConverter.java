@@ -16,13 +16,16 @@ import com.ikservices.oficinamecanica.workorders.infra.controller.WorkOrderReque
 import com.ikservices.oficinamecanica.workorders.infra.controller.WorkOrderResponseDTO;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntityId;
+import com.ikservices.oficinamecanica.workorders.installments.infra.WorkOrderInstallmentConverter;
 
 public class WorkOrderConverter {
 	
 	private final BudgetConverter budgetConverter;
+	private final WorkOrderInstallmentConverter installmentConverter;
 	
-	public WorkOrderConverter(BudgetConverter budgetConverter) {
+	public WorkOrderConverter(BudgetConverter budgetConverter, WorkOrderInstallmentConverter installmentConverter) {
 		this.budgetConverter = budgetConverter;
+		this.installmentConverter = installmentConverter;
 	}
 	
 	public WorkOrder parseWorkOrder(WorkOrderEntity entity) {
@@ -52,9 +55,9 @@ public class WorkOrderConverter {
 		workOrder.setAmount(entity.getAmount());
 		workOrder.setPayForm(entity.getPayForm());
 		workOrder.setPayQty(entity.getPayQty());
-		workOrder.setPaid(entity.getPaid());
-		
-		return null;
+		workOrder.setPaid(entity.getPaid());		
+		workOrder.setInstallments(Objects.nonNull(entity.getInstallments()) ? installmentConverter.parseInstallmentList(entity.getInstallments()) : new ArrayList<>());		
+		return workOrder;
 	}
 	
 	public WorkOrderEntity parseWorkOrderEntity(WorkOrder workOrder) {
@@ -137,20 +140,23 @@ public class WorkOrderConverter {
 	}
 	
 	public WorkOrderResponseDTO parseResponseDTO(WorkOrder workOrder) {
-		if(Objects.nonNull(workOrder)) {
+		if(Objects.isNull(workOrder)) {
 			throw new IKException("Null Object");
 		}
 		
 		WorkOrderResponseDTO responseDTO = new WorkOrderResponseDTO();
-		responseDTO.setWorkOrderId(workOrder.getId());
+		responseDTO.setWorkOrderId(workOrder.getId().getWorkOrderId());
+		responseDTO.setBudgetId(workOrder.getId().getBudgetId());
 		
-		Map<Long, Map<Long, Budget>> borderMap = new HashMap<>();
-		for(Long vehicleId : borderMap.keySet()) {
-			Map<Long, Budget> budgetMap = borderMap.get(vehicleId);
-			for(Long budgetId : budgetMap.keySet()) {
-				responseDTO.setBudgetDTO(budgetConverter.parseBudgetDTO(budgetMap, vehicleId, true));
-			}
+		if (Objects.nonNull(workOrder.getBudget()) && !workOrder.getBudget().isEmpty()) {
+			Map<Long, Map<Long, Budget>> outSideBudgetMap = workOrder.getBudget();
+			
+			for (Long vehicleId : outSideBudgetMap.keySet()) {
+				Map<Long, Budget> inSideBudgetMap = outSideBudgetMap.get(vehicleId);
+				budgetConverter.parseBudgetDTO(inSideBudgetMap, vehicleId,true);
+			}			
 		}
+		
 		responseDTO.setOpeningDate(workOrder.getOpeningDate().toString());
 		responseDTO.setKm(workOrder.getKm());
 		responseDTO.setWOStatus(workOrder.getWorkOrderStatus().ordinal());
@@ -159,13 +165,15 @@ public class WorkOrderConverter {
 		responseDTO.setPayQty(workOrder.getPayQty());
 		responseDTO.setPaid(workOrder.getPaid());
 		
+		responseDTO.setInstallments(Objects.nonNull(workOrder.getInstallments()) ? installmentConverter.parseDomainToDTO(workOrder.getInstallments()) : new ArrayList<>());
+		
 		return responseDTO;
 	}
 	
 	public List<WorkOrderResponseDTO> parseResponseDTOList(List<WorkOrder> workOrderList) {
 		List<WorkOrderResponseDTO> responseDTOList = new ArrayList<>();
 		
-		if(Objects.nonNull(workOrderList) && responseDTOList.isEmpty()) {
+		if(Objects.nonNull(workOrderList) && !workOrderList.isEmpty()) {
 			for(WorkOrder workOrder : workOrderList) {
 				responseDTOList.add(this.parseResponseDTO(workOrder));
 			}

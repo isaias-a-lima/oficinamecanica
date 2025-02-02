@@ -22,7 +22,6 @@ import com.ikservices.oficinamecanica.workorders.application.usecases.GetWorkOrd
 import com.ikservices.oficinamecanica.workorders.application.usecases.ListWorkOrders;
 import com.ikservices.oficinamecanica.workorders.application.usecases.SaveWorkOrder;
 import com.ikservices.oficinamecanica.workorders.application.usecases.UpdateWorkOrder;
-import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
 import com.ikservices.oficinamecanica.workorders.infra.WorkOrderConverter;
 import com.ikservices.oficinamecanica.workorders.infra.constants.WorkOrderConstant;

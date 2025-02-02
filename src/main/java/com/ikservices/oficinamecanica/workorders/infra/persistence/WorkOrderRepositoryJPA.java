@@ -16,7 +16,7 @@ public interface WorkOrderRepositoryJPA extends JpaRepository<WorkOrderEntity, W
 	public Long getNextWorkOrderId(@Param("workshopId") Long workshopId);
 	
 	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicle.workshopId = :workshopId AND w.wostatus = :status")
-	public List<WorkOrderEntity> findALlByWorkshop(@Param("workshopId") Long workshopId, 
+	public List<WorkOrderEntity> findAllByWorkshop(@Param("workshopId") Long workshopId, 
 			@Param("status") WorkOrderStatusEnum status);
 	
 	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicle.idDoc = :idDoc AND w.wostatus = :status")

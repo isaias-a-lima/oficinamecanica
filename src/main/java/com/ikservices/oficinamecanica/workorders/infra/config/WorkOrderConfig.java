@@ -15,6 +15,7 @@ import com.ikservices.oficinamecanica.workorders.application.usecases.UpdateWork
 import com.ikservices.oficinamecanica.workorders.infra.WorkOrderConverter;
 import com.ikservices.oficinamecanica.workorders.infra.gateways.WorkOrderRepositoryImpl;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderRepositoryJPA;
+import com.ikservices.oficinamecanica.workorders.installments.infra.WorkOrderInstallmentConverter;
 
 @Configuration
 @PropertySource(name="workorders.properties", value="classpath:workorders.properties", encoding="UTF-8")
@@ -29,8 +30,13 @@ public class WorkOrderConfig {
 	}
 	
 	@Bean
-	public WorkOrderConverter workOrderConverter(BudgetConverter budgetConverter) {
-		return new WorkOrderConverter(budgetConverter);
+	public WorkOrderInstallmentConverter workOrderInstallmentConverter() {
+		return new WorkOrderInstallmentConverter();
+	}
+	
+	@Bean
+	public WorkOrderConverter workOrderConverter(BudgetConverter budgetConverter, WorkOrderInstallmentConverter installmentConverter) {
+		return new WorkOrderConverter(budgetConverter, installmentConverter);
 	}
 	
 	@Bean

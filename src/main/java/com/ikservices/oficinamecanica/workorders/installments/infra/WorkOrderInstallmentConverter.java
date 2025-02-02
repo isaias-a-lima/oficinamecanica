@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
-import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallmentId;
-import com.ikservices.oficinamecanica.workorders.installments.infra.dto.WorkOrderInstallmentIdDTO;
 import com.ikservices.oficinamecanica.workorders.installments.infra.dto.WorkOrderInstallmentsDTO;
 import com.ikservices.oficinamecanica.workorders.installments.infra.persistence.WorkOrderInstallmentEntity;
 import com.ikservices.oficinamecanica.workorders.installments.infra.persistence.WorkOrderInstallmentEntityId;
@@ -53,31 +51,23 @@ public class WorkOrderInstallmentConverter {
 	}
 	
 	public List<WorkOrderInstallment> parseInstallmentList(List<WorkOrderInstallmentEntity> entityList) {
-		if(Objects.nonNull(entityList) && !entityList.isEmpty()) {
-			List<WorkOrderInstallment> installmentList = new ArrayList<>();
-			
-			for(WorkOrderInstallmentEntity entity : entityList) {
-				this.parseInstallment(entity);
+		List<WorkOrderInstallment> domainList = new ArrayList<>();
+		if (Objects.nonNull(entityList) && !entityList.isEmpty()) {
+			for (WorkOrderInstallmentEntity entity : entityList) {
+				domainList.add(this.parseInstallment(entity));
 			}
-			
-			return installmentList;
 		}
-		
-		return null;
+		return domainList;
 	}
 	
-	public List<WorkOrderInstallmentEntity> parseEntityList(List<WorkOrderInstallment> installmentList) {
-		if(Objects.nonNull(installmentList) && !installmentList.isEmpty()) {
-			List<WorkOrderInstallmentEntity> entityList = new ArrayList<>();
-			
-			for(WorkOrderInstallment installment : installmentList) {
-				this.parseEntity(installment);
+	public List<WorkOrderInstallmentEntity> parseEntityList(List<WorkOrderInstallment> domainList) {
+		List<WorkOrderInstallmentEntity> entityList = new ArrayList<>();
+		if(Objects.nonNull(domainList) && !domainList.isEmpty()) {
+			for(WorkOrderInstallment domain : domainList) {
+				entityList.add(this.parseEntity(domain));
 			}
-			
-			return entityList;
-		}
-		
-		return null;
+		}		
+		return entityList;
 	}
 	
 	public WorkOrderInstallment parseInstallment(WorkOrderInstallmentsDTO dto) {
@@ -87,10 +77,10 @@ public class WorkOrderInstallmentConverter {
 		
 		WorkOrderInstallment installment = new WorkOrderInstallment();
 		installment.setId(new WorkOrderInstallmentId(
-				dto.getWorkOrderInstallmentIdDTO().getNumber(),
-				dto.getWorkOrderInstallmentIdDTO().getWorkOrderId(), 
-				dto.getWorkOrderInstallmentIdDTO().getBudgetId(), 
-				dto.getWorkOrderInstallmentIdDTO().getInstallmentType()));
+				dto.getNumber(),
+				dto.getWorkOrderId(), 
+				dto.getBudgetId(), 
+				dto.getInstallmentType()));
 		
 		installment.setDueDate(LocalDate.parse(dto.getDueDate()));
 		installment.setPayValue(dto.getPayValue());
@@ -106,17 +96,27 @@ public class WorkOrderInstallmentConverter {
 		}
 		
 		WorkOrderInstallmentsDTO dto = new WorkOrderInstallmentsDTO();
-		dto.setWorkOrderInstallmentIdDTO(new WorkOrderInstallmentIdDTO(
-				installment.getId().getNumber(),
-				installment.getId().getWorkOrderId(), 
-				installment.getId().getBudgetId(), 
-				installment.getId().getInstallmentType()));
+		//compound key
+		dto.setNumber(installment.getId().getNumber());
+		dto.setWorkOrderId(installment.getId().getWorkOrderId());
+		dto.setBudgetId(installment.getId().getBudgetId());
+		dto.setInstallmentType(installment.getId().getInstallmentType());
 		
-		dto.setDueDate(installment.getDueDate().toString());
+		dto.setDueDate(Objects.nonNull(installment.getDueDate()) ? installment.getDueDate().toString() : "");
 		dto.setPayValue(installment.getPayValue());
-		dto.setPayDate(installment.getPayDate().toString());
-		dto.setNote(installment.getNote());
+		dto.setPayDate(Objects.nonNull(installment.getPayDate()) ? installment.getPayDate().toString() : "");
+		dto.setNote(Objects.nonNull(installment.getNote()) ? installment.getNote() : "");
 		
 		return dto;
+	}
+
+	public List<WorkOrderInstallmentsDTO> parseDomainToDTO(List<WorkOrderInstallment> installments) {
+		List<WorkOrderInstallmentsDTO> dtoList = new ArrayList<>();
+		if (Objects.nonNull(installments) && !installments.isEmpty()) {
+			for (WorkOrderInstallment installment : installments) {
+				dtoList.add(this.parseDTO(installment));
+			}
+		}
+		return dtoList;
 	}
 }
