@@ -38,7 +38,7 @@ public class BudgetEntity {
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "VEHICLEID", referencedColumnName = "VEHICLEID", updatable = false, insertable = false)
-	private VehicleEntity vehicleEntity;
+	private VehicleEntity vehicle;
 	
 	@Column(name = "OPENINGDATE")
 	private LocalDate openingDate;

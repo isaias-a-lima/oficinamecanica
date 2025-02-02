@@ -1,11 +1,19 @@
 package com.ikservices.oficinamecanica.budgets.infra;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
-import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetDTO;
 import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetRequest;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
@@ -15,11 +23,6 @@ import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.vehicles.infra.VehicleConverter;
-import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
-import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 
 
@@ -48,7 +51,8 @@ public class BudgetConverter {
 		budget.setBudgetStatus(entity.getBudgetStatus());
 		budget.setKm(entity.getKm());
 		budget.setOpeningDate(entity.getOpeningDate());
-		budget.setVehicle(Objects.nonNull(entity.getVehicleEntity()) ? vehicleConverter.parseVehicle(entity.getVehicleEntity()) : null);
+
+		budget.setVehicle(Objects.nonNull(entity.getVehicle()) ? vehicleConverter.parseVehicle(entity.getVehicle()) : null);
 
 		budget.setServiceItems(
 				!avoidStackOverflow && Objects.nonNull(entity.getServiceItems()) ?
@@ -73,8 +77,11 @@ public class BudgetConverter {
 		BudgetEntity entity = new BudgetEntity();
 		entity.setBudgetId(budgetId);
 		entity.setVehicleId(vehicleId);
-		entity.setVehicleEntity(Objects.nonNull(budget.getVehicle()) ? vehicleConverter.parseEntity(budget.getVehicle(), vehicleId) : null);
+		
 		entity.setOpeningDate(budget.getOpeningDate());
+
+		entity.setVehicle(Objects.nonNull(budget.getVehicle()) ? vehicleConverter.parseEntity(budget.getVehicle(), null) : null);
+
 		entity.setKm(budget.getKm());
 		entity.setBudgetStatus(budget.getBudgetStatus());
 		entity.setAmount(budget.getAmount());
@@ -134,10 +141,7 @@ public class BudgetConverter {
 		for (Map<Long, Map<Long, Budget>> outerMap : budgetList) {
 			for (Long vehicleId : outerMap.keySet()) {
 				Map<Long, Budget> innerMap = outerMap.get(vehicleId);
-
-				for (Long budgetId : innerMap.keySet()) {
-					dtoList.add(parseBudgetDTO(innerMap, vehicleId, false));
-				}
+				dtoList.add(parseBudgetDTO(innerMap, vehicleId, false));
 			}
 		}
 
