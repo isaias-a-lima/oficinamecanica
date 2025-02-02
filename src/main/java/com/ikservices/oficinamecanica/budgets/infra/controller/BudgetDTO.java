@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
+import com.ikservices.oficinamecanica.budgets.items.parts.infra.dto.BudgetItemPartResponseDTO;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.controller.BudgetItemServiceResponseDTO;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
@@ -30,6 +31,7 @@ public class BudgetDTO {
 	Integer budgetStatus;
 	String amount;
 	List<BudgetItemServiceResponseDTO> serviceItems = new ArrayList<>();
+	List<BudgetItemPartResponseDTO> partItems = new ArrayList<>();
 
 
 	public BudgetDTO(Budget budget, Long budgetId, Long vehicleId) {

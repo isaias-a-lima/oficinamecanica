@@ -1,27 +1,34 @@
 package com.ikservices.oficinamecanica.budgets.infra.gateways;
 
-import java.math.BigDecimal;
-import java.util.*;
-
 import com.ikservices.oficinamecanica.budgets.application.gateways.BudgetRepository;
 import com.ikservices.oficinamecanica.budgets.application.usecases.ListBudgetsByEnum;
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
+import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetRepositoryJPA;
+import com.ikservices.oficinamecanica.budgets.items.parts.domain.BudgetItemPart;
+import com.ikservices.oficinamecanica.budgets.items.parts.domain.BudgetItemPartId;
+import com.ikservices.oficinamecanica.budgets.items.parts.infra.BudgetItemPartConverter;
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemService;
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemServiceId;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.BudgetItemServiceConverter;
-import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntity;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceRepositoryJPA;
 import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
-import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
+import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 public class BudgetRepositoryImpl implements BudgetRepository {
+	private static final Logger LOGGER = IKLoggerUtil.getLogger(BudgetRepositoryImpl.class);
 
 	private static final int REMOVE = 0;
 	private static final int UPDATE = 1;
@@ -29,14 +36,18 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 	
 	private final BudgetConverter converter;
 	private final BudgetItemServiceConverter budgetItemServiceConverter;
+	private final BudgetItemPartConverter budgetItemPartConverter;
 	private final BudgetRepositoryJPA repositoryJPA;
 	private final BudgetItemServiceRepositoryJPA itemServiceRepository;
+	@Autowired
+	private Environment environment;
 	
-	public BudgetRepositoryImpl(BudgetConverter converter, BudgetItemServiceConverter budgetItemServiceConverter,
+	public BudgetRepositoryImpl(BudgetConverter converter, BudgetItemServiceConverter budgetItemServiceConverter, BudgetItemPartConverter budgetItemPartConverter,
                                 BudgetRepositoryJPA repositoryJPA,
-								BudgetItemServiceRepositoryJPA itemServiceRepository) {
+                                BudgetItemServiceRepositoryJPA itemServiceRepository) {
 		this.converter = converter;
         this.budgetItemServiceConverter = budgetItemServiceConverter;
+        this.budgetItemPartConverter = budgetItemPartConverter;
         this.repositoryJPA = repositoryJPA;
 		this.itemServiceRepository = itemServiceRepository;
 	}
@@ -78,6 +89,7 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 		BudgetEntity budgetEntity = converter.parseEntity(budget, vehicleId, null);
 
 		budgetEntity.setServiceItems(new ArrayList<>());
+		budgetEntity.setPartItems(new ArrayList<>());
 
 		BudgetEntity savedBudget = repositoryJPA.save(budgetEntity);
 
@@ -92,6 +104,11 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 				for (BudgetItemService serviceItem : budget.getServiceItems()) {
 					serviceItem.setItemId(new BudgetItemServiceId(null, entity.getBudgetId()));
 					entity.addServiceItem(budgetItemServiceConverter.parseEntity(serviceItem));
+				}
+
+				for (BudgetItemPart partItem : budget.getPartItems()) {
+					partItem.setId(new BudgetItemPartId(null, entity.getBudgetId()));
+					entity.addPartItem(budgetItemPartConverter.parseDomainToEntity(partItem));
 				}
 
 				budgetMap.put(entity.getBudgetId(), converter.parseBudget(entity, false));
@@ -109,22 +126,28 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 	}
 
 	@Override
-	public Map<Long, Budget> updateBudget(Budget budget, Long budgetId) {
+	public Map<Long, Budget> updateBudget(Budget budget, Long budgetId) throws IKException {
 		Map<Long, Budget> budgetMap = new HashMap<>();
-		
+
 		Optional<BudgetEntity> optional = repositoryJPA.findById(budgetId);
 
 		if (optional.isPresent()) {
-			BudgetEntity budgetEntity = optional.get();
+			try {
+				BudgetEntity budgetEntity = optional.get();
 
-			budgetEntity.update(converter.parseEntity(budget, budgetEntity.getVehicleId(), budgetId));
+				budgetEntity.update(converter.parseEntity(budget, budgetEntity.getVehicleId(), budgetId));
 
-			budgetMap.put(budgetEntity.getBudgetId(), converter.parseBudget(budgetEntity, false));
+				budgetMap.put(budgetEntity.getBudgetId(), converter.parseBudget(budgetEntity, false));
 
-			return budgetMap;
+				return budgetMap;
+			} catch (Exception e) {
+				String msgError = String.format("[className= %s][method= %s][error= %s]",getClass().getName(), "updateBudget", e.getMessage());
+				LOGGER.error(msgError, e);
+				throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR.getCode(), environment.getProperty(BudgetConstant.UPDATE_ERROR_MESSAGE)));
+			}
 		}
-		//TODO The message must come from a constant
-		throw new IKException(new IKMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.WARNING.getCode(), "Orçamento não encontrado."));
+
+		throw new IKException(new IKMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.WARNING.getCode(), environment.getProperty(BudgetConstant.GET_NOT_FOUND_MESSAGE)));
 	}
 
 	@Override

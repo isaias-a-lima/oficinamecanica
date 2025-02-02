@@ -38,7 +38,7 @@ public abstract class PDFTemplateBuilder {
      *
      * @throws DocumentException
      */
-    protected void openDocument(String param) throws DocumentException, FileNotFoundException {
+    protected void openDocument(String param) throws DocumentException {
         this.document = new Document(PageSize.A4, 20, 20, 20, 20);
         this.outputStream = new ByteArrayOutputStream();
         this.formattedPdfName = String.format(this.pdfName, param);

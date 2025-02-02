@@ -66,6 +66,7 @@ public class BudgetEntity {
 		}
 
 		this.updateServiceItems(entity.getServiceItems());
+		this.updatePartItems(entity.getPartItems());
 	}
 
 	private void updateAmount() {
@@ -115,6 +116,46 @@ public class BudgetEntity {
 
 	private Long getNextServiceId() {
 		return this.serviceItems.isEmpty() ? 1 : this.serviceItems.get(this.serviceItems.size() - 1).getId().getId() + 1;
+	}
+
+	//Part items
+
+	private void updatePartItems(List<BudgetItemPartEntity> newItems) {
+
+		this.partItems.removeIf(existingItem ->
+				newItems.stream().noneMatch(newItem -> newItem.getId().equals(existingItem.getId()))
+		);
+
+		for (BudgetItemPartEntity newItem : newItems) {
+
+			Optional<BudgetItemPartEntity> existingItemOptional = this.partItems.stream()
+					.filter(existingItem -> existingItem.getId().equals(newItem.getId()))
+					.findFirst();
+
+			if (existingItemOptional.isPresent()) {
+				BudgetItemPartEntity existingItem = existingItemOptional.get();
+				existingItem.update(newItem);
+				this.updateAmount();
+			} else {
+				this.partItemIncluding(newItem);
+			}
+		}
+
+		this.updateAmount();
+	}
+
+	public void addPartItem(BudgetItemPartEntity partItem) {
+		this.partItemIncluding(partItem);
+		this.updateAmount();
+	}
+
+	private void partItemIncluding(BudgetItemPartEntity partItem) {
+		partItem.getId().setItemId(getNextPartId());
+		this.partItems.add(partItem);
+	}
+
+	private Long getNextPartId() {
+		return this.partItems.isEmpty() ? 1 : this.partItems.get(this.partItems.size() - 1).getId().getItemId() + 1;
 	}
 
 	public void increaseAmount(BigDecimal value) {
