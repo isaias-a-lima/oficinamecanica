@@ -27,6 +27,10 @@ public class Part {
 	private BigDecimal profit;
 	private Integer balance;
 
+	public Part(PartId partId) {
+		this.partId = partId;
+	}
+
 	public BigDecimal getValue() {
 		return cost.add(cost.multiply(profit.divide(BigDecimal.valueOf(100)))).setScale(2, RoundingMode.HALF_UP);
 	}

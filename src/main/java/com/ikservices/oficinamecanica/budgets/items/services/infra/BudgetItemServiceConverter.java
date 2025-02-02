@@ -127,6 +127,7 @@ public class BudgetItemServiceConverter {
 		
 		BudgetItemServiceResponseDTO responseDTO = new BudgetItemServiceResponseDTO();
 		responseDTO.setItemId(item.getItemId().getId());
+		responseDTO.setBudgetId(item.getItemId().getBudgetId());
 		if (Objects.nonNull(item.getService())) {
 			responseDTO.setService(serviceConverter.parseDTO(item.getService()));
 			responseDTO.setCost(item.getService().getCost());

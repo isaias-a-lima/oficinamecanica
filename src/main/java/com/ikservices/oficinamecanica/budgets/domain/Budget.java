@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.budgets.domain;
 
+import com.ikservices.oficinamecanica.budgets.items.parts.domain.BudgetItemPart;
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemService;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
@@ -22,12 +23,23 @@ public class Budget {
 	BudgetStatusEnum budgetStatus;
 	BigDecimal amount;
 	List<BudgetItemService> serviceItems;
+	List<BudgetItemPart> partItems;
 
 	public String sumServiceItems() {
 		BigDecimal sum = BigDecimal.ZERO;
 		if (Objects.nonNull(serviceItems) && !serviceItems.isEmpty()) {
 			for (BudgetItemService serviceItem : serviceItems) {
 				sum = sum.add(serviceItem.getTotal());
+			}
+		}
+		return NumberUtil.parseStringMoney(sum);
+	}
+
+	public String sumPartItems() {
+		BigDecimal sum = BigDecimal.ZERO;
+		if (Objects.nonNull(partItems) && !partItems.isEmpty()) {
+			for (BudgetItemPart partItem : partItems) {
+				sum = sum.add(partItem.getTotal());
 			}
 		}
 		return NumberUtil.parseStringMoney(sum);

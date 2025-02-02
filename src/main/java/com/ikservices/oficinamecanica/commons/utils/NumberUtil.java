@@ -87,7 +87,6 @@ public class NumberUtil {
     }
 
     public static BigDecimal calcPrice(Integer quantity, BigDecimal cost, BigDecimal discount) {
-        //quantity * (cost - ((discount / 100) * cost));
         BigDecimal percentage = discount.divide(BigDecimal.valueOf(100.0));
         BigDecimal discountValue = cost.multiply(percentage);
         BigDecimal costValue = cost.subtract(discountValue);
