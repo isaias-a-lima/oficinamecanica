@@ -1,23 +1,28 @@
 package com.ikservices.oficinamecanica.budgets.infra;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
-import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetDTO;
 import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetRequest;
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
+import com.ikservices.oficinamecanica.budgets.items.parts.infra.BudgetItemPartConverter;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.BudgetItemServiceConverter;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.vehicles.infra.VehicleConverter;
-import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleDTO;
-import com.ikservices.oficinamecanica.vehicles.infra.controller.VehicleResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 
 
@@ -26,7 +31,11 @@ public class BudgetConverter {
 	private final VehicleConverter vehicleConverter;
 
 	@Autowired
+	@Lazy
 	private BudgetItemServiceConverter budgetItemServiceConverter;
+	@Autowired
+	@Lazy
+	private BudgetItemPartConverter budgetItemPartConverter;
 	
 	public BudgetConverter(VehicleConverter vehicleConverter) {
 		this.vehicleConverter = vehicleConverter;
@@ -51,6 +60,11 @@ public class BudgetConverter {
 						new ArrayList<>()
 		);
 
+		budget.setPartItems(
+				!avoidStackOverflow && Objects.nonNull(entity.getPartItems()) ?
+						budgetItemPartConverter.parseEntityToDomainList(entity.getPartItems()) :
+						new ArrayList<>()
+		);
 		
 		return budget;
 	}
@@ -77,6 +91,11 @@ public class BudgetConverter {
 						new ArrayList<>()
 		);
 
+		entity.setPartItems(
+				Objects.nonNull(budget.getPartItems()) ?
+						budgetItemPartConverter.parseDomainToEntityList(budget.getPartItems()) :
+						new ArrayList<>()
+		);
 		
 		return entity;
 	}
@@ -101,6 +120,10 @@ public class BudgetConverter {
 				dto.setServiceItems(budgetItemServiceConverter.parseItemListToResponseList(entry.getValue().getServiceItems()));
 			}
 
+			if (!avoidStackOverflow && Objects.nonNull(entry.getValue().getPartItems()) && !entry.getValue().getPartItems().isEmpty()) {
+				dto.setPartItems(budgetItemPartConverter.parseDomainToResponse(entry.getValue().getPartItems()));
+			}
+
 			if (Objects.nonNull(entry.getValue().getVehicle())) {
 				Map<Long, Vehicle> vehicleMap = new HashMap<>();
 				vehicleMap.put(vehicleId, entry.getValue().getVehicle());
@@ -112,30 +135,13 @@ public class BudgetConverter {
 		return dto;
 	}
 	
-	public Budget parseBudget(BudgetDTO dto) {
-		if(Objects.isNull(dto)) {
-			throw new IKException("Null object");
-		}
-		
-		Budget budget = new Budget();
-		budget.setAmount(NumberUtil.parseBigDecimal(dto.getAmount()));
-		budget.setBudgetStatus(BudgetStatusEnum.findByIndex(dto.getBudgetStatus()));
-		budget.setKm(dto.getKm());
-		budget.setOpeningDate(LocalDate.parse(dto.getOpeningDate()));
-		
-		return budget;
-	}
-	
 	public List<BudgetDTO> parseBudgetDTOList(List<Map<Long, Map<Long, Budget>>> budgetList) {
 		List<BudgetDTO> dtoList = new ArrayList<>();
 
 		for (Map<Long, Map<Long, Budget>> outerMap : budgetList) {
 			for (Long vehicleId : outerMap.keySet()) {
 				Map<Long, Budget> innerMap = outerMap.get(vehicleId);
-
-				for (Long budgetId : innerMap.keySet()) {
-					dtoList.add(parseBudgetDTO(innerMap, vehicleId, false));
-				}
+				dtoList.add(parseBudgetDTO(innerMap, vehicleId, false));
 			}
 		}
 
@@ -166,6 +172,7 @@ public class BudgetConverter {
 		budget.setBudgetStatus(request.getBudgetStatus());
 		budget.setAmount(NumberUtil.parseBigDecimal(request.getAmount()));
 		budget.setServiceItems(Objects.nonNull(request.getServiceItems()) ? budgetItemServiceConverter.parseRequestToDomainList(request.getServiceItems()) : null);
+		budget.setPartItems(Objects.nonNull(request.getPartItems()) ? budgetItemPartConverter.parseRequestToDomainList(request.getPartItems()) : null);
 		return budget;
 	}
 }

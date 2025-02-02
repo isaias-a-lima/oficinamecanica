@@ -19,11 +19,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class BudgetItemService {
-	BudgetItemServiceId itemId;
-	Service service;
-	Budget budget;
-	Integer quantity;
-	BigDecimal discount;
+	private BudgetItemServiceId itemId;
+	private Service service;
+	private Budget budget;
+	private Integer quantity;
+	private BigDecimal discount;
 	
 	public BigDecimal getTotal() {
 		return NumberUtil.calcPrice(quantity, service.getCost(), discount);

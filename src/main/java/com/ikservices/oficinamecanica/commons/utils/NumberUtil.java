@@ -87,11 +87,15 @@ public class NumberUtil {
     }
 
     public static BigDecimal calcPrice(Integer quantity, BigDecimal cost, BigDecimal discount) {
-        //quantity * (cost - ((discount / 100) * cost));
         BigDecimal percentage = discount.divide(BigDecimal.valueOf(100.0));
         BigDecimal discountValue = cost.multiply(percentage);
         BigDecimal costValue = cost.subtract(discountValue);
 
         return costValue.multiply(BigDecimal.valueOf(quantity.doubleValue())).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public static String parseStringNumberWithLeftZeros(Long number, int qtyLeftZeros) {
+        String str = "%0" + qtyLeftZeros + "d";
+        return String.format(str, number);
     }
 }

@@ -10,6 +10,7 @@ import java.util.Optional;
 import javax.persistence.*;
 
 import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
+import com.ikservices.oficinamecanica.budgets.items.parts.infra.persistence.BudgetItemPartEntity;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntity;
 import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 
@@ -54,6 +55,10 @@ public class BudgetEntity {
 
 	@OneToMany(mappedBy = "budgetEntity", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BudgetItemServiceEntity> serviceItems = new ArrayList<>();
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "BUDGETID", referencedColumnName = "BUDGETID")
+	private List<BudgetItemPartEntity> partItems = new ArrayList<>();
 	
 	public void update(BudgetEntity entity) {
 		if(Objects.nonNull(entity.getKm())) {
@@ -61,12 +66,16 @@ public class BudgetEntity {
 		}
 
 		this.updateServiceItems(entity.getServiceItems());
+		this.updatePartItems(entity.getPartItems());
 	}
 
 	private void updateAmount() {
 		BigDecimal sum = BigDecimal.ZERO;
 		for (BudgetItemServiceEntity item : serviceItems) {
 			sum = sum.add(item.getTotal());
+		}
+		for (BudgetItemPartEntity partItem : partItems) {
+			sum = sum.add(partItem.getTotal());
 		}
 		this.amount = sum;
 	}
@@ -107,6 +116,46 @@ public class BudgetEntity {
 
 	private Long getNextServiceId() {
 		return this.serviceItems.isEmpty() ? 1 : this.serviceItems.get(this.serviceItems.size() - 1).getId().getId() + 1;
+	}
+
+	//Part items
+
+	private void updatePartItems(List<BudgetItemPartEntity> newItems) {
+
+		this.partItems.removeIf(existingItem ->
+				newItems.stream().noneMatch(newItem -> newItem.getId().equals(existingItem.getId()))
+		);
+
+		for (BudgetItemPartEntity newItem : newItems) {
+
+			Optional<BudgetItemPartEntity> existingItemOptional = this.partItems.stream()
+					.filter(existingItem -> existingItem.getId().equals(newItem.getId()))
+					.findFirst();
+
+			if (existingItemOptional.isPresent()) {
+				BudgetItemPartEntity existingItem = existingItemOptional.get();
+				existingItem.update(newItem);
+				this.updateAmount();
+			} else {
+				this.partItemIncluding(newItem);
+			}
+		}
+
+		this.updateAmount();
+	}
+
+	public void addPartItem(BudgetItemPartEntity partItem) {
+		this.partItemIncluding(partItem);
+		this.updateAmount();
+	}
+
+	private void partItemIncluding(BudgetItemPartEntity partItem) {
+		partItem.getId().setItemId(getNextPartId());
+		this.partItems.add(partItem);
+	}
+
+	private Long getNextPartId() {
+		return this.partItems.isEmpty() ? 1 : this.partItems.get(this.partItems.size() - 1).getId().getItemId() + 1;
 	}
 
 	public void increaseAmount(BigDecimal value) {
