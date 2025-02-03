@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
-import com.ikservices.oficinamecanica.commons.response.IKRes;
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
+import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.workorders.application.SourceCriteriaEnum;
 import com.ikservices.oficinamecanica.workorders.application.usecases.GetWorkOrder;
@@ -53,23 +55,24 @@ public class WorkOrderController {
 	}
 	
 	@GetMapping("list/{source}/{criteriaId}")
-	public ResponseEntity<IKRes<WorkOrderResponseDTO>> listWorkOrders(@PathVariable SourceCriteriaEnum source, 
+	public ResponseEntity<IKResponse<WorkOrderResponseDTO>> listWorkOrders(@PathVariable SourceCriteriaEnum source, 
 			@PathVariable Object criteriaId, @RequestParam(name = "status") WorkOrderStatusEnum status) {
 		
 		try {
 			List<WorkOrderResponseDTO> workOrderDTOList = converter.parseResponseDTOList(listWorkOrders.execute(source, criteriaId, status));
 			
-			return ResponseEntity.ok(IKRes.<WorkOrderResponseDTO>build().body(workOrderDTOList));
+			return ResponseEntity.ok(IKResponse.<WorkOrderResponseDTO>build().body(workOrderDTOList));
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).
-					body(IKRes.<WorkOrderResponseDTO>build().
-							addMessage(ike.getMessage()));
+					body(IKResponse.<WorkOrderResponseDTO>build().addMessage(ike.getIkMessage().getCode(),
+							IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
-					body(IKRes.<WorkOrderResponseDTO>build().
-							addMessage(environment.getProperty(WorkOrderConstant.LIST_ERROR_MESSAGE)));
+					body(IKResponse.<WorkOrderResponseDTO>build().
+							addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, 
+									environment.getProperty(WorkOrderConstant.LIST_ERROR_MESSAGE)));
 		}
 	}
 }
