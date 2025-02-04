@@ -31,3 +31,7 @@ CONSTRAINT fk_budgets_wo_installments FOREIGN KEY(budgetid) REFERENCES budgets(b
 INSERT INTO WORK_ORDERS(workorderid, budgetid, openingdate, km, wostatus,
 amount, payform, payqty, paid)
 VALUES(1, 1, "2025-02-03", 17000, 0, 0, 0, 1, false);
+
+INSERT INTO WORK_ORDERS(workorderid, budgetid, openingdate, km, wostatus,
+amount, payform, payqty, paid)
+VALUES(2, 1, "2025-02-04", 23000, 0, 0, 0, 1, false);
