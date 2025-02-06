@@ -2,6 +2,8 @@ package com.ikservices.oficinamecanica.workorders.infra.controller;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -10,11 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ikservices.oficinamecanica.budgets.application.BudgetBusinessConstant;
+import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
+import com.ikservices.oficinamecanica.budgets.infra.controller.BudgetDTO;
 import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
@@ -79,11 +85,13 @@ public class WorkOrderController {
 		}
 	}
 	
-	@GetMapping("get")
-	public ResponseEntity<IKResponse<WorkOrderResponseDTO>> getWorkOrder(@RequestBody WorkOrderId workOrderId) {
+	@GetMapping("get/")
+	public ResponseEntity<IKResponse<WorkOrderResponseDTO>> getWorkOrder(@RequestParam(name = "workOrderId") Long workOrderId, 
+			@RequestParam(name = "budgetId") Long budgetId) {
 		
 		try {
-			WorkOrderResponseDTO workOrderResponseDTO = converter.parseResponseDTO(getWorkOrder.execute(workOrderId));
+			WorkOrderId woId = new WorkOrderId(workOrderId, budgetId);
+			WorkOrderResponseDTO workOrderResponseDTO = converter.parseResponseDTO(getWorkOrder.execute(woId));
 			
 			return ResponseEntity.ok(IKResponse.<WorkOrderResponseDTO>build().body(workOrderResponseDTO));			
 		}catch(IKException ike) {
@@ -97,6 +105,28 @@ public class WorkOrderController {
 					body(IKResponse.<WorkOrderResponseDTO>build().
 							addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, 
 									environment.getProperty(WorkOrderConstant.GET_ERROR_MESSAGE)));
+		}
+	}
+	
+	@Transactional
+	@PutMapping
+	public ResponseEntity<IKResponse<WorkOrderResponseDTO>> updateWorkOrder(@RequestBody WorkOrderRequestDTO requestDTO) {
+		try {
+			WorkOrder workOrder = converter.parseWorkOrder(requestDTO);
+			WorkOrderResponseDTO responseDTO = converter.parseResponseDTO(updateWorkOrder.execute(workOrder));
+			
+			
+			return ResponseEntity.ok(IKResponse.<WorkOrderResponseDTO>build().body(responseDTO).
+					addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, 
+							WorkOrderConstant.UPDATE_SUCCESS_MESSAGE));			
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<WorkOrderResponseDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<WorkOrderResponseDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(WorkOrderConstant.UPDATE_ERROR_MESSAGE)));
 		}
 	}
 }

@@ -1,14 +1,24 @@
 package com.ikservices.oficinamecanica.workorders.infra.gateways;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+
+import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.response.IKMessage;
+import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.workorders.application.SourceCriteriaEnum;
 import com.ikservices.oficinamecanica.workorders.application.gateways.WorkOrderRepository;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
 import com.ikservices.oficinamecanica.workorders.infra.WorkOrderConverter;
+import com.ikservices.oficinamecanica.workorders.infra.constants.WorkOrderConstant;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntityId;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderRepositoryJPA;
@@ -17,6 +27,9 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 	
 	private final WorkOrderConverter converter;
 	private final WorkOrderRepositoryJPA repository;
+	
+	@Autowired
+	private Environment environment;
 	
 	public WorkOrderRepositoryImpl(WorkOrderConverter converter, WorkOrderRepositoryJPA repository) {
 		this.converter = converter;
@@ -52,13 +65,27 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 
 	@Override
 	public WorkOrder saveWorkOrder(WorkOrder workOrder) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public WorkOrder updateWorkOrder(WorkOrder workOrder) {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<WorkOrderEntity> optional = repository.findById(new WorkOrderEntityId(workOrder.getId().getWorkOrderId(), 
+						workOrder.getId().getBudgetId()));			
+		
+		if(optional.isPresent()) {
+			try {
+				WorkOrderEntity workOrderEntity = optional.get();
+				
+				workOrderEntity.update(converter.parseWorkOrderEntity(workOrder));
+				
+				return converter.parseWorkOrder(workOrderEntity);
+			}catch(Exception e) {
+				throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, 
+						IKMessageType.ERROR.getCode(), environment.getProperty(WorkOrderConstant.OPERATION_ERROR_MESSAGE)));
+			}
+		}
+		
+		throw new IKException(new IKMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.WARNING.getCode(), environment.getProperty(WorkOrderConstant.GET_NOT_FOUND_MESSAGE)));
 	}
 }
