@@ -1,6 +1,7 @@
 package com.ikservices.oficinamecanica.vehicles.infra;
 
 import com.ikservices.oficinamecanica.commons.enumerates.TaxPayerEnum;
+import com.ikservices.oficinamecanica.commons.utils.StringUtil;
 import com.ikservices.oficinamecanica.commons.vo.IdentificationDocumentVO;
 import com.ikservices.oficinamecanica.customers.domain.Customer;
 import com.ikservices.oficinamecanica.customers.domain.CustomerId;
@@ -33,13 +34,13 @@ public class VehicleConverter {
 		Vehicle vehicle = new Vehicle();
 
 		vehicle.setCustomer(customerConverter.parseCustomer(entity.getCustomerEntity(), true));
-		vehicle.setPlate(entity.getPlate());
-		vehicle.setManufacturing(entity.getManufacturing());
-		vehicle.setObservations(entity.getObservations());
-		vehicle.setBrand(entity.getBrand());
-		vehicle.setEngine(entity.getEngine());
-		vehicle.setModel(entity.getModel());
-		vehicle.setColor(entity.getColor());
+		vehicle.setPlate(StringUtil.validString(entity.getPlate()));
+		vehicle.setManufacturing(StringUtil.validString(entity.getManufacturing()));
+		vehicle.setObservations(StringUtil.validString(entity.getObservations()));
+		vehicle.setBrand(StringUtil.validString(entity.getBrand()));
+		vehicle.setEngine(StringUtil.validString(entity.getEngine()));
+		vehicle.setModel(StringUtil.validString(entity.getModel()));
+		vehicle.setColor(StringUtil.validString(entity.getColor()));
 		vehicle.setFuel(entity.getFuel());
 		vehicle.setTransmission(entity.getTransmission());
 		vehicle.setActive(entity.getActive());

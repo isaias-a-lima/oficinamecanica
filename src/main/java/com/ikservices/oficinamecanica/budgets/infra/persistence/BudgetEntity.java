@@ -56,8 +56,7 @@ public class BudgetEntity {
 	@OneToMany(mappedBy = "budgetEntity", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BudgetItemServiceEntity> serviceItems = new ArrayList<>();
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "BUDGETID", referencedColumnName = "BUDGETID")
+	@OneToMany(mappedBy = "budgetEntity",cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BudgetItemPartEntity> partItems = new ArrayList<>();
 	
 	public void update(BudgetEntity entity) {
