@@ -49,4 +49,4 @@ PRIMARY KEY (itemid, workorderid, budgetid),
 CONSTRAINT fk_work_orders_wo_service_items FOREIGN KEY (workorderid) REFERENCES work_orders(workorderid),
 CONSTRAINT fk_budgets_wo_service_items FOREIGN KEY (budgetid) REFERENCES budgets(budgetid),
 CONSTRAINT fk_services_wo_service_items FOREIGN KEY (serviceid) REFERENCES services(serviceid)
-) COMMENT = 'WORK ORDER SERVICE ITEMS';
+)COMMENT = 'WORK ORDER SERVICE ITEMS';

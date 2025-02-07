@@ -1,4 +1,4 @@
-package com.ikservices.oficinamecanica.workorders.items.services.domain;
+package com.ikservices.oficinamecanica.workorders.items.services.infra.persistence;
 
 import java.io.Serializable;
 
@@ -10,13 +10,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
-public class WorkOrderServiceItemId implements Serializable {
+public class WorkOrderServiceItemEntityId implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private Long itemId;
-	private Long workOrder;
+	private Long workOrderItemId;
 	private Long budgetId;
 }
