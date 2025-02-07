@@ -17,7 +17,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class BudgetItemServiceResponseDTO {
+	//TODO verify wy there are no budgetId here to identify the compound key
 	private Long itemId;
+	private Long budgetId;
 	private ServiceDTO service;
 	private Integer quantity;
 	private BigDecimal cost;

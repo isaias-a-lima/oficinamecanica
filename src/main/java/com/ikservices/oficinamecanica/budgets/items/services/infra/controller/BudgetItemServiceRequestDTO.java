@@ -10,9 +10,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"itemId", "budgetId"})
 public class BudgetItemServiceRequestDTO {
 	private Long itemId;
 	private Long budgetId;

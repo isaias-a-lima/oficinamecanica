@@ -1,6 +1,7 @@
 package com.ikservices.oficinamecanica.budgets.application.usecases;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
+import com.ikservices.oficinamecanica.budgets.items.parts.domain.BudgetItemPart;
 import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemService;
 import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
@@ -95,7 +96,7 @@ public class CreateBudgetPDF extends PDFTemplateBuilder {
                         {"Desconto", LEFT},
                         {"Total", LEFT}
                 };
-                float[] serviceColumnWiths = {0.6f, 4.1f, 0.7f, 1.6f, 1.4f, 1.6f};
+                float[] serviceColumnWidths = {0.6f, 4.1f, 0.7f, 1.6f, 1.4f, 1.6f};
                 String[][] serviceItems = new String[budget.getServiceItems().size()][12];
                 String[][] serviceAndPartFooterColumns = {{" ", LEFT}, {" ", LEFT}, {" ", LEFT}, {" ", LEFT}, {"TOTAL", RIGHT}, {budget.sumServiceItems(), LEFT}};
                 int x = 0;
@@ -109,27 +110,42 @@ public class CreateBudgetPDF extends PDFTemplateBuilder {
                     serviceItems[x][5] = "0";
                     serviceItems[x][6] = NumberUtil.parseStringMoney(serviceItem.getService().getCost());
                     serviceItems[x][7] = "0";
-                    serviceItems[x][8] = serviceItem.getDiscount().toString();
+                    serviceItems[x][8] = NumberUtil.parseStringPercent(serviceItem.getDiscount());
                     serviceItems[x][9] = "0";
                     serviceItems[x][10] = NumberUtil.parseStringMoney(serviceItem.getTotal());
                     serviceItems[x][11] = "0";
 
                     x++;
                 }
-                this.addFullTable(serviceAndPartHeaderColumns, serviceColumnWiths, serviceAndPartFooterColumns, serviceItems);
+                this.addFullTable(serviceAndPartHeaderColumns, serviceColumnWidths, serviceAndPartFooterColumns, serviceItems);
 
                 //Parts table created
                 this.addTitleH4("Peças/Produtos");
-                String[][] partItems = new String[0][12];
-                String[][] partFooterColumns = {{" ", LEFT}, {" ", LEFT}, {" ", LEFT}, {" ", LEFT}, {"TOTAL", RIGHT}, {NumberUtil.parseStringMoney(BigDecimal.ZERO), LEFT}};
-                this.addFullTable(serviceAndPartHeaderColumns, serviceColumnWiths, partFooterColumns, partItems);
+                String[][] partItems = new String[budget.getPartItems().size()][12];
+                String[][] partFooterColumns = {{" ", LEFT}, {" ", LEFT}, {" ", LEFT}, {" ", LEFT}, {"TOTAL", RIGHT}, {budget.sumPartItems(), LEFT}};
+                int y = 0;
+                for (BudgetItemPart partItem : budget.getPartItems()) {
+                    partItems[y][0] = partItem.getId().getItemId().toString();
+                    partItems[y][1] = "0";
+                    partItems[y][2] = partItem.getPart().getDescription();
+                    partItems[y][3] = "0";
+                    partItems[y][4] = partItem.getQuantity().toString();
+                    partItems[y][5] = "0";
+                    partItems[y][6] = NumberUtil.parseStringMoney(partItem.getPart().getCost());
+                    partItems[y][7] = "0";
+                    partItems[y][8] = NumberUtil.parseStringPercent(partItem.getDiscount());
+                    partItems[y][9] = "0";
+                    partItems[y][10] = NumberUtil.parseStringMoney(partItem.getTotal());
+                    partItems[y][11] = "0";
+                    y++;
+                }
+
+                this.addFullTable(serviceAndPartHeaderColumns, serviceColumnWidths, partFooterColumns, partItems);
 
                 //Amount table created
                 float[] columnWidths = {8.4f, 1.6f};
                 String [][] amountTableContents = {{"TOTAL GERAL: ",RIGHT}, {NumberUtil.parseStringMoney(budget.getAmount()), LEFT}};
                 this.addTableFooter(2, 100, columnWidths, amountTableContents);
-
-                //this.addTitleH3("TOTAL GERAL: " + NumberUtil.parseStringMoney(budget.getAmount()), "right");
 
                 this.closeDocument();
 

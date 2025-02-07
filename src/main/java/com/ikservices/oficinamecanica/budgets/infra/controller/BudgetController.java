@@ -147,7 +147,7 @@ public class BudgetController {
 				URI uri = uriBuilder.path("budgets/{budgetId}").buildAndExpand(budgetId).toUri();
 				
 				responseEntity = ResponseEntity.created(uri).body(IKResponse.<BudgetDTO>build().body(
-						converter.parseBudgetDTO(budgetMap, budget.getVehicleId(), false))
+						converter.parseBudgetDTO(budgetMap, budget.getVehicleId(), true))
 						.addMessage(BudgetBusinessConstant.SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(BudgetConstant.SAVE_SUCCESS_MESSAGE)));
 				break;
 			}
@@ -273,16 +273,4 @@ public class BudgetController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-	@GetMapping("test")
-	public ResponseEntity<String> teste() {
-		String t = getClass().getResource("/assets/images/auto_sb_banner_210x60.png").getPath();
-		File dir = new File(".");
-		StringBuilder b = new StringBuilder();
-		for (String s : dir.list()) {
-			b.append(s).append("\n\r");
-		}
-
-		return ResponseEntity.ok(t + " - " + b.toString());
-	}
 }

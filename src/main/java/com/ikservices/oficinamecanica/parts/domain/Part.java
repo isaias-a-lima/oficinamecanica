@@ -3,6 +3,8 @@ package com.ikservices.oficinamecanica.parts.domain;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import com.ikservices.oficinamecanica.commons.constants.Constants;
+import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.workshops.domain.Workshop;
 
 import lombok.AllArgsConstructor;
@@ -27,7 +29,16 @@ public class Part {
 	private BigDecimal profit;
 	private Integer balance;
 
+	public Part(PartId partId) {
+		this.partId = partId;
+	}
+
 	public BigDecimal getValue() {
-		return cost.add(cost.multiply(profit.divide(BigDecimal.valueOf(100)))).setScale(2, RoundingMode.HALF_UP);
+		try {
+			return cost.add(cost.multiply(profit.divide(BigDecimal.valueOf(100)))).setScale(2, RoundingMode.HALF_UP);
+		} catch (Exception e) {
+			IKLoggerUtil.getLogger(Part.class).error(Constants.getINVALID_PARAM_MESSAGE(), e);
+			return BigDecimal.ZERO;
+		}
 	}
 }
