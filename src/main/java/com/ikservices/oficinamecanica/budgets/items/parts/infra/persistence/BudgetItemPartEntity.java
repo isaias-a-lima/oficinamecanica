@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.budgets.items.parts.infra.persistence;
 
+import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.persistence.BudgetItemServiceEntity;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.parts.infra.persistence.PartEntity;
@@ -14,7 +15,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @ToString
 @Entity
 @Table(name = "BUDGET_ITEM_PART")
@@ -22,6 +23,11 @@ public class BudgetItemPartEntity {
 
     @EmbeddedId
     private BudgetItemPartEntityId id;
+
+    @ManyToOne
+    @JoinColumn(name = "BUDGETID", referencedColumnName = "BUDGETID", updatable = false, insertable = false)
+    private BudgetEntity budgetEntity;
+
     @Column(name = "PART_ID")
     private Long partId;
     @Column(name = "WORKSHOP_ID")

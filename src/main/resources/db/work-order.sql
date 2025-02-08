@@ -49,4 +49,22 @@ PRIMARY KEY (itemid, workorderid, budgetid),
 CONSTRAINT fk_work_orders_wo_service_items FOREIGN KEY (workorderid) REFERENCES work_orders(workorderid),
 CONSTRAINT fk_budgets_wo_service_items FOREIGN KEY (budgetid) REFERENCES budgets(budgetid),
 CONSTRAINT fk_services_wo_service_items FOREIGN KEY (serviceid) REFERENCES services(serviceid)
+<<<<<<< HEAD
 )COMMENT = 'WORK ORDER SERVICE ITEMS';
+
+--2025-02-07 20:17 - Portugal - Isaias Lima - Creation of wo_parts_items table.
+CREATE TABLE WO_PARTS_ITEMS (
+itemid BIGINT NOT NULL COMMENT 'Work order part item identification number',
+workorderid BIGINT NOT NULL COMMENT 'Work order identification number',
+budgetid BIGINT NOT NULL COMMENT 'Budget identification number',
+part_id INT NOT NULL COMMENT 'Part identification number',
+workshop_id BIGINT NOT NULL COMMENT 'Workshop identification number',
+quantity INT NOT NULL COMMENT 'Items quantity',
+itemValue DECIMAL(12, 2) NOT NULL COMMENT 'Item value',
+discount DECIMAL(5, 2) NOT NULL COMMENT 'Item discount',
+PRIMARY KEY (itemid, workorderid, budgetid),
+CONSTRAINT fk_work_orders__wo_parts_items FOREIGN KEY (workorderid) REFERENCES work_orders(workorderid),
+CONSTRAINT fk_budgets__wo_parts_items FOREIGN KEY (budgetid) REFERENCES budgets(budgetid),
+CONSTRAINT fk_parts1__wo_parts_items FOREIGN KEY (part_id) REFERENCES parts(partid),
+CONSTRAINT fk_parts2__wo_parts_items FOREIGN KEY (workshop_id) REFERENCES parts(workshopid)
+) COMMENT = 'WORK ORDER PART ITEMS';
