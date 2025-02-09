@@ -4,11 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +21,13 @@ import lombok.Setter;
 public class WorkOrderInstallmentEntity {
 	@EmbeddedId
 	private WorkOrderInstallmentEntityId id;
+
+	@ManyToOne
+	@JoinColumns({
+			@JoinColumn(name = "WORKORDERID", referencedColumnName = "WORKORDERID", updatable = false, insertable = false),
+			@JoinColumn(name = "BUDGETID", referencedColumnName = "BUDGETID", updatable = false, insertable = false)
+	})
+	private WorkOrderEntity workOrder;
 	
 	@Column(name = "DUEDATE")
 	private LocalDate dueDate;

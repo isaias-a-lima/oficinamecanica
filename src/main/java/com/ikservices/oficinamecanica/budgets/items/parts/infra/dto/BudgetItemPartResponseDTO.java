@@ -18,6 +18,6 @@ public class BudgetItemPartResponseDTO {
     private PartDTO part;
     private Integer quantity;
     private String cost;
-    private BigDecimal discount;
+    private String discount;
     private String amount;
 }

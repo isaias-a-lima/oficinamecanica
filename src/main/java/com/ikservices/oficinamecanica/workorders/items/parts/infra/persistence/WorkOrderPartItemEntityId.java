@@ -16,8 +16,8 @@ public class WorkOrderPartItemEntityId implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column(name = "ITEMID")
     private Long itemId;
-    @Column(name = "WORKORDERID")
+    @Column(name = "WORKORDER_ID")
     private Long workOrderId;
-    @Column(name = "BUDGETID")
+    @Column(name = "BUDGET_ID")
     private Long budgetId;
 }

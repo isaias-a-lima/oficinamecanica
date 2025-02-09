@@ -15,15 +15,15 @@ public interface WorkOrderRepositoryJPA extends JpaRepository<WorkOrderEntity, W
 			+ "FROM WorkOrderEntity w WHERE w.budget.vehicle.workshopId = :workshopId")
 	public Long getNextWorkOrderId(@Param("workshopId") Long workshopId);
 	
-	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicle.workshopId = :workshopId AND w.wostatus = :status")
+	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicle.workshopId = :workshopId AND w.woStatus = :status")
 	public List<WorkOrderEntity> findAllByWorkshop(@Param("workshopId") Long workshopId, 
 			@Param("status") WorkOrderStatusEnum status);
 	
-	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicle.idDoc = :idDoc AND w.wostatus = :status")
+	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicle.idDoc = :idDoc AND w.woStatus = :status")
 	public List<WorkOrderEntity> findAllByCustomer(@Param("idDoc") String idDoc, 
 			@Param("status") WorkOrderStatusEnum status);
 	
-	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicleId= :vehicleId AND w.wostatus = :status")
+	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicleId= :vehicleId AND w.woStatus = :status")
 	public List<WorkOrderEntity> findAllByVehicle(@Param("vehicleId") Long vehicleId, 
 			@Param("status") WorkOrderStatusEnum status);
 }

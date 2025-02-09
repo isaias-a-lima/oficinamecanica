@@ -1,32 +1,20 @@
 package com.ikservices.oficinamecanica.workorders.infra.persistence;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
 import com.ikservices.oficinamecanica.workorders.installments.infra.persistence.WorkOrderInstallmentEntity;
-
+import com.ikservices.oficinamecanica.workorders.items.parts.infra.persistence.WorkOrderPartItemEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -47,11 +35,10 @@ public class WorkOrderEntity {
 	
 	@Column(name = "KM")
 	private Long km;
-	
-	//TODO Correct wostatus camel case and refactor RepositoryJPA queries and other files affected.
+
 	@Column(name = "WOSTATUS")
 	@Enumerated(EnumType.ORDINAL)
-	private WorkOrderStatusEnum wostatus;
+	private WorkOrderStatusEnum woStatus;
 	
 	@Column(name = "AMOUNT")
 	private BigDecimal amount;	
@@ -66,19 +53,18 @@ public class WorkOrderEntity {
 	@Column(name = "PAID")
 	private Boolean paid;
 	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumns({
-		@JoinColumn(name = "WORKORDERID", referencedColumnName = "WORKORDERID"),
-		@JoinColumn(name = "BUDGETID", referencedColumnName = "BUDGETID")
-	})
+	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<WorkOrderInstallmentEntity> installments;
+
+	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<WorkOrderPartItemEntity> partItems;
 	
 	public void update(WorkOrderEntity entity) {
 		if(Objects.nonNull(entity.getKm())) {
 			this.km = entity.getKm();
 		}
-		if(Objects.nonNull(entity.getWostatus())) {
-			this.wostatus = entity.getWostatus();
+		if(Objects.nonNull(entity.getWoStatus())) {
+			this.woStatus = entity.getWoStatus();
 		}
 		if(Objects.nonNull(entity.getPaid())) {
 			this.paid = entity.getPaid();
