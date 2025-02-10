@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -79,52 +77,8 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         dto.setPart(partConverter.parseDTO(domain.getPart()));
         dto.setQuantity(domain.getQuantity());
         dto.setCost(NumberUtil.parseStringMoney(domain.getPart().getCost()));
-        dto.setDiscount(domain.getDiscount());
+        dto.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
         dto.setAmount(NumberUtil.parseStringMoney(domain.getTotal()));
         return dto;
-    }
-
-    @Override
-    public List<BudgetItemPart> parseRequestToDomainList(List<BudgetItemPartRequestDTO> requestList) {
-        List<BudgetItemPart> list = new ArrayList<>();
-        if (Objects.nonNull(requestList) && !requestList.isEmpty()) {
-            for (BudgetItemPartRequestDTO dto : requestList) {
-                list.add(this.parseRequestToDomain(dto));
-            }
-        }
-        return list;
-    }
-
-    @Override
-    public List<BudgetItemPartEntity> parseDomainToEntityList(List<BudgetItemPart> domainList) {
-        List<BudgetItemPartEntity> list = new ArrayList<>();
-        if (Objects.nonNull(domainList) && !domainList.isEmpty()) {
-            for (BudgetItemPart budgetItemPart : domainList) {
-                list.add(this.parseDomainToEntity(budgetItemPart));
-            }
-        }
-        return list;
-    }
-
-    @Override
-    public List<BudgetItemPart> parseEntityToDomainList(List<BudgetItemPartEntity> entityList) {
-        List<BudgetItemPart> list = new ArrayList<>();
-        if (Objects.nonNull(entityList) && !entityList.isEmpty()) {
-            for (BudgetItemPartEntity entity : entityList) {
-                list.add(this.parseEntityToDomain(entity));
-            }
-        }
-        return list;
-    }
-
-    @Override
-    public List<BudgetItemPartResponseDTO> parseDomainToResponse(List<BudgetItemPart> domainList) {
-        List<BudgetItemPartResponseDTO> dtoList = new ArrayList<>();
-        if (Objects.nonNull(domainList) && !domainList.isEmpty()) {
-            for (BudgetItemPart budgetItemPart : domainList) {
-                dtoList.add(this.parseDomainToResponse(budgetItemPart));
-            }
-        }
-        return dtoList;
     }
 }

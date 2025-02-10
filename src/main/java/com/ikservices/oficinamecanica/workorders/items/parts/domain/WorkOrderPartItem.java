@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.workorders.items.parts.domain;
 
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.parts.domain.Part;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,4 +19,8 @@ public class WorkOrderPartItem {
     private Integer quantity;
     private BigDecimal itemValue;
     private BigDecimal discount;
+
+    public BigDecimal getTotal() {
+        return NumberUtil.calcPrice(this.quantity, this.itemValue, this.discount);
+    }
 }

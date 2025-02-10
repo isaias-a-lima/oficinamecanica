@@ -4,13 +4,17 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
+import com.ikservices.oficinamecanica.budgets.items.parts.domain.BudgetItemPart;
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
 
+import com.ikservices.oficinamecanica.workorders.items.parts.domain.WorkOrderPartItem;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,4 +40,15 @@ public class WorkOrder {
 	private Integer payQty;
 	private List<WorkOrderInstallment> installments;
 	private Boolean paid;
+	private List<WorkOrderPartItem> partItems;
+
+	public String sumPartItems() {
+		BigDecimal sum = BigDecimal.ZERO;
+		if (Objects.nonNull(partItems) && !partItems.isEmpty()) {
+			for (WorkOrderPartItem partItem : partItems) {
+				sum = sum.add(partItem.getTotal());
+			}
+		}
+		return NumberUtil.parseStringMoney(sum);
+	}
 }

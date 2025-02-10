@@ -18,5 +18,6 @@ public class WorkOrderPartItemResponseDTO {
     private Integer quantity;
     private String itemValue;
     private String discount;
+    private String amount;
 
 }

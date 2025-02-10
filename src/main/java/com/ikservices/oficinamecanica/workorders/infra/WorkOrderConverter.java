@@ -51,7 +51,7 @@ public class WorkOrderConverter {
 		}
 		workOrder.setOpeningDate(entity.getOpeningDate());
 		workOrder.setKm(entity.getKm());
-		workOrder.setWorkOrderStatus(entity.getWostatus());
+		workOrder.setWorkOrderStatus(entity.getWoStatus());
 		workOrder.setAmount(entity.getAmount());
 		workOrder.setPayForm(entity.getPayForm());
 		workOrder.setPayQty(entity.getPayQty());
@@ -79,7 +79,7 @@ public class WorkOrderConverter {
 		
 		entity.setOpeningDate(workOrder.getOpeningDate());
 		entity.setKm(workOrder.getKm());
-		entity.setWostatus(workOrder.getWorkOrderStatus());
+		entity.setWoStatus(workOrder.getWorkOrderStatus());
 		entity.setAmount(workOrder.getAmount());
 		entity.setPayForm(workOrder.getPayForm());
 		
