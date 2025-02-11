@@ -24,9 +24,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "WO_SERVICE_ITEMS")
 public class WorkOrderServiceItemEntity {
@@ -34,7 +33,10 @@ public class WorkOrderServiceItemEntity {
 	private WorkOrderServiceItemEntityId id;
 	
 	@ManyToOne
-	@JoinColumn(name = "WORKORDERID", referencedColumnName = "WORKORDERID", updatable = false, insertable = false)
+	@JoinColumns({
+		@JoinColumn(name = "WORKORDER_ID", referencedColumnName = "WORKORDERID", updatable = false, insertable = false),
+		@JoinColumn(name = "BUDGET_ID",  referencedColumnName = "BUDGETID", updatable = false, insertable = false)
+	})
 	private WorkOrderEntity workOrder;
 	
 	@Column(name = "SERVICE_ID")

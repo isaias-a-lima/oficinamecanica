@@ -17,7 +17,8 @@ public class WorkOrderServiceItemRequestDTO {
 	private Long itemId;
 	private Long workOrderId;
 	private Long budgetId;
-	private Integer serviceId;
+	private Long serviceId;
+	private Long workshopId;
 	private Integer quantity;
 	private BigDecimal itemValue;
 	private BigDecimal discount;

@@ -39,16 +39,16 @@ VALUES(2, 1, "2025-02-04", 23000, 0, 0, 0, 1, false);
 --2025-02-07 15:20 - Brazil - Mateus Lima - Creation of wo_service_items table.
 CREATE TABLE WO_SERVICE_ITEMS (
 itemid BIGINT NOT NULL COMMENT 'Work order item identification number',
-workorderid BIGINT NOT NULL COMMENT 'Work order identification number',
-budgetid BIGINT NOT NULL COMMENT 'Budget identification number',
+workorder_id BIGINT NOT NULL COMMENT 'Work order identification number',
+budget_id BIGINT NOT NULL COMMENT 'Budget identification number',
 service_id INT NOT NULL COMMENT 'Service identification number',
 workshop_id BIGINT NOT NULL COMMENT 'Workshop identification number',
 quantity INT NOT NULL COMMENT 'Items quantity',
 itemvalue DECIMAL(12, 2) NOT NULL COMMENT 'Item value',
 discount DECIMAL(5,2) NOT NULL COMMENT 'Service item discount',
-PRIMARY KEY (itemid, workorderid, budgetid),
-CONSTRAINT fk_work_orders__wo_service_items FOREIGN KEY (workorderid) REFERENCES work_orders(workorderid),
-CONSTRAINT fk_budgets__wo_service_items FOREIGN KEY (budgetid) REFERENCES budgets(budgetid),
+PRIMARY KEY (itemid, workorder_id, budget_id),
+CONSTRAINT fk_work_orders__wo_service_items FOREIGN KEY (workorder_id) REFERENCES work_orders(workorderid),
+CONSTRAINT fk_budgets__wo_service_items FOREIGN KEY (budget_id) REFERENCES budgets(budgetid),
 CONSTRAINT fk_services1__wo_service_items FOREIGN KEY (service_id) REFERENCES services(serviceid),
 CONSTRAINT fk_services2__wo_service_items FOREIGN KEY (workshop_id) REFERENCES services(workshopid)
 )COMMENT = 'WORK ORDER SERVICE ITEMS';

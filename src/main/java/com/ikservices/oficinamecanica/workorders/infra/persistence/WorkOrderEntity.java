@@ -7,6 +7,8 @@ import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
 import com.ikservices.oficinamecanica.workorders.installments.infra.persistence.WorkOrderInstallmentEntity;
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.persistence.WorkOrderPartItemEntity;
+import com.ikservices.oficinamecanica.workorders.items.services.infra.persistence.WorkOrderServiceItemEntity;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,8 +61,9 @@ public class WorkOrderEntity {
 	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<WorkOrderInstallmentEntity> installments;
 
-	//TODO Here will be the service items list
-
+	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<WorkOrderServiceItemEntity> serviceItems;
+	
 	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<WorkOrderPartItemEntity> partItems;
 	
@@ -78,16 +81,18 @@ public class WorkOrderEntity {
 			this.payQty = entity.getPayQty();
 		}
 
-		//TODO There will be the invocation of service items update here.
-
+		this.updateServiceItems(entity.getServiceItems());
+		
 		this.updatePartItems(entity.getPartItems());
 	}
 
 	private void updateAmount() {
 		BigDecimal sum = BigDecimal.ZERO;
 
-		//TODO There will be a FOR of service items here.
-
+		for (WorkOrderServiceItemEntity serviceItem : serviceItems) {
+			sum = sum.add(serviceItem.getTotal());
+		}
+		
 		for (WorkOrderPartItemEntity partItem : partItems) {
 			sum = sum.add(partItem.getTotal());
 		}
@@ -95,7 +100,44 @@ public class WorkOrderEntity {
 	}
 
 	//Service items begin
-	//TODO Here will be the service items update business rules.
+	
+	private void updateServiceItems(List<WorkOrderServiceItemEntity> newItems) {
+		
+		this.serviceItems.removeIf(existingItem ->
+			newItems.stream().noneMatch(newItem -> newItem.getId().equals(existingItem.getId()))
+		);
+		
+		for(WorkOrderServiceItemEntity newItem : newItems) {
+			
+			Optional<WorkOrderServiceItemEntity> existingItemOptional = this.serviceItems.stream()
+					.filter(existingItem -> existingItem.getId().equals(newItem.getId()))
+					.findFirst();
+			
+			if (existingItemOptional.isPresent()) {
+				WorkOrderServiceItemEntity existingItem = existingItemOptional.get();
+				existingItem.update(newItem);
+			} else {
+				this.serviceItemIncluding(newItem);
+			}
+		}
+		
+		this.updateAmount();
+	}
+	
+	public void addServiceItem(WorkOrderServiceItemEntity serviceItem) {
+		this.serviceItemIncluding(serviceItem);
+		this.updateAmount();
+	}
+	
+	private void serviceItemIncluding(WorkOrderServiceItemEntity serviceItem) {
+		serviceItem.getId().setItemId(getNextServiceId());
+		this.serviceItems.add(serviceItem);
+	
+	}
+	
+	private Long getNextServiceId() {
+		return this.serviceItems.isEmpty() ? 1 : this.serviceItems.get(this.serviceItems.size() - 1).getId().getItemId() + 1;
+	}
 	//Service items end
 
 	//Part items begin

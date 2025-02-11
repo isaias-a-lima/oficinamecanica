@@ -2,6 +2,8 @@ package com.ikservices.oficinamecanica.workorders.items.services.infra.persisten
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +18,10 @@ import lombok.Setter;
 public class WorkOrderServiceItemEntityId implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
+	@Column(name = "ITEMID")
 	private Long itemId;
+	@Column(name = "WORKORDER_ID")
 	private Long workOrderItemId;
+	@Column(name = "BUDGET_ID")
 	private Long budgetId;
 }
