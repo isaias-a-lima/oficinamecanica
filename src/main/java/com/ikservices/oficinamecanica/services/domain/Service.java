@@ -20,4 +20,8 @@ public class Service {
 	private Workshop workshop;
 	private String description;
 	private BigDecimal cost;
+	
+	public Service(ServiceId id) {
+		this.id = id;
+	}
 }

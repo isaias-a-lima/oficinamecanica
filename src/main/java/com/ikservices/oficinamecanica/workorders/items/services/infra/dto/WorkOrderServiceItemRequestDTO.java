@@ -1,8 +1,6 @@
-package com.ikservices.oficinamecanica.workorders.items.services.domain;
+package com.ikservices.oficinamecanica.workorders.items.services.infra.dto;
 
 import java.math.BigDecimal;
-
-import com.ikservices.oficinamecanica.services.domain.Service;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -12,14 +10,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
-public class WorkOrderServiceItem {
-	private WorkOrderServiceItemId itemId;
-	private Service service;
+public class WorkOrderServiceItemRequestDTO {
+	private Long itemId;
+	private Long workOrderId;
+	private Long budgetId;
+	private Long serviceId;
+	private Long workshopId;
 	private Integer quantity;
 	private BigDecimal itemValue;
 	private BigDecimal discount;
 }
-

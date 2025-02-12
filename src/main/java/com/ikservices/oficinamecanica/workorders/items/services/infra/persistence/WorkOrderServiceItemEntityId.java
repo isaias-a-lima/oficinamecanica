@@ -1,6 +1,8 @@
-package com.ikservices.oficinamecanica.workorders.items.services.domain;
+package com.ikservices.oficinamecanica.workorders.items.services.infra.persistence;
 
 import java.io.Serializable;
+
+import javax.persistence.Column;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -10,13 +12,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
-public class WorkOrderServiceItemId implements Serializable {
+public class WorkOrderServiceItemEntityId implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
+	@Column(name = "ITEMID")
 	private Long itemId;
-	private Long workOrder;
+	@Column(name = "WORKORDER_ID")
+	private Long workOrderItemId;
+	@Column(name = "BUDGET_ID")
 	private Long budgetId;
 }
