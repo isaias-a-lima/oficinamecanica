@@ -19,7 +19,7 @@ public class WorkOrderServiceItemResponseDTO {
 	private Long itemId;
 	private Long workOrderId;
 	private Long budgetId;
-	private ServiceDTO serviceDTO;
+	private ServiceDTO service;
 	private Integer quantity;
 	private BigDecimal itemValue;
 	private BigDecimal discount; 

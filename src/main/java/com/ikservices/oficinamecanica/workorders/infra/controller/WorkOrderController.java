@@ -85,13 +85,14 @@ public class WorkOrderController {
 		}
 	}
 	
-	@GetMapping("get/")
+	@GetMapping("get")
 	public ResponseEntity<IKResponse<WorkOrderResponseDTO>> getWorkOrder(@RequestParam(name = "workOrderId") Long workOrderId, 
 			@RequestParam(name = "budgetId") Long budgetId) {
 		
 		try {
 			WorkOrderId woId = new WorkOrderId(workOrderId, budgetId);
 			WorkOrderResponseDTO workOrderResponseDTO = converter.parseResponseDTO(getWorkOrder.execute(woId));
+			LOGGER.info("REQUEST JSON: " + IKLoggerUtil.parseJSON(converter.createRequest(workOrderResponseDTO)));
 			
 			return ResponseEntity.ok(IKResponse.<WorkOrderResponseDTO>build().body(workOrderResponseDTO));			
 		}catch(IKException ike) {

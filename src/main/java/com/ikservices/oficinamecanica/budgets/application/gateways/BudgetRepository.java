@@ -17,4 +17,5 @@ public interface BudgetRepository {
 	public void changeStatus(Long budgetId, BudgetStatusEnum budgetStatus);
 	public void increaseAmount(Long budgetId, BigDecimal value);
 	public void decreaseAmount(Long budgetId, BigDecimal value);
+    public Long approveBudget(Long budgetId);
 }

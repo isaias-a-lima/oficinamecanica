@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
@@ -24,6 +26,8 @@ import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEnti
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderRepositoryJPA;
 
 public class WorkOrderRepositoryImpl implements WorkOrderRepository {
+
+	private static final Logger LOGGER = IKLoggerUtil.getLogger(WorkOrderRepositoryImpl.class);
 	
 	private final WorkOrderConverter converter;
 	private final WorkOrderRepositoryJPA repository;
@@ -65,7 +69,14 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 
 	@Override
 	public WorkOrder saveWorkOrder(WorkOrder workOrder) {
-		return null;
+		WorkOrderEntity saved = null;
+		try {
+			saved = repository.save(converter.parseWorkOrderEntity(workOrder));
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), "Erro ao tentar salvar."));
+		}
+		return converter.parseWorkOrder(saved);
 	}
 
 	@Override

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.ikservices.oficinamecanica.workorders.items.services.infra.persistence.WorkOrderServiceItemEntity;
+import com.ikservices.oficinamecanica.workorders.items.services.infra.persistence.WorkOrderServiceItemEntityId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -162,6 +164,31 @@ public class BudgetItemServiceConverter {
 		}
 		
 		return responseList;
+	}
+
+	public WorkOrderServiceItemEntity parseBudgetServiceItemToWorkOrderServiceItem(BudgetItemServiceEntity source, Long workOrderId) {
+		if (Objects.isNull(source)) {
+			throw new IKException("Null objects");
+		}
+		WorkOrderServiceItemEntity target = new WorkOrderServiceItemEntity();
+		target.setId(new WorkOrderServiceItemEntityId(source.getId().getId(), workOrderId, source.getId().getBudgetId()));
+		target.setServiceId(source.getServiceId());
+		target.setWorkshopId(source.getWorkshopId());
+		target.setService(source.getServiceEntity());
+		target.setQuantity(source.getQuantity());
+		target.setItemValue(source.getCost());
+		target.setDiscount(source.getDiscount());
+		return target;
+	}
+
+	public List<WorkOrderServiceItemEntity> parseToWorkOrderServiceItemList(List<BudgetItemServiceEntity> sourceList, Long workOrderId) {
+		List<WorkOrderServiceItemEntity> targetList = new ArrayList<>();
+		if (Objects.nonNull(sourceList) && !sourceList.isEmpty()) {
+			for (BudgetItemServiceEntity source : sourceList) {
+				targetList.add(this.parseBudgetServiceItemToWorkOrderServiceItem(source, workOrderId));
+			}
+		}
+		return targetList;
 	}
 }
 

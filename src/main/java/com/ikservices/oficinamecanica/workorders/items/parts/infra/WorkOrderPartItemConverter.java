@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.workorders.items.parts.infra;
 
+import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.generics.IKConverter;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.parts.domain.Part;
@@ -12,10 +13,14 @@ import com.ikservices.oficinamecanica.workorders.items.parts.infra.dto.WorkOrder
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.dto.WorkOrderPartItemResponseDTO;
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.persistence.WorkOrderPartItemEntity;
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.persistence.WorkOrderPartItemEntityId;
+import com.ikservices.oficinamecanica.workorders.items.services.infra.dto.WorkOrderServiceItemRequestDTO;
+import com.ikservices.oficinamecanica.workorders.items.services.infra.dto.WorkOrderServiceItemResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -48,10 +53,9 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
         if (Objects.nonNull(domain)) {
             entity = new WorkOrderPartItemEntity();
             entity.setId(new WorkOrderPartItemEntityId(domain.getId().getItemId(), domain.getId().getWorkOrderId(), domain.getId().getBudgetId()));
-            PartEntity partEntity = partConverter.parseEntity(domain.getPart());
-            entity.setPartId(partEntity.getId().getId());
-            entity.setWorkshopId(partEntity.getId().getWorkshopId());
-            entity.setPart(partEntity);
+            entity.setPartId(domain.getPart().getPartId().getId());
+            entity.setWorkshopId(domain.getPart().getPartId().getWorkshopId());
+            entity.setPart(partConverter.parseEntity(domain.getPart()));
             entity.setQuantity(domain.getQuantity());
             entity.setItemValue(domain.getItemValue());
             entity.setDiscount(domain.getDiscount());
@@ -67,7 +71,7 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
         if (Objects.nonNull(entity)) {
             domain = new WorkOrderPartItem();
             domain.setId(new WorkOrderPartItemId(entity.getId().getItemId(), entity.getId().getWorkOrderId(), entity.getId().getBudgetId()));
-            domain.setPart(new Part(new PartId(entity.getPartId(), entity.getWorkshopId())));
+            domain.setPart(partConverter.parsePart(entity.getPart()));
             domain.setQuantity(entity.getQuantity());
             domain.setItemValue(entity.getItemValue());
             domain.setDiscount(entity.getDiscount());
@@ -93,5 +97,31 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
         }
 
         return response;
+    }
+
+    public List<WorkOrderPartItemRequestDTO> createRequestList(List<WorkOrderPartItemResponseDTO> responseList) {
+        List<WorkOrderPartItemRequestDTO> requestList = new ArrayList<>();
+        if (Objects.nonNull(responseList) && !responseList.isEmpty()) {
+            for (WorkOrderPartItemResponseDTO response : responseList) {
+                requestList.add(this.createRequest(response));
+            }
+        }
+        return requestList;
+    }
+
+    private WorkOrderPartItemRequestDTO createRequest(WorkOrderPartItemResponseDTO response) {
+        if (Objects.isNull(response)) {
+            throw new IKException("Null object.");
+        }
+        WorkOrderPartItemRequestDTO request = new WorkOrderPartItemRequestDTO();
+        request.setItemId(response.getItemId());
+        request.setWorkOrderId(response.getWorkOrderId());
+        request.setBudgetId(response.getBudgetId());
+        request.setPartId(response.getPart().getPartId());
+        request.setWorkshopId(response.getPart().getWorkshopId());
+        request.setQuantity(response.getQuantity());
+        request.setItemValue(NumberUtil.parseBigDecimal(response.getItemValue()));
+        request.setDiscount(NumberUtil.parseBigDecimal(response.getDiscount()));
+        return request;
     }
 }

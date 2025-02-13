@@ -9,6 +9,9 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
+import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
+import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntityId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -121,7 +124,7 @@ public class BudgetConverter {
 			}
 
 			if (!avoidStackOverflow && Objects.nonNull(entry.getValue().getPartItems()) && !entry.getValue().getPartItems().isEmpty()) {
-				dto.setPartItems(budgetItemPartConverter.parseDomainToResponse(entry.getValue().getPartItems()));
+				dto.setPartItems(budgetItemPartConverter.parseDomainToResponseList(entry.getValue().getPartItems()));
 			}
 
 			if (Objects.nonNull(entry.getValue().getVehicle())) {
@@ -174,5 +177,19 @@ public class BudgetConverter {
 		budget.setServiceItems(Objects.nonNull(request.getServiceItems()) ? budgetItemServiceConverter.parseRequestToDomainList(request.getServiceItems()) : null);
 		budget.setPartItems(Objects.nonNull(request.getPartItems()) ? budgetItemPartConverter.parseRequestToDomainList(request.getPartItems()) : null);
 		return budget;
+	}
+
+	public WorkOrderEntity parseBudgetToWorkOrder(BudgetEntity budgetEntity, Long workOrderId) {
+		WorkOrderEntity workOrderEntity = new WorkOrderEntity();
+		workOrderEntity.setId(new WorkOrderEntityId(workOrderId, budgetEntity.getBudgetId()));
+		workOrderEntity.setBudget(budgetEntity);
+		workOrderEntity.setOpeningDate(LocalDate.now());
+		workOrderEntity.setKm(budgetEntity.getKm());
+		workOrderEntity.setWoStatus(WorkOrderStatusEnum.QUEUE);
+		workOrderEntity.setAmount(budgetEntity.getAmount());
+		workOrderEntity.setServiceItems(budgetItemServiceConverter.parseToWorkOrderServiceItemList(budgetEntity.getServiceItems(), workOrderId));
+		workOrderEntity.setPartItems(budgetItemPartConverter.parseToWorkOrderPartItemEntityList(budgetEntity.getPartItems(), workOrderId));
+
+		return workOrderEntity;
 	}
 }

@@ -34,10 +34,7 @@ public class WorkOrderConfig {
 		return new WorkOrderInstallmentConverter();
 	}
 	
-	@Bean
-	public WorkOrderConverter workOrderConverter(BudgetConverter budgetConverter, WorkOrderInstallmentConverter installmentConverter) {
-		return new WorkOrderConverter(budgetConverter, installmentConverter);
-	}
+
 	
 	@Bean
 	public GetWorkOrder getWorkOrder(WorkOrderRepository repository) {

@@ -6,6 +6,7 @@ import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.budgets.infra.constants.BudgetConstant;
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
@@ -51,12 +52,13 @@ public class BudgetController {
 	private final ChangeStatus changeStatus;
 	private final IncreaseAmount increaseAmount;
 	private final DecreaseAmount decreaseAmount;
+	private final ApproveBudget approveBudget;
 
     private final CreateBudgetPDF createPDF;
 	
 	public BudgetController(GetBudget getBudget, ListBudgets listBudgets, SaveBudget saveBudget,
                             UpdateBudget updateBudget, ChangeStatus changeStatus, IncreaseAmount increaseAmount,
-                            DecreaseAmount decreaseAmount, CreateBudgetPDF createPDF) {
+                            DecreaseAmount decreaseAmount, ApproveBudget approveBudget, CreateBudgetPDF createPDF) {
 		this.getBudget = getBudget;
 		this.listBudgets = listBudgets;
 		this.saveBudget = saveBudget;
@@ -64,6 +66,7 @@ public class BudgetController {
 		this.changeStatus = changeStatus;
 		this.increaseAmount = increaseAmount;
 		this.decreaseAmount = decreaseAmount;
+        this.approveBudget = approveBudget;
         this.createPDF = createPDF;
     }
 	
@@ -273,4 +276,17 @@ public class BudgetController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+	@PutMapping("budget/approve/{budgetId}")
+	public ResponseEntity<IKResponse<Long>> approveBudget(@PathVariable Long budgetId) {
+		try {
+			Long approvedBudgetId = approveBudget.execute(budgetId);
+			String formattedMessage = String.format(environment.getProperty(BudgetConstant.APPROVED_SUCCESS_MESSAGE), approvedBudgetId);
+			return ResponseEntity.ok(IKResponse.<Long>build().body(approvedBudgetId).addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, formattedMessage));
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			String formattedMessage = String.format(environment.getProperty(BudgetConstant.APPROVED_ERROR_MESSAGE), budgetId);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<Long>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, formattedMessage));
+		}
+	}
 }

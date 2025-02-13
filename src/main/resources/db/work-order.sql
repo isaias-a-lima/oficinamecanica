@@ -7,8 +7,8 @@ km BIGINT NOT NULL COMMENT "Vehicle km",
 wostatus TINYINT NOT NULL COMMENT "Work order status",
 amount DECIMAL(12, 2) NOT NULL COMMENT "Work order amount",
 payform TINYINT NULL COMMENT "Work order pay form",
-payqty TINYINT NULL DEFAULT 1 COMMENT "Installments quantity",
-paid BOOLEAN NOT NULL COMMENT "Is the work order paid or not paid?",
+payqty TINYINT NULL COMMENT "Installments quantity",
+paid BOOLEAN NULL COMMENT "Is the work order paid or not paid?",
 PRIMARY KEY(workorderid, budgetid),
 CONSTRAINT fk_budgets_work_orders FOREIGN KEY(budgetid) REFERENCES budgets(budgetid)
 )COMMENT = "WORK ORDERS";

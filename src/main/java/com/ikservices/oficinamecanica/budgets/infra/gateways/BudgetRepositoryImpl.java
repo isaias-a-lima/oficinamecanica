@@ -20,8 +20,13 @@ import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
+import com.ikservices.oficinamecanica.workorders.application.gateways.WorkOrderRepository;
+import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
+import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntityId;
+import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderRepositoryJPA;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 
 import java.math.BigDecimal;
@@ -39,6 +44,9 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 	private final BudgetItemPartConverter budgetItemPartConverter;
 	private final BudgetRepositoryJPA repositoryJPA;
 	private final BudgetItemServiceRepositoryJPA itemServiceRepository;
+	@Autowired
+	@Lazy
+	private WorkOrderRepositoryJPA workOrderRepositoryJPA;
 	@Autowired
 	private Environment environment;
 	
@@ -178,5 +186,25 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 		if(Objects.nonNull(budgetEntity)) {
 			budgetEntity.setAmount(budgetEntity.getAmount().subtract(value));
 		}
-	}	
+	}
+
+	@Override
+	public Long approveBudget(Long budgetId) {
+
+		Optional<BudgetEntity> optional = repositoryJPA.findById(budgetId);
+
+		if (optional.isPresent()) {
+			BudgetEntity entity = optional.get();
+			entity.setBudgetStatus(BudgetStatusEnum.APPROVED);
+
+			Long workOrderId = workOrderRepositoryJPA.getNextWorkOrderId(entity.getVehicle().getWorkshopId());
+
+			WorkOrderEntity workOrderEntity = converter.parseBudgetToWorkOrder(entity, workOrderId);
+
+			workOrderRepositoryJPA.save(workOrderEntity);
+			return workOrderEntity.getId().getBudgetId();
+		}
+
+		return null;
+	}
 }

@@ -15,6 +15,7 @@ import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStat
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
 
 import com.ikservices.oficinamecanica.workorders.items.parts.domain.WorkOrderPartItem;
+import com.ikservices.oficinamecanica.workorders.items.services.domain.WorkOrderServiceItem;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -40,6 +41,7 @@ public class WorkOrder {
 	private Integer payQty;
 	private List<WorkOrderInstallment> installments;
 	private Boolean paid;
+	private List<WorkOrderServiceItem> serviceItems;
 	private List<WorkOrderPartItem> partItems;
 
 	public String sumPartItems() {
@@ -47,6 +49,11 @@ public class WorkOrder {
 		if (Objects.nonNull(partItems) && !partItems.isEmpty()) {
 			for (WorkOrderPartItem partItem : partItems) {
 				sum = sum.add(partItem.getTotal());
+			}
+		}
+		if (Objects.nonNull(serviceItems) && !serviceItems.isEmpty()) {
+			for (WorkOrderServiceItem  serviceItem: serviceItems) {
+				sum = sum.add(serviceItem.getTotal());
 			}
 		}
 		return NumberUtil.parseStringMoney(sum);

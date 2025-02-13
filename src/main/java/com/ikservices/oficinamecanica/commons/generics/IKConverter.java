@@ -47,7 +47,7 @@ public abstract class IKConverter<I, D, E, O> {
         return domainList;
     }
 
-    public List<O> parseDomainToResponse(List<D> domainList) {
+    public List<O> parseDomainToResponseList(List<D> domainList) {
         List<O> dtoList = new ArrayList<>();
         if (Objects.nonNull(domainList) && !domainList.isEmpty()) {
             for (D domain : domainList) {

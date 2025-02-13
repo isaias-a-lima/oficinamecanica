@@ -1,22 +1,23 @@
 package com.ikservices.oficinamecanica.workorders.items.services.infra;
 
-import java.util.Objects;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
-
+import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.generics.IKConverter;
 import com.ikservices.oficinamecanica.services.domain.Service;
 import com.ikservices.oficinamecanica.services.domain.ServiceId;
 import com.ikservices.oficinamecanica.services.infra.ServiceConverter;
-import com.ikservices.oficinamecanica.workorders.infra.WorkOrderConverter;
 import com.ikservices.oficinamecanica.workorders.items.services.domain.WorkOrderServiceItem;
 import com.ikservices.oficinamecanica.workorders.items.services.domain.WorkOrderServiceItemId;
 import com.ikservices.oficinamecanica.workorders.items.services.infra.dto.WorkOrderServiceItemRequestDTO;
 import com.ikservices.oficinamecanica.workorders.items.services.infra.dto.WorkOrderServiceItemResponseDTO;
 import com.ikservices.oficinamecanica.workorders.items.services.infra.persistence.WorkOrderServiceItemEntity;
 import com.ikservices.oficinamecanica.workorders.items.services.infra.persistence.WorkOrderServiceItemEntityId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 public class WorkOrderServiceItemsConverter extends IKConverter<WorkOrderServiceItemRequestDTO, 
@@ -69,11 +70,11 @@ WorkOrderServiceItem, WorkOrderServiceItemEntity, WorkOrderServiceItemResponseDT
 	public WorkOrderServiceItem parseEntityToDomain(WorkOrderServiceItemEntity entity) {
 		WorkOrderServiceItem domain = null;
 		
-		if(Objects.nonNull(domain)) {
+		if(Objects.nonNull(entity)) {
 			domain = new WorkOrderServiceItem();
 			
 			domain.setItemId(new WorkOrderServiceItemId(entity.getId().getItemId(),
-					entity.getId().getWorkOrderItemId(), entity.getServiceId()));
+					entity.getId().getWorkOrderItemId(), entity.getId().getBudgetId()));
 			domain.setService(serviceConverter.parseService(entity.getService()));
 			domain.setQuantity(entity.getQuantity());
 			domain.setItemValue(entity.getItemValue());
@@ -93,12 +94,38 @@ WorkOrderServiceItem, WorkOrderServiceItemEntity, WorkOrderServiceItemResponseDT
 			dto.setItemId(domain.getItemId().getItemId());
 			dto.setWorkOrderId(domain.getItemId().getWorkOrder());
 			dto.setBudgetId(domain.getItemId().getBudgetId());
-			dto.setServiceDTO(serviceConverter.parseDTO(domain.getService()));
+			dto.setService(serviceConverter.parseDTO(domain.getService()));
 			dto.setQuantity(domain.getQuantity());
 			dto.setItemValue(domain.getItemValue());
 			dto.setDiscount(domain.getDiscount());
 		}
 		
 		return dto;
-	}	
+	}
+
+    public List<WorkOrderServiceItemRequestDTO> createRequestList(List<WorkOrderServiceItemResponseDTO> responseList) {
+		List<WorkOrderServiceItemRequestDTO> requestList = new ArrayList<>();
+		if (Objects.nonNull(responseList) && !responseList.isEmpty()) {
+			for (WorkOrderServiceItemResponseDTO response : responseList) {
+				requestList.add(this.createRequest(response));
+			}
+		}
+		return requestList;
+    }
+
+	private WorkOrderServiceItemRequestDTO createRequest(WorkOrderServiceItemResponseDTO response) {
+		if (Objects.isNull(response)) {
+			throw new IKException("Null object.");
+		}
+		WorkOrderServiceItemRequestDTO request = new WorkOrderServiceItemRequestDTO();
+		request.setItemId(response.getItemId());
+		request.setWorkOrderId(response.getWorkOrderId());
+		request.setBudgetId(response.getBudgetId());
+		request.setServiceId(response.getService().getServiceId());
+		request.setWorkshopId(response.getService().getWorkshopId());
+		request.setQuantity(response.getQuantity());
+		request.setItemValue(response.getItemValue());
+		request.setDiscount(response.getDiscount());
+		return request;
+	}
 }

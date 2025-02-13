@@ -12,10 +12,14 @@ import com.ikservices.oficinamecanica.parts.domain.Part;
 import com.ikservices.oficinamecanica.parts.domain.PartId;
 import com.ikservices.oficinamecanica.parts.infra.PartConverter;
 import com.ikservices.oficinamecanica.parts.infra.persistence.PartEntity;
+import com.ikservices.oficinamecanica.workorders.items.parts.infra.persistence.WorkOrderPartItemEntity;
+import com.ikservices.oficinamecanica.workorders.items.parts.infra.persistence.WorkOrderPartItemEntityId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -80,5 +84,27 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         dto.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
         dto.setAmount(NumberUtil.parseStringMoney(domain.getTotal()));
         return dto;
+    }
+
+    public WorkOrderPartItemEntity parseToWorkOrderPartItemEntity(BudgetItemPartEntity source, Long workOrderId) {
+        WorkOrderPartItemEntity target = new WorkOrderPartItemEntity();
+        target.setId(new WorkOrderPartItemEntityId(source.getId().getItemId(), workOrderId, source.getId().getBudgetId()));
+        target.setPartId(source.getPartId());
+        target.setWorkshopId(source.getWorkshopId());
+        target.setPart(source.getPart());
+        target.setQuantity(source.getQuantity());
+        target.setItemValue(source.getCost());
+        target.setDiscount(source.getDiscount());
+        return target;
+    }
+
+    public List<WorkOrderPartItemEntity> parseToWorkOrderPartItemEntityList(List<BudgetItemPartEntity> sourceList, Long workOrderId) {
+        List<WorkOrderPartItemEntity> targetList = new ArrayList<>();
+        if (Objects.nonNull(sourceList) && !sourceList.isEmpty()) {
+            for (BudgetItemPartEntity source : sourceList) {
+                targetList.add(this.parseToWorkOrderPartItemEntity(source, workOrderId));
+            }
+        }
+        return targetList;
     }
 }

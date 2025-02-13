@@ -119,4 +119,14 @@ public class WorkOrderInstallmentConverter {
 		}
 		return dtoList;
 	}
+
+	public List<WorkOrderInstallment> parseDTOToDomainList(List<WorkOrderInstallmentsDTO> installmentsDTOS) {
+		List<WorkOrderInstallment> dtoList = new ArrayList<>();
+		if (Objects.nonNull(installmentsDTOS) && !installmentsDTOS.isEmpty()) {
+			for (WorkOrderInstallmentsDTO installmentsDTO : installmentsDTOS) {
+				dtoList.add(this.parseInstallment(installmentsDTO));
+			}
+		}
+		return dtoList;
+	}
 }
