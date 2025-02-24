@@ -53,13 +53,17 @@ public class WorkOrderServiceItemEntity {
 	private BigDecimal discount;
 	
 	public void update(WorkOrderServiceItemEntity entity) {
-		if(Objects.nonNull(entity)) {
+		if(Objects.nonNull(entity.getServiceId())) {
+			this.serviceId = entity.getServiceId();
+			this.service.getId().setId(entity.getServiceId());
+		}
+		if(Objects.nonNull(entity.getQuantity())) {
 			this.quantity = entity.getQuantity();
 		}
-		if(Objects.nonNull(entity)) {
+		if(Objects.nonNull(entity.getItemValue())) {
 			this.itemValue = entity.getItemValue();
 		}
-		if(Objects.nonNull(entity)) {
+		if(Objects.nonNull(entity.getDiscount())) {
 			this.discount = entity.getDiscount();
 		}
 	}

@@ -21,6 +21,7 @@ public class WorkOrderServiceItemResponseDTO {
 	private Long budgetId;
 	private ServiceDTO service;
 	private Integer quantity;
-	private BigDecimal itemValue;
-	private BigDecimal discount; 
+	private String itemValue;
+	private String discount;
+	private String amount;
 }

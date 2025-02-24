@@ -101,7 +101,8 @@ public class BudgetRepositoryImpl implements BudgetRepository {
 
 		BudgetEntity savedBudget = repositoryJPA.save(budgetEntity);
 
-		if (Objects.nonNull(budget.getServiceItems()) && !budget.getServiceItems().isEmpty()) {
+		if ((Objects.nonNull(budget.getServiceItems()) && !budget.getServiceItems().isEmpty()) ||
+				(Objects.nonNull(budget.getPartItems()) && !budget.getPartItems().isEmpty())) {
 
 			Optional<BudgetEntity> optional = repositoryJPA.findById(savedBudget.getBudgetId());
 

@@ -28,7 +28,7 @@ public class WorkOrderEntity {
 	@EmbeddedId
 	private WorkOrderEntityId id;
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BUDGETID", insertable = false, updatable = false)
 	private BudgetEntity budget;
 	

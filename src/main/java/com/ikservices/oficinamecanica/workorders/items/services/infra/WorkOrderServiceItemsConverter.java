@@ -2,6 +2,7 @@ package com.ikservices.oficinamecanica.workorders.items.services.infra;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.generics.IKConverter;
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.services.domain.Service;
 import com.ikservices.oficinamecanica.services.domain.ServiceId;
 import com.ikservices.oficinamecanica.services.infra.ServiceConverter;
@@ -96,8 +97,9 @@ WorkOrderServiceItem, WorkOrderServiceItemEntity, WorkOrderServiceItemResponseDT
 			dto.setBudgetId(domain.getItemId().getBudgetId());
 			dto.setService(serviceConverter.parseDTO(domain.getService()));
 			dto.setQuantity(domain.getQuantity());
-			dto.setItemValue(domain.getItemValue());
-			dto.setDiscount(domain.getDiscount());
+			dto.setItemValue(NumberUtil.parseStringMoney(domain.getItemValue()));
+			dto.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
+			dto.setAmount(NumberUtil.parseStringMoney(domain.getTotal()));
 		}
 		
 		return dto;
@@ -124,8 +126,8 @@ WorkOrderServiceItem, WorkOrderServiceItemEntity, WorkOrderServiceItemResponseDT
 		request.setServiceId(response.getService().getServiceId());
 		request.setWorkshopId(response.getService().getWorkshopId());
 		request.setQuantity(response.getQuantity());
-		request.setItemValue(response.getItemValue());
-		request.setDiscount(response.getDiscount());
+		request.setItemValue(NumberUtil.parseBigDecimal(response.getItemValue()));
+		request.setDiscount(NumberUtil.parseBigDecimal(response.getDiscount()));
 		return request;
 	}
 }

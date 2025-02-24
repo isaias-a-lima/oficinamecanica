@@ -175,13 +175,13 @@ public class WorkOrderConverter {
 			
 			for (Long vehicleId : outSideBudgetMap.keySet()) {
 				Map<Long, Budget> inSideBudgetMap = outSideBudgetMap.get(vehicleId);
-				budgetConverter.parseBudgetDTO(inSideBudgetMap, vehicleId,true);
+				responseDTO.setBudget(budgetConverter.parseBudgetDTO(inSideBudgetMap, vehicleId,true));
 			}			
 		}
 		
 		responseDTO.setOpeningDate(workOrder.getOpeningDate().toString());
 		responseDTO.setKm(workOrder.getKm());
-		responseDTO.setWOStatus(workOrder.getWorkOrderStatus().ordinal());
+		responseDTO.setWorkOrderStatus(workOrder.getWorkOrderStatus().ordinal());
 		responseDTO.setAmount(NumberUtil.parseStringMoney(workOrder.getAmount()));
 		responseDTO.setPayForm(Objects.nonNull(workOrder.getPayForm()) ? workOrder.getPayForm().ordinal() : null);
 		responseDTO.setPayQty(workOrder.getPayQty());
@@ -215,7 +215,7 @@ public class WorkOrderConverter {
 		request.setBudgetId(response.getBudgetId());
 		request.setOpeningDate(response.getOpeningDate());
 		request.setKm(response.getKm());
-		request.setWorkOrderStatus(WorkOrderStatusEnum.findByIndex(response.getWOStatus()));
+		request.setWorkOrderStatus(WorkOrderStatusEnum.findByIndex(response.getWorkOrderStatus()));
 		request.setAmount(NumberUtil.parseBigDecimal(response.getAmount()));
 		request.setPayForm(Objects.nonNull(response.getPayForm()) ? PayFormEnum.findByIndex(response.getPayForm()) : null);
 		request.setPayQty(response.getPayQty());

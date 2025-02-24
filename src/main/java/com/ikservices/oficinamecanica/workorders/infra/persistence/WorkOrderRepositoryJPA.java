@@ -2,6 +2,7 @@ package com.ikservices.oficinamecanica.workorders.infra.persistence;
 
 import java.util.List;
 
+import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,9 +19,9 @@ public interface WorkOrderRepositoryJPA extends JpaRepository<WorkOrderEntity, W
 	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicle.workshopId = :workshopId AND w.woStatus = :status")
 	public List<WorkOrderEntity> findAllByWorkshop(@Param("workshopId") Long workshopId, 
 			@Param("status") WorkOrderStatusEnum status);
-	
-	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicle.idDoc = :idDoc AND w.woStatus = :status")
-	public List<WorkOrderEntity> findAllByCustomer(@Param("idDoc") String idDoc, 
+	//TODO Improve this query to find a list of work orders that belong to a customer from a workshop and must have a certain status
+	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicle.customerEntity.id = :customerId AND w.woStatus = :status")
+	public List<WorkOrderEntity> findAllByCustomer(@Param("customerId") CustomerEntityId customerId,
 			@Param("status") WorkOrderStatusEnum status);
 	
 	@Query("SELECT w FROM WorkOrderEntity w WHERE w.budget.vehicleId= :vehicleId AND w.woStatus = :status")

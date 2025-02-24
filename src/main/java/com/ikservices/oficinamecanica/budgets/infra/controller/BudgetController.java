@@ -283,6 +283,11 @@ public class BudgetController {
 			Long approvedBudgetId = approveBudget.execute(budgetId);
 			String formattedMessage = String.format(environment.getProperty(BudgetConstant.APPROVED_SUCCESS_MESSAGE), approvedBudgetId);
 			return ResponseEntity.ok(IKResponse.<Long>build().body(approvedBudgetId).addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, formattedMessage));
+
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<Long>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			String formattedMessage = String.format(environment.getProperty(BudgetConstant.APPROVED_ERROR_MESSAGE), budgetId);

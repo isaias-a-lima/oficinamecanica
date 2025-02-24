@@ -22,7 +22,7 @@ public class WorkOrderResponseDTO {
 	private BudgetDTO budget;
 	private String openingDate;
 	private Long km;
-	private Integer WOStatus;
+	private Integer workOrderStatus;
 	private String amount;
 	private Integer payForm;
 	private Integer payQty;

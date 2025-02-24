@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
+import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -46,13 +47,13 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 		
 		switch(source) {
 			case WORKSHOP:
-				entityList = repository.findAllByWorkshop(new Long(criteriaId.toString()), status);
+				entityList = repository.findAllByWorkshop(Long.valueOf(criteriaId.toString()), status);
 				return converter.parseWorkOrderList(entityList);
 			case CUSTOMER:
-				entityList = repository.findAllByCustomer((String)criteriaId, status);
+				entityList = repository.findAllByCustomer((CustomerEntityId) criteriaId, status);
 				return converter.parseWorkOrderList(entityList);
 			case VEHICLE:
-				entityList = repository.findAllByVehicle((Long)criteriaId, status);
+				entityList = repository.findAllByVehicle(Long.valueOf(criteriaId.toString()), status);
 				return converter.parseWorkOrderList(entityList);
 			default:
 				throw new IKException("Not found");
