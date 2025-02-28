@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.workorders.infra.config;
 
+import com.ikservices.oficinamecanica.workorders.application.usecases.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,10 +9,6 @@ import org.springframework.core.env.Environment;
 
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.workorders.application.gateways.WorkOrderRepository;
-import com.ikservices.oficinamecanica.workorders.application.usecases.GetWorkOrder;
-import com.ikservices.oficinamecanica.workorders.application.usecases.ListWorkOrders;
-import com.ikservices.oficinamecanica.workorders.application.usecases.SaveWorkOrder;
-import com.ikservices.oficinamecanica.workorders.application.usecases.UpdateWorkOrder;
 import com.ikservices.oficinamecanica.workorders.infra.WorkOrderConverter;
 import com.ikservices.oficinamecanica.workorders.infra.gateways.WorkOrderRepositoryImpl;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderRepositoryJPA;
@@ -34,8 +31,6 @@ public class WorkOrderConfig {
 		return new WorkOrderInstallmentConverter();
 	}
 	
-
-	
 	@Bean
 	public GetWorkOrder getWorkOrder(WorkOrderRepository repository) {
 		return new GetWorkOrder(repository);
@@ -54,5 +49,10 @@ public class WorkOrderConfig {
 	@Bean
 	public UpdateWorkOrder updateWorkOrder(WorkOrderRepository repository) {
 		return new UpdateWorkOrder(repository);
+	}
+
+	@Bean
+	public FinalizeWorkOrder getFinalizeWorkOrder(WorkOrderRepository repository) {
+		return new FinalizeWorkOrder(repository);
 	}
 }

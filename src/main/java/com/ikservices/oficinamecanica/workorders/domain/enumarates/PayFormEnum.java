@@ -4,6 +4,8 @@ public enum PayFormEnum {
 	DEBIT,
 	CREDIT,
 	CASH,
+	PIX,
+	INVOICE,
 	CHECK,
 	EXCHANGE;
 	

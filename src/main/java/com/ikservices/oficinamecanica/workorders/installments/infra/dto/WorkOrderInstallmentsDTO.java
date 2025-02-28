@@ -17,9 +17,9 @@ public class WorkOrderInstallmentsDTO {
 	private Long number;
 	private Long workOrderId;
 	private Long budgetId;
-	private PayTypeEnum installmentType;
+	private Integer installmentType;
 	private String dueDate;
-	private BigDecimal payValue;
+	private String payValue;
 	private String payDate;
 	private String note;
 }

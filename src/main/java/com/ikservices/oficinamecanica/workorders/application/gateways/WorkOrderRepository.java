@@ -12,4 +12,5 @@ public interface WorkOrderRepository {
 	WorkOrder getWorkOrder(WorkOrderId workOrderId);
 	WorkOrder saveWorkOrder(WorkOrder workOrder);
 	WorkOrder updateWorkOrder(WorkOrder workOrder);
+	Boolean finalizeWorkOrder(WorkOrderId workOrderId);
 }

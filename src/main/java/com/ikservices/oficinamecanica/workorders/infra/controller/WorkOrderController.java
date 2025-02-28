@@ -7,10 +7,7 @@ import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.workorders.application.SourceCriteriaEnum;
-import com.ikservices.oficinamecanica.workorders.application.usecases.GetWorkOrder;
-import com.ikservices.oficinamecanica.workorders.application.usecases.ListWorkOrders;
-import com.ikservices.oficinamecanica.workorders.application.usecases.SaveWorkOrder;
-import com.ikservices.oficinamecanica.workorders.application.usecases.UpdateWorkOrder;
+import com.ikservices.oficinamecanica.workorders.application.usecases.*;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
@@ -42,14 +39,13 @@ public class WorkOrderController {
 	
 	private final ListWorkOrders listWorkOrders;
 	private final GetWorkOrder getWorkOrder;
-	private final SaveWorkOrder saveWorkOrder;
+	private final FinalizeWorkOrder finalizeWorkOrder;
 	private final UpdateWorkOrder updateWorkOrder;
 	
-	public WorkOrderController(ListWorkOrders listWorkOrders, GetWorkOrder getWorkOrder,
-			SaveWorkOrder saveWorkOrder, UpdateWorkOrder updateWorkOrder) {
+	public WorkOrderController(ListWorkOrders listWorkOrders, GetWorkOrder getWorkOrder, FinalizeWorkOrder finalizeWorkOrder, UpdateWorkOrder updateWorkOrder) {
 		this.listWorkOrders = listWorkOrders;
 		this.getWorkOrder = getWorkOrder;
-		this.saveWorkOrder = saveWorkOrder;
+		this.finalizeWorkOrder = finalizeWorkOrder;
 		this.updateWorkOrder = updateWorkOrder;
 	}
 	
@@ -124,6 +120,25 @@ public class WorkOrderController {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 					IKResponse.<WorkOrderResponseDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(WorkOrderConstant.UPDATE_ERROR_MESSAGE)));
+		}
+	}
+
+	@Transactional
+	@PutMapping("finalize")
+	public ResponseEntity<IKResponse<Boolean>> completeWorkOrder(@RequestBody WorkOrderEndingDTO dto) {
+
+		try {
+			Boolean result = finalizeWorkOrder.execute(new WorkOrderId(dto.getWorkOrderId(), dto.getBudgetId()));
+
+			return ResponseEntity.ok(IKResponse.<Boolean>build().body(result).addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(WorkOrderConstant.FINALIZE_SUCCESS_MESSAGE)));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<Boolean>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<Boolean>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(WorkOrderConstant.FINALIZE_ERROR_MESSAGE)));
 		}
 	}
 }

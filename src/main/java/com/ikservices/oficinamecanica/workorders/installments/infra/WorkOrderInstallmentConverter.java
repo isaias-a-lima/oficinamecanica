@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
+import com.ikservices.oficinamecanica.workorders.installments.domain.PayTypeEnum;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallmentId;
 import com.ikservices.oficinamecanica.workorders.installments.infra.dto.WorkOrderInstallmentsDTO;
@@ -79,11 +81,11 @@ public class WorkOrderInstallmentConverter {
 		installment.setId(new WorkOrderInstallmentId(
 				dto.getNumber(),
 				dto.getWorkOrderId(), 
-				dto.getBudgetId(), 
-				dto.getInstallmentType()));
+				dto.getBudgetId(),
+				PayTypeEnum.findById(dto.getInstallmentType())));
 		
 		installment.setDueDate(LocalDate.parse(dto.getDueDate()));
-		installment.setPayValue(dto.getPayValue());
+		installment.setPayValue(NumberUtil.parseBigDecimal(dto.getPayValue()));
 		installment.setPayDate(LocalDate.parse(dto.getPayDate()));
 		installment.setNote(dto.getNote());
 		
@@ -100,10 +102,10 @@ public class WorkOrderInstallmentConverter {
 		dto.setNumber(installment.getId().getNumber());
 		dto.setWorkOrderId(installment.getId().getWorkOrderId());
 		dto.setBudgetId(installment.getId().getBudgetId());
-		dto.setInstallmentType(installment.getId().getInstallmentType());
+		dto.setInstallmentType(installment.getId().getInstallmentType().ordinal());
 		
 		dto.setDueDate(Objects.nonNull(installment.getDueDate()) ? installment.getDueDate().toString() : "");
-		dto.setPayValue(installment.getPayValue());
+		dto.setPayValue(NumberUtil.parseStringMoney(installment.getPayValue()));
 		dto.setPayDate(Objects.nonNull(installment.getPayDate()) ? installment.getPayDate().toString() : "");
 		dto.setNote(Objects.nonNull(installment.getNote()) ? installment.getNote() : "");
 		

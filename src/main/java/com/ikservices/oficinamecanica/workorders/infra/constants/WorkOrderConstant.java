@@ -10,4 +10,6 @@ public class WorkOrderConstant {
 	public static final String OPERATION_ERROR_MESSAGE = "workorder.operation.error.message";
 	public static final String OPERATION_SUCCESS_MESSAGE = "workorder.operation.success.message";
 	public static final String LIST_ERROR_MESSAGE = "workorder.list.error.message";
+    public static final String FINALIZE_SUCCESS_MESSAGE = "workorder.finalize.success.message";
+	public static final String FINALIZE_ERROR_MESSAGE = "workorder.finalize.error.message";
 }

@@ -175,4 +175,10 @@ public class WorkOrderEntity {
 		return this.partItems.isEmpty() ? 1 : this.partItems.get(this.partItems.size() - 1).getId().getItemId() + 1;
 	}
 	//Part items end
+
+	//Installments begin
+	public void addInstallments(List<WorkOrderInstallmentEntity> installmentEntityList) {
+		this.installments.addAll(installmentEntityList);
+	}
+	//Installments end
 }
