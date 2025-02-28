@@ -1,7 +1,7 @@
-package com.ikservices.oficinamecanica.payables.application.usecases;
+package com.ikservices.oficinamecanica.categories.application.usecases;
 
-import com.ikservices.oficinamecanica.payables.application.gateways.CategoryRepository;
-import com.ikservices.oficinamecanica.payables.domain.Category;
+import com.ikservices.oficinamecanica.categories.application.gateways.CategoryRepository;
+import com.ikservices.oficinamecanica.categories.domain.Category;
 
 public class UpdateCategory {
 	private CategoryRepository repository;

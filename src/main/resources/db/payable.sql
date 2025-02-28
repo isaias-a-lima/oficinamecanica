@@ -25,3 +25,13 @@ activated BOOLEAN NOT NULL COMMENT "Activated or not?",
 PRIMARY KEY(categoryid, workshopid),
 CONSTRAINT fk_workshops_mov_category FOREIGN KEY (workshopid) REFERENCES workshops(workshopid)
 )COMMENT = "MOV_CATEGORY";
+
+--2025-02-28 17:05 - Brazil - Mateus Lima - insert into mov_category.
+INSERT INTO MOV_CATEGORY(categoryid, workshopid, creation, description,
+categtype, activated) VALUES(1, 1, "2025-02-28", "Contas de consumo",
+1, true);
+
+--2025-02-28 17:13 - Brazil - Mateus Lima - insert into mov_category.
+INSERT INTO MOV_CATEGORY(categoryid, workshopid, creation, description,
+categtype, activated) VALUES(2, 1, "2025-02-28", "Contas fixas",
+1, true);

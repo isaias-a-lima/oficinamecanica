@@ -3,6 +3,8 @@ package com.ikservices.oficinamecanica.payables.domain;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.ikservices.oficinamecanica.categories.domain.Category;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

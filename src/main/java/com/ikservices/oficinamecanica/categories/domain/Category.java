@@ -1,4 +1,4 @@
-package com.ikservices.oficinamecanica.payables.domain;
+package com.ikservices.oficinamecanica.categories.domain;
 
 import java.time.LocalDate;
 
