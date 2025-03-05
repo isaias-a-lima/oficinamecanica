@@ -43,11 +43,7 @@ public class WorkOrderEntity {
 	private WorkOrderStatusEnum woStatus;
 	
 	@Column(name = "AMOUNT")
-	private BigDecimal amount;	
-	
-	@Column(name = "PAYFORM")
-	@Enumerated(EnumType.ORDINAL)
-	private PayFormEnum payForm;
+	private BigDecimal amount;
 	
 	@Column(name = "PAYQTY")
 	private Integer payQty;
@@ -65,15 +61,15 @@ public class WorkOrderEntity {
 	private List<WorkOrderPartItemEntity> partItems;
 	
 	public void update(WorkOrderEntity entity) {
+
 		if(Objects.nonNull(entity.getKm())) {
 			this.km = entity.getKm();
 		}
+
 		if(Objects.nonNull(entity.getWoStatus())) {
 			this.woStatus = entity.getWoStatus();
 		}
-		if(Objects.nonNull(entity.getPayForm())) {
-			this.payForm = entity.getPayForm();
-		}
+
 		if(Objects.nonNull(entity.getPayQty())) {
 			this.payQty = entity.getPayQty();
 		}

@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.persistence.*;
 
+import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,6 +35,10 @@ public class WorkOrderInstallmentEntity {
 	
 	@Column(name = "PAYVALUE")
 	private BigDecimal payValue;
+
+	@Column(name = "PAYFORM")
+	@Enumerated(EnumType.ORDINAL)
+	private PayFormEnum payForm;
 	
 	@Column(name = "PAYDATE")
 	private LocalDate payDate;

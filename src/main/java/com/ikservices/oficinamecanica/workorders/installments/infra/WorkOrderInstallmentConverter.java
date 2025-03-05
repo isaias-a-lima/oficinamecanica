@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
+import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.installments.domain.PayTypeEnum;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallmentId;
@@ -29,6 +30,7 @@ public class WorkOrderInstallmentConverter {
 		 
 		 installment.setDueDate(entity.getDueDate());
 		 installment.setPayValue(entity.getPayValue());
+		 installment.setPayForm(entity.getPayForm());
 		 installment.setPayDate(entity.getPayDate());
 		 installment.setNote(entity.getNote());
 		 
@@ -46,6 +48,7 @@ public class WorkOrderInstallmentConverter {
 				installment.getId().getInstallmentType()));
 		entity.setDueDate(installment.getDueDate());
 		entity.setPayValue(installment.getPayValue());
+		entity.setPayForm(installment.getPayForm());
 		entity.setPayDate(installment.getPayDate());
 		entity.setNote(installment.getNote());
 		
@@ -86,6 +89,7 @@ public class WorkOrderInstallmentConverter {
 		
 		installment.setDueDate(LocalDate.parse(dto.getDueDate()));
 		installment.setPayValue(NumberUtil.parseBigDecimal(dto.getPayValue()));
+		installment.setPayForm(PayFormEnum.findByIndex(dto.getPayForm()));
 		installment.setPayDate(LocalDate.parse(dto.getPayDate()));
 		installment.setNote(dto.getNote());
 		
@@ -106,6 +110,7 @@ public class WorkOrderInstallmentConverter {
 		
 		dto.setDueDate(Objects.nonNull(installment.getDueDate()) ? installment.getDueDate().toString() : "");
 		dto.setPayValue(NumberUtil.parseStringMoney(installment.getPayValue()));
+		dto.setPayForm(Objects.nonNull(installment.getPayForm()) ? installment.getPayForm().ordinal() : null);
 		dto.setPayDate(Objects.nonNull(installment.getPayDate()) ? installment.getPayDate().toString() : "");
 		dto.setNote(Objects.nonNull(installment.getNote()) ? installment.getNote() : "");
 		

@@ -24,7 +24,6 @@ public class WorkOrderResponseDTO {
 	private Long km;
 	private Integer workOrderStatus;
 	private String amount;
-	private Integer payForm;
 	private Integer payQty;
 	private boolean paid;
 	private List<WorkOrderInstallmentsDTO> installments;

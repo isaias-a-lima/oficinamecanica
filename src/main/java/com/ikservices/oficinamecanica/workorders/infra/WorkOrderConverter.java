@@ -1,19 +1,11 @@
 package com.ikservices.oficinamecanica.workorders.infra;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
-import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
 import com.ikservices.oficinamecanica.workorders.infra.controller.WorkOrderRequestDTO;
 import com.ikservices.oficinamecanica.workorders.infra.controller.WorkOrderResponseDTO;
@@ -25,6 +17,9 @@ import com.ikservices.oficinamecanica.workorders.items.services.infra.WorkOrderS
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.*;
 
 @Component
 public class WorkOrderConverter {
@@ -68,7 +63,6 @@ public class WorkOrderConverter {
 		workOrder.setKm(entity.getKm());
 		workOrder.setWorkOrderStatus(entity.getWoStatus());
 		workOrder.setAmount(entity.getAmount());
-		workOrder.setPayForm(entity.getPayForm());
 		workOrder.setPayQty(entity.getPayQty());
 		workOrder.setPaid(entity.getPaid());		
 		workOrder.setInstallments(Objects.nonNull(entity.getInstallments()) ? installmentConverter.parseInstallmentList(entity.getInstallments()) : new ArrayList<>());
@@ -98,8 +92,6 @@ public class WorkOrderConverter {
 		entity.setKm(workOrder.getKm());
 		entity.setWoStatus(workOrder.getWorkOrderStatus());
 		entity.setAmount(workOrder.getAmount());
-		entity.setPayForm(workOrder.getPayForm());
-		
 		entity.setPayQty(workOrder.getPayQty());
 		entity.setPaid(workOrder.getPaid());
 		entity.setInstallments(Objects.nonNull(workOrder.getInstallments()) ? installmentConverter.parseEntityList(workOrder.getInstallments()) : new ArrayList<>());
@@ -152,7 +144,6 @@ public class WorkOrderConverter {
 		workOrder.setKm(requestDTO.getKm());
 		workOrder.setWorkOrderStatus(requestDTO.getWorkOrderStatus());
 		workOrder.setAmount(requestDTO.getAmount());
-		workOrder.setPayForm(requestDTO.getPayForm());
 		workOrder.setPayQty(requestDTO.getPayQty());
 		workOrder.setPaid(requestDTO.isPaid());
 		workOrder.setInstallments(Objects.nonNull(requestDTO.getInstallments()) ? installmentConverter.parseDTOToDomainList(requestDTO.getInstallments()) : new ArrayList<>());
@@ -183,7 +174,6 @@ public class WorkOrderConverter {
 		responseDTO.setKm(workOrder.getKm());
 		responseDTO.setWorkOrderStatus(workOrder.getWorkOrderStatus().ordinal());
 		responseDTO.setAmount(NumberUtil.parseStringMoney(workOrder.getAmount()));
-		responseDTO.setPayForm(Objects.nonNull(workOrder.getPayForm()) ? workOrder.getPayForm().ordinal() : null);
 		responseDTO.setPayQty(workOrder.getPayQty());
 		responseDTO.setPaid(Objects.nonNull(workOrder.getPaid()) ? workOrder.getPaid() : false);
 		
@@ -217,7 +207,6 @@ public class WorkOrderConverter {
 		request.setKm(response.getKm());
 		request.setWorkOrderStatus(WorkOrderStatusEnum.findByIndex(response.getWorkOrderStatus()));
 		request.setAmount(NumberUtil.parseBigDecimal(response.getAmount()));
-		request.setPayForm(Objects.nonNull(response.getPayForm()) ? PayFormEnum.findByIndex(response.getPayForm()) : null);
 		request.setPayQty(response.getPayQty());
 		request.setPaid(response.isPaid());
 		request.setInstallments(response.getInstallments());

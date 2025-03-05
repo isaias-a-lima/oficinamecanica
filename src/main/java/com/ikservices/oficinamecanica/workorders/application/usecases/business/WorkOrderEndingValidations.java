@@ -29,8 +29,6 @@ public class WorkOrderEndingValidations implements IWorkOrderBusiness<WorkOrder>
 
     @Override
     public void validate(WorkOrder object) {
-        PayFormEnum payForm = object.getPayForm();
-        Integer payQty = object.getPayQty();
 
         if (WorkOrderStatusEnum.DONE.equals(object.getWorkOrderStatus()) || WorkOrderStatusEnum.CANCELLED.equals(object.getWorkOrderStatus())) {
             throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), WorkOrderStatusEnum.DONE.equals(object.getWorkOrderStatus()) ? FINISHED : CANCELED));
@@ -38,14 +36,6 @@ public class WorkOrderEndingValidations implements IWorkOrderBusiness<WorkOrder>
 
         if (Objects.isNull(object.getAmount())) {
             throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), NULL_AMOUNT));
-        }
-
-        if (Objects.isNull(object.getPayForm())) {
-            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), NULL_PAY_FORM));
-        }
-
-        if (Objects.isNull(object.getPayQty())) {
-            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), NULL_PAY_QTY));
         }
     }
 
@@ -55,16 +45,7 @@ public class WorkOrderEndingValidations implements IWorkOrderBusiness<WorkOrder>
 
         List<WorkOrderInstallment> list = new ArrayList<>();
 
-        //TODO improve, eliminate duplicated code
-        if (PayFormEnum.CREDIT.equals(workOrder.getPayForm()) || PayFormEnum.EXCHANGE.equals(workOrder.getPayForm())) {
-            WorkOrderInstallment installment = new WorkOrderInstallment();
-            installment.setId(new WorkOrderInstallmentId(1L, workOrder.getId().getWorkOrderId(), workOrder.getId().getBudgetId(), PayTypeEnum.DEFAULT));
-            installment.setDueDate(LocalDate.now());
-            installment.setPayValue(workOrder.getAmount());
-
-            list.add(installment);
-
-        } else {
+        if (Objects.nonNull(workOrder.getPayQty()) && workOrder.getPayQty() > 0) {
             BigDecimal installmentValue = workOrder.getAmount().divide(new BigDecimal(workOrder.getPayQty()), RoundingMode.HALF_UP);
             BigDecimal auxValue = BigDecimal.ZERO;
 
@@ -84,10 +65,6 @@ public class WorkOrderEndingValidations implements IWorkOrderBusiness<WorkOrder>
                 list.add(installment);
 
             }
-        }
-
-        if (list.isEmpty()) {
-            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), EMPTY_LIST));
         }
 
         return list;

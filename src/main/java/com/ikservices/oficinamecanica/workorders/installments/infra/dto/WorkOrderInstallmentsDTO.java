@@ -20,6 +20,7 @@ public class WorkOrderInstallmentsDTO {
 	private Integer installmentType;
 	private String dueDate;
 	private String payValue;
+	private Integer payForm;
 	private String payDate;
 	private String note;
 }

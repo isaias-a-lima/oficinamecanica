@@ -69,3 +69,9 @@ CONSTRAINT fk_budgets__wo_parts_items FOREIGN KEY (budget_id) REFERENCES budgets
 CONSTRAINT fk_parts1__wo_parts_items FOREIGN KEY (part_id) REFERENCES parts(partid),
 CONSTRAINT fk_parts2__wo_parts_items FOREIGN KEY (workshop_id) REFERENCES parts(workshopid)
 ) COMMENT = 'WORK ORDER PART ITEMS';
+
+--2025-03-05 00:50 - Portugal - Isaias Lima - Remove payform column
+ALTER TABLE WORK_ORDERS DROP COLUMN payform;
+
+--2025-03-05 00:50 - Portugal - Isaias Lima - Add payform column
+ALTER TABLE WO_INSTALLMENTS ADD payform TINYINT NULL COMMENT 'Installment pay form' AFTER payvalue;

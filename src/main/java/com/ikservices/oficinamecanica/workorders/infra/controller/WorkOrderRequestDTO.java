@@ -24,7 +24,6 @@ public class WorkOrderRequestDTO {
 	private Long km;
 	private WorkOrderStatusEnum workOrderStatus;
 	private BigDecimal amount;
-	private PayFormEnum payForm;
 	private Integer payQty;
 	private boolean paid;
 	private List<WorkOrderInstallmentsDTO> installments;
