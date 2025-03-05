@@ -1,26 +1,22 @@
 package com.ikservices.oficinamecanica.workorders.domain;
 
+import com.ikservices.oficinamecanica.budgets.domain.Budget;
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
+import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
+import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
+import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
+import com.ikservices.oficinamecanica.workorders.items.parts.domain.WorkOrderPartItem;
+import com.ikservices.oficinamecanica.workorders.items.services.domain.WorkOrderServiceItem;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import com.ikservices.oficinamecanica.budgets.domain.Budget;
-import com.ikservices.oficinamecanica.budgets.items.parts.domain.BudgetItemPart;
-import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
-import com.ikservices.oficinamecanica.vehicles.domain.Vehicle;
-import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
-import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
-import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
-
-import com.ikservices.oficinamecanica.workorders.items.parts.domain.WorkOrderPartItem;
-import com.ikservices.oficinamecanica.workorders.items.services.domain.WorkOrderServiceItem;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Setter
@@ -51,8 +47,13 @@ public class WorkOrder {
 				sum = sum.add(partItem.getTotal());
 			}
 		}
+		return NumberUtil.parseStringMoney(sum);
+	}
+
+	public String sumServiceItems() {
+		BigDecimal sum = BigDecimal.ZERO;
 		if (Objects.nonNull(serviceItems) && !serviceItems.isEmpty()) {
-			for (WorkOrderServiceItem  serviceItem: serviceItems) {
+			for (WorkOrderServiceItem serviceItem : serviceItems) {
 				sum = sum.add(serviceItem.getTotal());
 			}
 		}

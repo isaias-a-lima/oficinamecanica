@@ -17,11 +17,15 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -41,12 +45,14 @@ public class WorkOrderController {
 	private final GetWorkOrder getWorkOrder;
 	private final FinalizeWorkOrder finalizeWorkOrder;
 	private final UpdateWorkOrder updateWorkOrder;
+	private final CreateWorkOrderPDF createPDF;
 	
-	public WorkOrderController(ListWorkOrders listWorkOrders, GetWorkOrder getWorkOrder, FinalizeWorkOrder finalizeWorkOrder, UpdateWorkOrder updateWorkOrder) {
+	public WorkOrderController(ListWorkOrders listWorkOrders, GetWorkOrder getWorkOrder, FinalizeWorkOrder finalizeWorkOrder, UpdateWorkOrder updateWorkOrder, CreateWorkOrderPDF createPDF) {
 		this.listWorkOrders = listWorkOrders;
 		this.getWorkOrder = getWorkOrder;
 		this.finalizeWorkOrder = finalizeWorkOrder;
 		this.updateWorkOrder = updateWorkOrder;
+		this.createPDF = createPDF;
 	}
 	
 	@GetMapping("list/{source}/{criteriaId}/{workshopId}")
@@ -139,6 +145,31 @@ public class WorkOrderController {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 					IKResponse.<Boolean>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(WorkOrderConstant.FINALIZE_ERROR_MESSAGE)));
+		}
+	}
+
+	@GetMapping("workorder/pdf/{workOrderId}/{budgetId}")
+	public ResponseEntity<byte[]> createBudgetPDF(@PathVariable Long workOrderId, @PathVariable Long budgetId, HttpServletResponse response) {
+		try {
+			WorkOrder execute = getWorkOrder.execute(new WorkOrderId(workOrderId, budgetId));
+
+			byte[] file = createPDF.execute(execute);
+
+			String fileName = createPDF.getFormattedPdfName();
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_PDF);
+			headers.setContentDispositionFormData("attachment", fileName);
+
+			return ResponseEntity.status(HttpStatus.OK).headers(headers).body(file);
+
+		} catch (EntityNotFoundException e) {
+			LOGGER.info("workOrderId: " + workOrderId);
+			LOGGER.error(environment.getProperty(WorkOrderConstant.GET_NOT_FOUND_MESSAGE));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 }

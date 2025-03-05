@@ -12,4 +12,10 @@ public class WorkOrderConstant {
 	public static final String LIST_ERROR_MESSAGE = "workorder.list.error.message";
     public static final String FINALIZE_SUCCESS_MESSAGE = "workorder.finalize.success.message";
 	public static final String FINALIZE_ERROR_MESSAGE = "workorder.finalize.error.message";
+
+	public static final String PDF_NAME = "workorder.pdf.name";
+	public static final String PDF_LOGO = "workorder.pdf.logo";
+	public static final String PDF_TITLE = "workorder.pdf.title";
+	public static final String PDF_SUCCESS_MESSAGE = "workorder.pdf.success.message";
+	public static final String PDF_ERROR_MESSAGE = "workorder.pdf.error.message";
 }

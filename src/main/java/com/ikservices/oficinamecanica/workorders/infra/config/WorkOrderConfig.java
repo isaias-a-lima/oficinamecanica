@@ -1,6 +1,7 @@
 package com.ikservices.oficinamecanica.workorders.infra.config;
 
 import com.ikservices.oficinamecanica.workorders.application.usecases.*;
+import com.ikservices.oficinamecanica.workorders.infra.constants.WorkOrderConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,5 +55,13 @@ public class WorkOrderConfig {
 	@Bean
 	public FinalizeWorkOrder getFinalizeWorkOrder(WorkOrderRepository repository) {
 		return new FinalizeWorkOrder(repository);
+	}
+
+	@Bean
+	public CreateWorkOrderPDF getCreateWorkOrderPDF() {
+		String pdfName = environment.getProperty(WorkOrderConstant.PDF_NAME);
+		String logo = environment.getProperty(WorkOrderConstant.PDF_LOGO);
+		String title = environment.getProperty(WorkOrderConstant.PDF_TITLE);
+		return new CreateWorkOrderPDF(pdfName, logo, title);
 	}
 }

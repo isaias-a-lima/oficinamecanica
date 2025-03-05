@@ -12,6 +12,8 @@ import java.util.UUID;
 
 public class IKLoggerUtil {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(IKLoggerUtil.class);
+
     public static Logger getLogger(Class clazz) {
         return LoggerFactory.getLogger(clazz.getName());
     }
@@ -25,7 +27,7 @@ public class IKLoggerUtil {
         try {
             return om.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            return "json_object_not_created";
+            return "json_object_not_created: " + e.getMessage();
         }
     }
 

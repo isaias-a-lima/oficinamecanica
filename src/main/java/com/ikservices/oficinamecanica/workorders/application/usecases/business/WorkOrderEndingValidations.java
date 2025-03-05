@@ -7,6 +7,7 @@ import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.workorders.application.gateways.IWorkOrderBusiness;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
+import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
 import com.ikservices.oficinamecanica.workorders.installments.domain.PayTypeEnum;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallmentId;
@@ -23,11 +24,17 @@ public class WorkOrderEndingValidations implements IWorkOrderBusiness<WorkOrder>
     private final static String NULL_PAY_FORM = "Escolha uma forma de pagamento.";
     private final static String NULL_PAY_QTY = "Escolha o número de parcelas ou escolha 1 se for pagamento à vista.";
     private final static String EMPTY_LIST = "As parcelas ou pagamento à vista não puderam ser calculados.";
+    private final static String FINISHED = "Esta ordem de serviço já está concluída.";
+    private final static String CANCELED = "Esta ordem de serviço já está cancelada.";
 
     @Override
     public void validate(WorkOrder object) {
         PayFormEnum payForm = object.getPayForm();
         Integer payQty = object.getPayQty();
+
+        if (WorkOrderStatusEnum.DONE.equals(object.getWorkOrderStatus()) || WorkOrderStatusEnum.CANCELLED.equals(object.getWorkOrderStatus())) {
+            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), WorkOrderStatusEnum.DONE.equals(object.getWorkOrderStatus()) ? FINISHED : CANCELED));
+        }
 
         if (Objects.isNull(object.getAmount())) {
             throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), NULL_AMOUNT));
