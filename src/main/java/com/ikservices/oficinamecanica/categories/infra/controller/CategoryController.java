@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ikservices.oficinamecanica.categories.application.usecases.GetCategory;
@@ -18,6 +19,8 @@ import com.ikservices.oficinamecanica.categories.application.usecases.GetNextCat
 import com.ikservices.oficinamecanica.categories.application.usecases.ListCategory;
 import com.ikservices.oficinamecanica.categories.application.usecases.SaveCategory;
 import com.ikservices.oficinamecanica.categories.application.usecases.UpdateCategory;
+import com.ikservices.oficinamecanica.categories.domain.Category;
+import com.ikservices.oficinamecanica.categories.domain.CategoryId;
 import com.ikservices.oficinamecanica.categories.infra.CategoryConverter;
 import com.ikservices.oficinamecanica.categories.infra.constants.CategoryConstant;
 import com.ikservices.oficinamecanica.commons.constants.Constants;
@@ -72,6 +75,27 @@ public class CategoryController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
 					body(IKResponse.<CategoryDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, 
 							IKMessageType.ERROR, environment.getProperty(CategoryConstant.LIST_ERROR_MESSAGE)));
+		}
+	}
+	
+	@GetMapping("get/{categoryId}/{workshopId}")
+	public ResponseEntity<IKResponse<CategoryDTO>> getCategory(@PathVariable Integer categoryId, 
+			@PathVariable Long workshopId) {
+		try {
+			CategoryId catId = new CategoryId(categoryId, workshopId);
+			CategoryDTO categoryDTO = converter.parseDomainToResponse(getCategory.execute(catId));
+			
+			return ResponseEntity.ok(IKResponse.<CategoryDTO>build().body(categoryDTO));			
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).
+					body(IKResponse.<CategoryDTO>build().addMessage(ike.getIkMessage().getCode(),
+							IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
+					body(IKResponse.<CategoryDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, 
+							IKMessageType.ERROR, environment.getProperty(CategoryConstant.GET_ERROR_MESSAGE)));
 		}
 	}
 }
