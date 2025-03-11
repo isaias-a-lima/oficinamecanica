@@ -7,7 +7,7 @@ public class UpdateCategory {
 	private CategoryRepository repository;
 	
 	public UpdateCategory(CategoryRepository repository) {
-		repository = repository;
+		this.repository = repository;
 	}
 	
 	public Category execute(Category category) {

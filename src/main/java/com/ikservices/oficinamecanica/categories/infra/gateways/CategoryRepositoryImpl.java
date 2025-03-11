@@ -63,7 +63,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 		CategoryEntity entity = optional.orElse(null);
 		
 		if(Objects.nonNull(entity)) {
-			entity.update(entity);
+			entity.update(converter.parseDomainToEntity(category));
 		}
 		
 		return converter.parseEntityToDomain(entity);
