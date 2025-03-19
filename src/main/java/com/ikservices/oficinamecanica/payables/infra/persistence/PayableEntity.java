@@ -7,7 +7,12 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.ikservices.oficinamecanica.categories.infra.persistence.CategoryEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,8 +29,15 @@ public class PayableEntity {
 	@EmbeddedId
 	private PayableEntityId id;
 	
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "CATEGORYID" , referencedColumnName = "CATEGORYID", updatable = false, insertable = false),
+		@JoinColumn(name = "WORKSHOPID", referencedColumnName = "WORKSHOPID", updatable = false, insertable = false)
+	})
+	private CategoryEntity category;
+	
 	@Column(name = "CREATION")
-	private LocalDate creation;
+	private LocalDate creationDate;
 	
 	@Column(name = "DESCRIPTION")
 	private String description;
@@ -46,9 +58,6 @@ public class PayableEntity {
 	private Integer categoryId;
 	
 	public void update(PayableEntity entity) {
-		if(Objects.nonNull(entity.getCreation())) {
-			this.creation = entity.getCreation();
-		}
 		if(Objects.nonNull(entity.getDescription())) {
 			this.description = entity.getDescription();
 		}

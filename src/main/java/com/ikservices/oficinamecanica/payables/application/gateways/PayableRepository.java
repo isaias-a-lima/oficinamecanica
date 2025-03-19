@@ -10,4 +10,5 @@ public interface PayableRepository {
 	Payable getPayable(PayableId id);
 	Payable savePayable(Payable payable);
 	Payable updatePayable(Payable payable);
+	Integer getNextPayableId(Long workshopId);
 }
