@@ -35,3 +35,8 @@ categtype, activated) VALUES(1, 1, "2025-02-28", "Contas de consumo",
 INSERT INTO MOV_CATEGORY(categoryid, workshopid, creation, description,
 categtype, activated) VALUES(2, 1, "2025-02-28", "Contas fixas",
 1, true);
+
+--2025-03-25 17:00 - Brazil - Mateus Lima - insert into payable.
+INSERT INTO PAYABLE(id, workshopid, creation, description, docnumber,
+duedate, payvalue, paydate, categoryid) VALUES(1, 1, "2025-03-25", "Contas a pagar",
+"0000111", "2025-03-30", 100.00, "2025-03-27", 2);
