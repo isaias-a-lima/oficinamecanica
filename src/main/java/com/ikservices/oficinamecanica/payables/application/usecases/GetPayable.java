@@ -8,7 +8,7 @@ public class GetPayable {
 	private PayableRepository repository;
 	
 	public GetPayable(PayableRepository repository) {
-		repository = repository;
+		this.repository = repository;
 	}
 	
 	public Payable execute(PayableId id) {

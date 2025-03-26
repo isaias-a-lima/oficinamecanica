@@ -40,3 +40,8 @@ categtype, activated) VALUES(2, 1, "2025-02-28", "Contas fixas",
 INSERT INTO PAYABLE(id, workshopid, creation, description, docnumber,
 duedate, payvalue, paydate, categoryid) VALUES(1, 1, "2025-03-25", "Contas a pagar",
 "0000111", "2025-03-30", 100.00, "2025-03-27", 2);
+
+--2025-03-26 17:00 - Brazil - Mateus Lima - insert into payable.
+INSERT INTO PAYABLE(id, workshopid, creation, description, docnumber,
+duedate, payvalue, paydate, categoryid) VALUES(2, 1, "2025-03-25", "Contas a pagar diferentes",
+"12345", "2025-03-30", 120.00, "2025-03-27", 1);
