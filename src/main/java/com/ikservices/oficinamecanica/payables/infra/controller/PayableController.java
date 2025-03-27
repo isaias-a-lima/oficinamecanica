@@ -9,9 +9,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -128,6 +130,25 @@ public class PayableController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 					IKResponse.<PayableDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, 
 							environment.getProperty(PayableConstant.SAVE_ERROR_MESSAGE)));
+        }
+	}
+	
+	@Transactional
+	@PutMapping
+	public ResponseEntity<IKResponse<PayableDTO>> savePayable(@RequestBody PayableDTO payableDTO) {
+		try {
+			Payable payable = updatePayable.execute(converter.parseRequestToDomain(payableDTO));
+			return ResponseEntity.ok(IKResponse.<PayableDTO>build().body(converter.parseDomainToResponse(payable)).
+					addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, 
+							environment.getProperty(PayableConstant.UPDATE_SUCCESS_MESSAGE)));			
+		}catch (IKException ike) {
+            LOGGER.error(ike.getMessage(), ike);
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+                    IKResponse.<PayableDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    IKResponse.<PayableDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(PayableConstant.UPDATE_ERROR_MESSAGE)));
         }
 	}
 }
