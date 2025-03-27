@@ -1,6 +1,8 @@
 package com.ikservices.oficinamecanica.workorders.application.gateways;
 
-public interface IWorkOrderBusiness<T> {
+import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 
-    void validate(T object);
+public interface IWorkOrderBusiness {
+
+    void validate(WorkOrder workOrder);
 }

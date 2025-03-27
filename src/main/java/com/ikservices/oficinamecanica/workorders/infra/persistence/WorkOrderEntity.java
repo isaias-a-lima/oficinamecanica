@@ -59,7 +59,35 @@ public class WorkOrderEntity {
 	
 	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<WorkOrderPartItemEntity> partItems;
-	
+
+	public void updatePayments(List<WorkOrderInstallmentEntity> newEntityList) {
+
+		this.installments.removeIf(existingItem ->
+				newEntityList.stream().noneMatch(newEntity -> newEntity.equals(existingItem))
+		);
+
+		for (WorkOrderInstallmentEntity newEntity : newEntityList) {
+
+			Optional<WorkOrderInstallmentEntity> existingItemOptional = this.installments.stream()
+					.filter(existingItem -> existingItem.equals(newEntity))
+					.findFirst();
+
+			if (existingItemOptional.isPresent()) {
+				WorkOrderInstallmentEntity existingItem = existingItemOptional.get();
+				existingItem.update(newEntity);
+			} else {
+				this.setNextInstallmentNumberId(newEntity);
+			}
+		}
+
+	}
+
+	private void setNextInstallmentNumberId(WorkOrderInstallmentEntity installment) {
+		Long nextId = this.installments.isEmpty() ? 1 : this.installments.get(this.installments.size() - 1).getId().getNumber() + 1;
+		installment.getId().setNumber(nextId);
+		this.installments.add(installment);
+	}
+
 	public void update(WorkOrderEntity entity) {
 
 		if(Objects.nonNull(entity.getKm())) {

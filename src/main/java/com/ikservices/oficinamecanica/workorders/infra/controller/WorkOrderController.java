@@ -46,14 +46,17 @@ public class WorkOrderController {
 	private final FinalizeWorkOrder finalizeWorkOrder;
 	private final UpdateWorkOrder updateWorkOrder;
 	private final CreateWorkOrderPDF createPDF;
+
+	private final UpdatePayments updatePayments;
 	
-	public WorkOrderController(ListWorkOrders listWorkOrders, GetWorkOrder getWorkOrder, FinalizeWorkOrder finalizeWorkOrder, UpdateWorkOrder updateWorkOrder, CreateWorkOrderPDF createPDF) {
+	public WorkOrderController(ListWorkOrders listWorkOrders, GetWorkOrder getWorkOrder, FinalizeWorkOrder finalizeWorkOrder, UpdateWorkOrder updateWorkOrder, CreateWorkOrderPDF createPDF, UpdatePayments updatePayments) {
 		this.listWorkOrders = listWorkOrders;
 		this.getWorkOrder = getWorkOrder;
 		this.finalizeWorkOrder = finalizeWorkOrder;
 		this.updateWorkOrder = updateWorkOrder;
 		this.createPDF = createPDF;
-	}
+        this.updatePayments = updatePayments;
+    }
 	
 	@GetMapping("list/{source}/{criteriaId}/{workshopId}")
 	public ResponseEntity<IKResponse<WorkOrderResponseDTO>> listWorkOrders(@PathVariable SourceCriteriaEnum source, 
@@ -170,6 +173,31 @@ public class WorkOrderController {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@Transactional
+	@PutMapping("payments")
+	public ResponseEntity<IKResponse<WorkOrderResponseDTO>> updatePayments(@RequestBody WorkOrderRequestDTO requestDTO) {
+
+		WorkOrder workOrder = null;
+
+		try {
+			LOGGER.info(IKLoggerUtil.parseJSON(requestDTO));
+
+			workOrder = converter.parseWorkOrder(requestDTO);
+
+			WorkOrderResponseDTO result = converter.parseResponseDTO(updatePayments.execute(workOrder));
+
+			return ResponseEntity.ok(IKResponse.<WorkOrderResponseDTO>build().body(result).addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(WorkOrderConstant.UPDATE_SUCCESS_MESSAGE)));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+					IKResponse.<WorkOrderResponseDTO>build().body(converter.parseResponseDTO(workOrder)).addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					IKResponse.<WorkOrderResponseDTO>build().body(converter.parseResponseDTO(workOrder)).addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(WorkOrderConstant.UPDATE_ERROR_MESSAGE)));
 		}
 	}
 }

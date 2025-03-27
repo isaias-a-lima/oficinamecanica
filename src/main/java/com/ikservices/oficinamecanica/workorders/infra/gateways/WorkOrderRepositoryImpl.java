@@ -1,13 +1,18 @@
 package com.ikservices.oficinamecanica.workorders.infra.gateways;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderEndingValidations;
+import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderUpdatePaymentsValidation;
+import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderUpdateValidation;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
 import com.ikservices.oficinamecanica.workorders.installments.infra.WorkOrderInstallmentConverter;
+import com.ikservices.oficinamecanica.workorders.installments.infra.persistence.WorkOrderInstallmentEntity;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -91,6 +96,8 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 		if(optional.isPresent()) {
 			try {
 				WorkOrderEntity workOrderEntity = optional.get();
+
+				WorkOrderUpdateValidation.verify(converter.parseWorkOrder(workOrderEntity));
 				
 				workOrderEntity.update(converter.parseWorkOrderEntity(workOrder));
 				
@@ -134,6 +141,40 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 		}
 
 		return result;
+	}
+
+	@Override
+	public WorkOrder updatePayments(WorkOrder workOrder) {
+		Optional<WorkOrderEntity> optional = repository.findById(new WorkOrderEntityId(workOrder.getId().getWorkOrderId(),
+				workOrder.getId().getBudgetId()));
+
+		if(optional.isPresent()) {
+			try {
+				WorkOrderEntity workOrderEntity = optional.get();
+
+				WorkOrderUpdatePaymentsValidation.verify(converter.parseWorkOrder(workOrderEntity));
+
+				workOrderEntity.updatePayments(converter.parseWorkOrderEntity(workOrder).getInstallments());
+
+                BigDecimal paidValue = BigDecimal.ZERO;
+
+				for (WorkOrderInstallmentEntity installment : workOrderEntity.getInstallments()) {
+                    paidValue = Objects.nonNull(installment.getPayDate()) ? paidValue.add(installment.getPayValue()) : paidValue;
+				}
+
+                workOrderEntity.setPaid(paidValue.equals(workOrderEntity.getAmount()));
+
+				return converter.parseWorkOrder(workOrderEntity);
+
+			} catch (IKException e) {
+				throw e;
+			}catch(Exception e) {
+				LOGGER.error(e.getMessage(), e);
+				throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR.getCode(), environment.getProperty(WorkOrderConstant.UPDATE_ERROR_MESSAGE)));
+			}
+		}
+
+		throw new IKException(new IKMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.WARNING.getCode(), environment.getProperty(WorkOrderConstant.GET_NOT_FOUND_MESSAGE)));
 	}
 
 }

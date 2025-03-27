@@ -64,4 +64,9 @@ public class WorkOrderConfig {
 		String title = environment.getProperty(WorkOrderConstant.PDF_TITLE);
 		return new CreateWorkOrderPDF(pdfName, logo, title);
 	}
+
+	@Bean
+	public UpdatePayments getUpdatePayments(WorkOrderRepository repository) {
+		return new UpdatePayments(repository);
+	}
 }

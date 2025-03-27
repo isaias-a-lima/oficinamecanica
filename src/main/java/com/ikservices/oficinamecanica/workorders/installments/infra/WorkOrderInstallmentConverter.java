@@ -89,8 +89,8 @@ public class WorkOrderInstallmentConverter {
 		
 		installment.setDueDate(LocalDate.parse(dto.getDueDate()));
 		installment.setPayValue(NumberUtil.parseBigDecimal(dto.getPayValue()));
-		installment.setPayForm(PayFormEnum.findByIndex(dto.getPayForm()));
-		installment.setPayDate(LocalDate.parse(dto.getPayDate()));
+		installment.setPayForm(Objects.nonNull(dto.getPayForm()) ? PayFormEnum.findByIndex(dto.getPayForm()) : null);
+		installment.setPayDate(Objects.nonNull(dto.getPayDate()) && !dto.getPayDate().isEmpty() ? LocalDate.parse(dto.getPayDate()) : null);
 		installment.setNote(dto.getNote());
 		
 		return installment;
@@ -111,7 +111,7 @@ public class WorkOrderInstallmentConverter {
 		dto.setDueDate(Objects.nonNull(installment.getDueDate()) ? installment.getDueDate().toString() : "");
 		dto.setPayValue(NumberUtil.parseStringMoney(installment.getPayValue()));
 		dto.setPayForm(Objects.nonNull(installment.getPayForm()) ? installment.getPayForm().ordinal() : null);
-		dto.setPayDate(Objects.nonNull(installment.getPayDate()) ? installment.getPayDate().toString() : "");
+		dto.setPayDate(Objects.nonNull(installment.getPayDate()) ? installment.getPayDate().toString() : null);
 		dto.setNote(Objects.nonNull(installment.getNote()) ? installment.getNote() : "");
 		
 		return dto;

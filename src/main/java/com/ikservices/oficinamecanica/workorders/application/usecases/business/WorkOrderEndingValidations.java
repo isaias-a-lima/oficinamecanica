@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class WorkOrderEndingValidations implements IWorkOrderBusiness<WorkOrder> {
+public class WorkOrderEndingValidations implements IWorkOrderBusiness {
     private final static String NULL_AMOUNT = "O valor total não pode ser nulo.";
     private final static String NULL_PAY_FORM = "Escolha uma forma de pagamento.";
     private final static String NULL_PAY_QTY = "Escolha o número de parcelas ou escolha 1 se for pagamento à vista.";

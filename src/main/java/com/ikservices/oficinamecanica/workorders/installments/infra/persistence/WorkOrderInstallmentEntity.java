@@ -53,9 +53,11 @@ public class WorkOrderInstallmentEntity {
 		if(Objects.nonNull(entity.getPayValue())) {
 			this.payValue = entity.getPayValue();
 		}
-		if(Objects.nonNull(entity.getPayDate())) {
-			this.payDate = entity.getPayDate();
-		}
+
+		this.payForm = entity.getPayForm();
+
+		this.payDate = entity.getPayDate();
+
 		if(Objects.nonNull(entity.getNote())) {
 			this.note = entity.getNote();
 		}
