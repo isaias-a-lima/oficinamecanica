@@ -12,6 +12,8 @@ import com.ikservices.oficinamecanica.parts.domain.Part;
 import com.ikservices.oficinamecanica.parts.domain.PartId;
 import com.ikservices.oficinamecanica.parts.infra.PartConverter;
 import com.ikservices.oficinamecanica.parts.infra.persistence.PartEntity;
+import com.ikservices.oficinamecanica.workorders.items.parts.infra.persistence.WorkOrderPartItemEntity;
+import com.ikservices.oficinamecanica.workorders.items.parts.infra.persistence.WorkOrderPartItemEntityId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -79,52 +81,30 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         dto.setPart(partConverter.parseDTO(domain.getPart()));
         dto.setQuantity(domain.getQuantity());
         dto.setCost(NumberUtil.parseStringMoney(domain.getPart().getCost()));
-        dto.setDiscount(domain.getDiscount());
+        dto.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
         dto.setAmount(NumberUtil.parseStringMoney(domain.getTotal()));
         return dto;
     }
 
-    @Override
-    public List<BudgetItemPart> parseRequestToDomainList(List<BudgetItemPartRequestDTO> requestList) {
-        List<BudgetItemPart> list = new ArrayList<>();
-        if (Objects.nonNull(requestList) && !requestList.isEmpty()) {
-            for (BudgetItemPartRequestDTO dto : requestList) {
-                list.add(this.parseRequestToDomain(dto));
-            }
-        }
-        return list;
+    public WorkOrderPartItemEntity parseToWorkOrderPartItemEntity(BudgetItemPartEntity source, Long workOrderId) {
+        WorkOrderPartItemEntity target = new WorkOrderPartItemEntity();
+        target.setId(new WorkOrderPartItemEntityId(source.getId().getItemId(), workOrderId, source.getId().getBudgetId()));
+        target.setPartId(source.getPartId());
+        target.setWorkshopId(source.getWorkshopId());
+        target.setPart(source.getPart());
+        target.setQuantity(source.getQuantity());
+        target.setItemValue(source.getCost());
+        target.setDiscount(source.getDiscount());
+        return target;
     }
 
-    @Override
-    public List<BudgetItemPartEntity> parseDomainToEntityList(List<BudgetItemPart> domainList) {
-        List<BudgetItemPartEntity> list = new ArrayList<>();
-        if (Objects.nonNull(domainList) && !domainList.isEmpty()) {
-            for (BudgetItemPart budgetItemPart : domainList) {
-                list.add(this.parseDomainToEntity(budgetItemPart));
+    public List<WorkOrderPartItemEntity> parseToWorkOrderPartItemEntityList(List<BudgetItemPartEntity> sourceList, Long workOrderId) {
+        List<WorkOrderPartItemEntity> targetList = new ArrayList<>();
+        if (Objects.nonNull(sourceList) && !sourceList.isEmpty()) {
+            for (BudgetItemPartEntity source : sourceList) {
+                targetList.add(this.parseToWorkOrderPartItemEntity(source, workOrderId));
             }
         }
-        return list;
-    }
-
-    @Override
-    public List<BudgetItemPart> parseEntityToDomainList(List<BudgetItemPartEntity> entityList) {
-        List<BudgetItemPart> list = new ArrayList<>();
-        if (Objects.nonNull(entityList) && !entityList.isEmpty()) {
-            for (BudgetItemPartEntity entity : entityList) {
-                list.add(this.parseEntityToDomain(entity));
-            }
-        }
-        return list;
-    }
-
-    @Override
-    public List<BudgetItemPartResponseDTO> parseDomainToResponse(List<BudgetItemPart> domainList) {
-        List<BudgetItemPartResponseDTO> dtoList = new ArrayList<>();
-        if (Objects.nonNull(domainList) && !domainList.isEmpty()) {
-            for (BudgetItemPart budgetItemPart : domainList) {
-                dtoList.add(this.parseDomainToResponse(budgetItemPart));
-            }
-        }
-        return dtoList;
+        return targetList;
     }
 }

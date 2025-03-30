@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Objects;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
+import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
+import com.ikservices.oficinamecanica.workorders.installments.domain.PayTypeEnum;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
 import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallmentId;
 import com.ikservices.oficinamecanica.workorders.installments.infra.dto.WorkOrderInstallmentsDTO;
@@ -27,6 +30,7 @@ public class WorkOrderInstallmentConverter {
 		 
 		 installment.setDueDate(entity.getDueDate());
 		 installment.setPayValue(entity.getPayValue());
+		 installment.setPayForm(entity.getPayForm());
 		 installment.setPayDate(entity.getPayDate());
 		 installment.setNote(entity.getNote());
 		 
@@ -44,6 +48,7 @@ public class WorkOrderInstallmentConverter {
 				installment.getId().getInstallmentType()));
 		entity.setDueDate(installment.getDueDate());
 		entity.setPayValue(installment.getPayValue());
+		entity.setPayForm(installment.getPayForm());
 		entity.setPayDate(installment.getPayDate());
 		entity.setNote(installment.getNote());
 		
@@ -79,12 +84,13 @@ public class WorkOrderInstallmentConverter {
 		installment.setId(new WorkOrderInstallmentId(
 				dto.getNumber(),
 				dto.getWorkOrderId(), 
-				dto.getBudgetId(), 
-				dto.getInstallmentType()));
+				dto.getBudgetId(),
+				PayTypeEnum.findById(dto.getInstallmentType())));
 		
 		installment.setDueDate(LocalDate.parse(dto.getDueDate()));
-		installment.setPayValue(dto.getPayValue());
-		installment.setPayDate(LocalDate.parse(dto.getPayDate()));
+		installment.setPayValue(NumberUtil.parseBigDecimal(dto.getPayValue()));
+		installment.setPayForm(Objects.nonNull(dto.getPayForm()) ? PayFormEnum.findByIndex(dto.getPayForm()) : null);
+		installment.setPayDate(Objects.nonNull(dto.getPayDate()) && !dto.getPayDate().isEmpty() ? LocalDate.parse(dto.getPayDate()) : null);
 		installment.setNote(dto.getNote());
 		
 		return installment;
@@ -100,11 +106,12 @@ public class WorkOrderInstallmentConverter {
 		dto.setNumber(installment.getId().getNumber());
 		dto.setWorkOrderId(installment.getId().getWorkOrderId());
 		dto.setBudgetId(installment.getId().getBudgetId());
-		dto.setInstallmentType(installment.getId().getInstallmentType());
+		dto.setInstallmentType(installment.getId().getInstallmentType().ordinal());
 		
 		dto.setDueDate(Objects.nonNull(installment.getDueDate()) ? installment.getDueDate().toString() : "");
-		dto.setPayValue(installment.getPayValue());
-		dto.setPayDate(Objects.nonNull(installment.getPayDate()) ? installment.getPayDate().toString() : "");
+		dto.setPayValue(NumberUtil.parseStringMoney(installment.getPayValue()));
+		dto.setPayForm(Objects.nonNull(installment.getPayForm()) ? installment.getPayForm().ordinal() : null);
+		dto.setPayDate(Objects.nonNull(installment.getPayDate()) ? installment.getPayDate().toString() : null);
 		dto.setNote(Objects.nonNull(installment.getNote()) ? installment.getNote() : "");
 		
 		return dto;
@@ -115,6 +122,16 @@ public class WorkOrderInstallmentConverter {
 		if (Objects.nonNull(installments) && !installments.isEmpty()) {
 			for (WorkOrderInstallment installment : installments) {
 				dtoList.add(this.parseDTO(installment));
+			}
+		}
+		return dtoList;
+	}
+
+	public List<WorkOrderInstallment> parseDTOToDomainList(List<WorkOrderInstallmentsDTO> installmentsDTOS) {
+		List<WorkOrderInstallment> dtoList = new ArrayList<>();
+		if (Objects.nonNull(installmentsDTOS) && !installmentsDTOS.isEmpty()) {
+			for (WorkOrderInstallmentsDTO installmentsDTO : installmentsDTOS) {
+				dtoList.add(this.parseInstallment(installmentsDTO));
 			}
 		}
 		return dtoList;

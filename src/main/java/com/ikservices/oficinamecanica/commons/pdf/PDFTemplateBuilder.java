@@ -19,6 +19,9 @@ import static com.lowagie.text.Utilities.toByteArray;
 public abstract class PDFTemplateBuilder {
     private final String FOLDER_SOURCE = "/assets/images/";
 
+    protected final static String PDF_GENERATION_ERROR = "Erro ao gerar PDF.";
+    protected final static String DOCUMENT_CLOSE_ERROR = "Document close error.";
+
     protected final String RIGHT = "right";
     protected final String LEFT = "left";
     private final String pdfName;

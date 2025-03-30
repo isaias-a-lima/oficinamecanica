@@ -69,4 +69,8 @@ public class BudgetConfig {
 		String title = environment.getProperty(BudgetConstant.PDF_TITLE);
 		return new CreateBudgetPDF(pdfName, logo, title);
 	}
+	@Bean
+	ApproveBudget approveBudget(BudgetRepository repository) {
+		return new ApproveBudget(repository);
+	}
 }

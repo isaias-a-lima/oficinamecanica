@@ -16,4 +16,6 @@ public class BudgetConstant {
 	public static final String PDF_SUCCESS_MESSAGE = "budget.pdf.success.message";
 	public static final String PDF_ERROR_MESSAGE = "budget.pdf.error.message";
 
+    public static final String APPROVED_SUCCESS_MESSAGE = "budget.approved.success.message";
+	public static final String APPROVED_ERROR_MESSAGE = "budget.approved.error.message";
 }

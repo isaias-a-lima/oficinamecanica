@@ -1,32 +1,42 @@
 package com.ikservices.oficinamecanica.workorders.infra;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
+import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
 import com.ikservices.oficinamecanica.workorders.infra.controller.WorkOrderRequestDTO;
 import com.ikservices.oficinamecanica.workorders.infra.controller.WorkOrderResponseDTO;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntityId;
 import com.ikservices.oficinamecanica.workorders.installments.infra.WorkOrderInstallmentConverter;
+import com.ikservices.oficinamecanica.workorders.items.parts.infra.WorkOrderPartItemConverter;
+import com.ikservices.oficinamecanica.workorders.items.services.infra.WorkOrderServiceItemsConverter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.util.*;
+
+@Component
 public class WorkOrderConverter {
+	@Autowired
+	@Lazy
+	private BudgetConverter budgetConverter;
+	@Autowired
+	@Lazy
+	private WorkOrderInstallmentConverter installmentConverter;
+	@Autowired
+	@Lazy
+	private WorkOrderServiceItemsConverter serviceItemsConverter;
+	@Autowired
+	@Lazy
+	private WorkOrderPartItemConverter partItemConverter;
 	
-	private final BudgetConverter budgetConverter;
-	private final WorkOrderInstallmentConverter installmentConverter;
-	
-	public WorkOrderConverter(BudgetConverter budgetConverter, WorkOrderInstallmentConverter installmentConverter) {
-		this.budgetConverter = budgetConverter;
-		this.installmentConverter = installmentConverter;
-	}
+
 	
 	public WorkOrder parseWorkOrder(WorkOrderEntity entity) {
 		if(Objects.isNull(entity)) {
@@ -51,12 +61,13 @@ public class WorkOrderConverter {
 		}
 		workOrder.setOpeningDate(entity.getOpeningDate());
 		workOrder.setKm(entity.getKm());
-		workOrder.setWorkOrderStatus(entity.getWostatus());
+		workOrder.setWorkOrderStatus(entity.getWoStatus());
 		workOrder.setAmount(entity.getAmount());
-		workOrder.setPayForm(entity.getPayForm());
 		workOrder.setPayQty(entity.getPayQty());
 		workOrder.setPaid(entity.getPaid());		
-		workOrder.setInstallments(Objects.nonNull(entity.getInstallments()) ? installmentConverter.parseInstallmentList(entity.getInstallments()) : new ArrayList<>());		
+		workOrder.setInstallments(Objects.nonNull(entity.getInstallments()) ? installmentConverter.parseInstallmentList(entity.getInstallments()) : new ArrayList<>());
+		workOrder.setServiceItems(Objects.nonNull(entity.getServiceItems()) ? serviceItemsConverter.parseEntityToDomainList(entity.getServiceItems()) : new ArrayList<>());
+		workOrder.setPartItems(Objects.nonNull(entity.getPartItems()) ? partItemConverter.parseEntityToDomainList(entity.getPartItems()) : new ArrayList<>());
 		return workOrder;
 	}
 	
@@ -79,12 +90,13 @@ public class WorkOrderConverter {
 		
 		entity.setOpeningDate(workOrder.getOpeningDate());
 		entity.setKm(workOrder.getKm());
-		entity.setWostatus(workOrder.getWorkOrderStatus());
+		entity.setWoStatus(workOrder.getWorkOrderStatus());
 		entity.setAmount(workOrder.getAmount());
-		entity.setPayForm(workOrder.getPayForm());
-		
 		entity.setPayQty(workOrder.getPayQty());
-		entity.setPaid(workOrder.getPaid()); 
+		entity.setPaid(workOrder.getPaid());
+		entity.setInstallments(Objects.nonNull(workOrder.getInstallments()) ? installmentConverter.parseEntityList(workOrder.getInstallments()) : new ArrayList<>());
+		entity.setServiceItems(Objects.nonNull(workOrder.getServiceItems()) ? serviceItemsConverter.parseDomainToEntityList(workOrder.getServiceItems()) : new ArrayList<>());
+		entity.setPartItems(Objects.nonNull(workOrder.getPartItems()) ? partItemConverter.parseDomainToEntityList(workOrder.getPartItems()) : new ArrayList<>());
 		
 		return entity;
 	}
@@ -130,12 +142,13 @@ public class WorkOrderConverter {
 		workOrder.setBudget(map);
 		workOrder.setOpeningDate(LocalDate.parse(requestDTO.getOpeningDate()));
 		workOrder.setKm(requestDTO.getKm());
-		workOrder.setWorkOrderStatus(requestDTO.getWOStatus());
+		workOrder.setWorkOrderStatus(requestDTO.getWorkOrderStatus());
 		workOrder.setAmount(requestDTO.getAmount());
-		workOrder.setPayForm(requestDTO.getPayForm());
 		workOrder.setPayQty(requestDTO.getPayQty());
 		workOrder.setPaid(requestDTO.isPaid());
-		
+		workOrder.setInstallments(Objects.nonNull(requestDTO.getInstallments()) ? installmentConverter.parseDTOToDomainList(requestDTO.getInstallments()) : new ArrayList<>());
+		workOrder.setServiceItems(Objects.nonNull(requestDTO.getServiceItems()) ? serviceItemsConverter.parseRequestToDomainList(requestDTO.getServiceItems()) : new ArrayList<>());
+		workOrder.setPartItems(Objects.nonNull(requestDTO.getPartItems()) ? partItemConverter.parseRequestToDomainList(requestDTO.getPartItems()) : new ArrayList<>());
 		return workOrder;
 	}
 	
@@ -153,19 +166,20 @@ public class WorkOrderConverter {
 			
 			for (Long vehicleId : outSideBudgetMap.keySet()) {
 				Map<Long, Budget> inSideBudgetMap = outSideBudgetMap.get(vehicleId);
-				budgetConverter.parseBudgetDTO(inSideBudgetMap, vehicleId,true);
+				responseDTO.setBudget(budgetConverter.parseBudgetDTO(inSideBudgetMap, vehicleId,true));
 			}			
 		}
 		
 		responseDTO.setOpeningDate(workOrder.getOpeningDate().toString());
 		responseDTO.setKm(workOrder.getKm());
-		responseDTO.setWOStatus(workOrder.getWorkOrderStatus().ordinal());
-		responseDTO.setAmount(workOrder.getAmount());
-		responseDTO.setPayForm(workOrder.getPayForm().ordinal());
+		responseDTO.setWorkOrderStatus(workOrder.getWorkOrderStatus().ordinal());
+		responseDTO.setAmount(NumberUtil.parseStringMoney(workOrder.getAmount()));
 		responseDTO.setPayQty(workOrder.getPayQty());
-		responseDTO.setPaid(workOrder.getPaid());
+		responseDTO.setPaid(Objects.nonNull(workOrder.getPaid()) ? workOrder.getPaid() : false);
 		
 		responseDTO.setInstallments(Objects.nonNull(workOrder.getInstallments()) ? installmentConverter.parseDomainToDTO(workOrder.getInstallments()) : new ArrayList<>());
+		responseDTO.setServiceItems(Objects.nonNull(workOrder.getServiceItems()) ? serviceItemsConverter.parseDomainToResponseList(workOrder.getServiceItems()) : new ArrayList<>());
+		responseDTO.setPartItems(Objects.nonNull(workOrder.getPartItems()) ? partItemConverter.parseDomainToResponseList(workOrder.getPartItems()) : new ArrayList<>());
 		
 		return responseDTO;
 	}
@@ -180,5 +194,24 @@ public class WorkOrderConverter {
 		}
 		
 		return responseDTOList;
+	}
+
+	public WorkOrderRequestDTO createRequest(WorkOrderResponseDTO response) {
+		if (Objects.isNull(response)) {
+			throw new IKException("Null object.");
+		}
+		WorkOrderRequestDTO request = new WorkOrderRequestDTO();
+		request.setWorkOrderId(response.getWorkOrderId());
+		request.setBudgetId(response.getBudgetId());
+		request.setOpeningDate(response.getOpeningDate());
+		request.setKm(response.getKm());
+		request.setWorkOrderStatus(WorkOrderStatusEnum.findByIndex(response.getWorkOrderStatus()));
+		request.setAmount(NumberUtil.parseBigDecimal(response.getAmount()));
+		request.setPayQty(response.getPayQty());
+		request.setPaid(response.isPaid());
+		request.setInstallments(response.getInstallments());
+		request.setServiceItems(serviceItemsConverter.createRequestList(response.getServiceItems()));
+		request.setPartItems(partItemConverter.createRequestList(response.getPartItems()));
+		return request;
 	}
 }

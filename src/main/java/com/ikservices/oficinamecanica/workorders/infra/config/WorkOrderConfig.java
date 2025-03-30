@@ -1,5 +1,7 @@
 package com.ikservices.oficinamecanica.workorders.infra.config;
 
+import com.ikservices.oficinamecanica.workorders.application.usecases.*;
+import com.ikservices.oficinamecanica.workorders.infra.constants.WorkOrderConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,10 +10,6 @@ import org.springframework.core.env.Environment;
 
 import com.ikservices.oficinamecanica.budgets.infra.BudgetConverter;
 import com.ikservices.oficinamecanica.workorders.application.gateways.WorkOrderRepository;
-import com.ikservices.oficinamecanica.workorders.application.usecases.GetWorkOrder;
-import com.ikservices.oficinamecanica.workorders.application.usecases.ListWorkOrders;
-import com.ikservices.oficinamecanica.workorders.application.usecases.SaveWorkOrder;
-import com.ikservices.oficinamecanica.workorders.application.usecases.UpdateWorkOrder;
 import com.ikservices.oficinamecanica.workorders.infra.WorkOrderConverter;
 import com.ikservices.oficinamecanica.workorders.infra.gateways.WorkOrderRepositoryImpl;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderRepositoryJPA;
@@ -35,11 +33,6 @@ public class WorkOrderConfig {
 	}
 	
 	@Bean
-	public WorkOrderConverter workOrderConverter(BudgetConverter budgetConverter, WorkOrderInstallmentConverter installmentConverter) {
-		return new WorkOrderConverter(budgetConverter, installmentConverter);
-	}
-	
-	@Bean
 	public GetWorkOrder getWorkOrder(WorkOrderRepository repository) {
 		return new GetWorkOrder(repository);
 	}
@@ -57,5 +50,23 @@ public class WorkOrderConfig {
 	@Bean
 	public UpdateWorkOrder updateWorkOrder(WorkOrderRepository repository) {
 		return new UpdateWorkOrder(repository);
+	}
+
+	@Bean
+	public FinalizeWorkOrder getFinalizeWorkOrder(WorkOrderRepository repository) {
+		return new FinalizeWorkOrder(repository);
+	}
+
+	@Bean
+	public CreateWorkOrderPDF getCreateWorkOrderPDF() {
+		String pdfName = environment.getProperty(WorkOrderConstant.PDF_NAME);
+		String logo = environment.getProperty(WorkOrderConstant.PDF_LOGO);
+		String title = environment.getProperty(WorkOrderConstant.PDF_TITLE);
+		return new CreateWorkOrderPDF(pdfName, logo, title);
+	}
+
+	@Bean
+	public UpdatePayments getUpdatePayments(WorkOrderRepository repository) {
+		return new UpdatePayments(repository);
 	}
 }
