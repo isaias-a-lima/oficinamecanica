@@ -69,5 +69,4 @@ public class PartRepositoryImpl implements PartRepository{
 	public Long getNextPartId(Long workshopId) {
 		return repository.getNextPartId(workshopId);
 	}
-
 }
