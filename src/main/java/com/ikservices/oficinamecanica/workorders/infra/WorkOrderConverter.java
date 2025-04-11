@@ -11,9 +11,9 @@ import com.ikservices.oficinamecanica.workorders.infra.controller.WorkOrderReque
 import com.ikservices.oficinamecanica.workorders.infra.controller.WorkOrderResponseDTO;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntityId;
-import com.ikservices.oficinamecanica.workorders.installments.infra.WorkOrderInstallmentConverter;
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.WorkOrderPartItemConverter;
 import com.ikservices.oficinamecanica.workorders.items.services.infra.WorkOrderServiceItemsConverter;
+import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -28,15 +28,13 @@ public class WorkOrderConverter {
 	private BudgetConverter budgetConverter;
 	@Autowired
 	@Lazy
-	private WorkOrderInstallmentConverter installmentConverter;
-	@Autowired
-	@Lazy
 	private WorkOrderServiceItemsConverter serviceItemsConverter;
 	@Autowired
 	@Lazy
 	private WorkOrderPartItemConverter partItemConverter;
-	
-
+	@Autowired
+	@Lazy
+	private PaymentConverter paymentConverter;
 	
 	public WorkOrder parseWorkOrder(WorkOrderEntity entity) {
 		if(Objects.isNull(entity)) {
@@ -64,10 +62,10 @@ public class WorkOrderConverter {
 		workOrder.setWorkOrderStatus(entity.getWoStatus());
 		workOrder.setAmount(entity.getAmount());
 		workOrder.setPayQty(entity.getPayQty());
-		workOrder.setPaid(entity.getPaid());		
-		workOrder.setInstallments(Objects.nonNull(entity.getInstallments()) ? installmentConverter.parseInstallmentList(entity.getInstallments()) : new ArrayList<>());
+		workOrder.setPaid(entity.getPaid());
 		workOrder.setServiceItems(Objects.nonNull(entity.getServiceItems()) ? serviceItemsConverter.parseEntityToDomainList(entity.getServiceItems()) : new ArrayList<>());
 		workOrder.setPartItems(Objects.nonNull(entity.getPartItems()) ? partItemConverter.parseEntityToDomainList(entity.getPartItems()) : new ArrayList<>());
+		workOrder.setPayments(Objects.nonNull(entity.getPayments()) ? paymentConverter.parseEntityToDomainList(entity.getPayments()) : new ArrayList<>());
 		return workOrder;
 	}
 	
@@ -94,9 +92,9 @@ public class WorkOrderConverter {
 		entity.setAmount(workOrder.getAmount());
 		entity.setPayQty(workOrder.getPayQty());
 		entity.setPaid(workOrder.getPaid());
-		entity.setInstallments(Objects.nonNull(workOrder.getInstallments()) ? installmentConverter.parseEntityList(workOrder.getInstallments()) : new ArrayList<>());
 		entity.setServiceItems(Objects.nonNull(workOrder.getServiceItems()) ? serviceItemsConverter.parseDomainToEntityList(workOrder.getServiceItems()) : new ArrayList<>());
 		entity.setPartItems(Objects.nonNull(workOrder.getPartItems()) ? partItemConverter.parseDomainToEntityList(workOrder.getPartItems()) : new ArrayList<>());
+		entity.setPayments(Objects.nonNull(workOrder.getPayments()) ? paymentConverter.parseDomainToEntityList(workOrder.getPayments()) : new ArrayList<>());
 		
 		return entity;
 	}
@@ -146,9 +144,9 @@ public class WorkOrderConverter {
 		workOrder.setAmount(requestDTO.getAmount());
 		workOrder.setPayQty(requestDTO.getPayQty());
 		workOrder.setPaid(requestDTO.isPaid());
-		workOrder.setInstallments(Objects.nonNull(requestDTO.getInstallments()) ? installmentConverter.parseDTOToDomainList(requestDTO.getInstallments()) : new ArrayList<>());
 		workOrder.setServiceItems(Objects.nonNull(requestDTO.getServiceItems()) ? serviceItemsConverter.parseRequestToDomainList(requestDTO.getServiceItems()) : new ArrayList<>());
 		workOrder.setPartItems(Objects.nonNull(requestDTO.getPartItems()) ? partItemConverter.parseRequestToDomainList(requestDTO.getPartItems()) : new ArrayList<>());
+		workOrder.setPayments(Objects.nonNull(requestDTO.getPayments()) ? paymentConverter.parseRequestToDomainList(requestDTO.getPayments()) : new ArrayList<>());
 		return workOrder;
 	}
 	
@@ -176,10 +174,10 @@ public class WorkOrderConverter {
 		responseDTO.setAmount(NumberUtil.parseStringMoney(workOrder.getAmount()));
 		responseDTO.setPayQty(workOrder.getPayQty());
 		responseDTO.setPaid(Objects.nonNull(workOrder.getPaid()) ? workOrder.getPaid() : false);
-		
-		responseDTO.setInstallments(Objects.nonNull(workOrder.getInstallments()) ? installmentConverter.parseDomainToDTO(workOrder.getInstallments()) : new ArrayList<>());
+
 		responseDTO.setServiceItems(Objects.nonNull(workOrder.getServiceItems()) ? serviceItemsConverter.parseDomainToResponseList(workOrder.getServiceItems()) : new ArrayList<>());
 		responseDTO.setPartItems(Objects.nonNull(workOrder.getPartItems()) ? partItemConverter.parseDomainToResponseList(workOrder.getPartItems()) : new ArrayList<>());
+		responseDTO.setPayments(Objects.nonNull(workOrder.getPayments()) ? paymentConverter.parseDomainToResponseList(workOrder.getPayments()) : new ArrayList<>());
 		
 		return responseDTO;
 	}
@@ -209,9 +207,9 @@ public class WorkOrderConverter {
 		request.setAmount(NumberUtil.parseBigDecimal(response.getAmount()));
 		request.setPayQty(response.getPayQty());
 		request.setPaid(response.isPaid());
-		request.setInstallments(response.getInstallments());
 		request.setServiceItems(serviceItemsConverter.createRequestList(response.getServiceItems()));
 		request.setPartItems(partItemConverter.createRequestList(response.getPartItems()));
+		request.setPayments(response.getPayments());
 		return request;
 	}
 }

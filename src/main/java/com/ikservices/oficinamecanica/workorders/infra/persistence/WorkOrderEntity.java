@@ -1,11 +1,10 @@
 package com.ikservices.oficinamecanica.workorders.infra.persistence;
 
 import com.ikservices.oficinamecanica.budgets.infra.persistence.BudgetEntity;
-import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
-import com.ikservices.oficinamecanica.workorders.installments.infra.persistence.WorkOrderInstallmentEntity;
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.persistence.WorkOrderPartItemEntity;
 import com.ikservices.oficinamecanica.workorders.items.services.infra.persistence.WorkOrderServiceItemEntity;
+import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,9 +49,6 @@ public class WorkOrderEntity {
 	
 	@Column(name = "PAID")
 	private Boolean paid;
-	
-	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<WorkOrderInstallmentEntity> installments;
 
 	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<WorkOrderServiceItemEntity> serviceItems;
@@ -60,33 +56,8 @@ public class WorkOrderEntity {
 	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<WorkOrderPartItemEntity> partItems;
 
-	public void updatePayments(List<WorkOrderInstallmentEntity> newEntityList) {
-
-		this.installments.removeIf(existingItem ->
-				newEntityList.stream().noneMatch(newEntity -> newEntity.equals(existingItem))
-		);
-
-		for (WorkOrderInstallmentEntity newEntity : newEntityList) {
-
-			Optional<WorkOrderInstallmentEntity> existingItemOptional = this.installments.stream()
-					.filter(existingItem -> existingItem.equals(newEntity))
-					.findFirst();
-
-			if (existingItemOptional.isPresent()) {
-				WorkOrderInstallmentEntity existingItem = existingItemOptional.get();
-				existingItem.update(newEntity);
-			} else {
-				this.setNextInstallmentNumberId(newEntity);
-			}
-		}
-
-	}
-
-	private void setNextInstallmentNumberId(WorkOrderInstallmentEntity installment) {
-		Long nextId = this.installments.isEmpty() ? 1 : this.installments.get(this.installments.size() - 1).getId().getNumber() + 1;
-		installment.getId().setNumber(nextId);
-		this.installments.add(installment);
-	}
+	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PaymentEntity> payments;
 
 	public void update(WorkOrderEntity entity) {
 
@@ -200,9 +171,37 @@ public class WorkOrderEntity {
 	}
 	//Part items end
 
-	//Installments begin
-	public void addInstallments(List<WorkOrderInstallmentEntity> installmentEntityList) {
-		this.installments.addAll(installmentEntityList);
+	//Payments begin
+	public void updatePayments(List<PaymentEntity> newEntityList) {
+
+		this.payments.removeIf(existingItem ->
+				newEntityList.stream().noneMatch(newEntity -> newEntity.equals(existingItem))
+		);
+
+		for (PaymentEntity newEntity : newEntityList) {
+
+			Optional<PaymentEntity> existingItemOptional = this.payments.stream()
+					.filter(existingItem -> existingItem.equals(newEntity))
+					.findFirst();
+
+			if (existingItemOptional.isPresent()) {
+				PaymentEntity existingItem = existingItemOptional.get();
+				existingItem.update(newEntity);
+			} else {
+				this.setNextPaymentNumberId(newEntity);
+			}
+		}
+
 	}
-	//Installments end
+
+	private void setNextPaymentNumberId(PaymentEntity installment) {
+		Integer nextId = this.payments.isEmpty() ? 1 : this.payments.get(this.payments.size() - 1).getId().getNumber() + 1;
+		installment.getId().setNumber(nextId);
+		this.payments.add(installment);
+	}
+
+	public void addPayments(List<PaymentEntity> paymentEntityList) {
+		this.payments.addAll(paymentEntityList);
+	}
+	//Payments end
 }

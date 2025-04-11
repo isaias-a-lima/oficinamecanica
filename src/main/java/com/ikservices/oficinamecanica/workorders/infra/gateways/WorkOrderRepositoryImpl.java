@@ -1,28 +1,15 @@
 package com.ikservices.oficinamecanica.workorders.infra.gateways;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
-import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
-import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderEndingValidations;
-import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderUpdatePaymentsValidation;
-import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderUpdateValidation;
-import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
-import com.ikservices.oficinamecanica.workorders.installments.infra.WorkOrderInstallmentConverter;
-import com.ikservices.oficinamecanica.workorders.installments.infra.persistence.WorkOrderInstallmentEntity;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-
 import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
+import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
+import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.workorders.application.SourceCriteriaEnum;
 import com.ikservices.oficinamecanica.workorders.application.gateways.WorkOrderRepository;
+import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderUpdatePaymentsValidation;
+import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderUpdateValidation;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
@@ -31,6 +18,16 @@ import com.ikservices.oficinamecanica.workorders.infra.constants.WorkOrderConsta
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntityId;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderRepositoryJPA;
+import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConverter;
+import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentEntity;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 
@@ -39,7 +36,7 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 	private final WorkOrderConverter converter;
 	private final WorkOrderRepositoryJPA repository;
 	@Autowired
-	private  WorkOrderInstallmentConverter installmentConverter;
+	private PaymentConverter paymentConverter;
 	
 	@Autowired
 	private Environment environment;
@@ -122,9 +119,9 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 			if (optional.isPresent()) {
 				WorkOrderEntity workOrderEntity = optional.get();
 
-				List<WorkOrderInstallment> workOrderInstallments = WorkOrderEndingValidations.defineInstallments(converter.parseWorkOrder(workOrderEntity));
-
-				workOrderEntity.addInstallments(installmentConverter.parseEntityList(workOrderInstallments));
+				//TODO Check the need to maintain this logic
+				//List<Payment> payments = WorkOrderEndingValidations.definePayments(converter.parseWorkOrder(workOrderEntity));
+				//workOrderEntity.addPayments(paymentConverter.parseDomainToEntityList(payments));
 
 				workOrderEntity.setWoStatus(WorkOrderStatusEnum.DONE);
 
@@ -154,12 +151,12 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 
 				WorkOrderUpdatePaymentsValidation.verify(converter.parseWorkOrder(workOrderEntity));
 
-				workOrderEntity.updatePayments(converter.parseWorkOrderEntity(workOrder).getInstallments());
+				workOrderEntity.updatePayments(converter.parseWorkOrderEntity(workOrder).getPayments());
 
                 BigDecimal paidValue = BigDecimal.ZERO;
 
-				for (WorkOrderInstallmentEntity installment : workOrderEntity.getInstallments()) {
-                    paidValue = Objects.nonNull(installment.getPayDate()) ? paidValue.add(installment.getPayValue()) : paidValue;
+				for (PaymentEntity payment : workOrderEntity.getPayments()) {
+                    paidValue = Objects.nonNull(payment.getPayDate()) ? paidValue.add(payment.getPayValue()) : paidValue;
 				}
 
                 workOrderEntity.setPaid(paidValue.equals(workOrderEntity.getAmount()));

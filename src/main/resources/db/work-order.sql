@@ -75,3 +75,26 @@ ALTER TABLE WORK_ORDERS DROP COLUMN payform;
 
 --2025-03-05 00:50 - Portugal - Isaias Lima - Add payform column
 ALTER TABLE WO_INSTALLMENTS ADD payform TINYINT NULL COMMENT 'Installment pay form' AFTER payvalue;
+
+--2025-03-31 01:20 - Portugal - Isaias Lima - Creation of payments table.
+CREATE TABLE PAYMENTS (
+paynumber INT NOT NULL COMMENT "Payment number",
+workorderid BIGINT NOT NULL COMMENT "Work order identification number",
+budgetid BIGINT NOT NULL COMMENT "budget identification number",
+duedate DATE NOT NULL COMMENT "Payment due date",
+payvalue DECIMAL(12,2) NOT NULL COMMENT "Payment value",
+paytype TINYINT NOT NULL COMMENT "Payment type.",
+note VARCHAR(255) NULL COMMENT "Payment notes",
+paydate DATE NULL COMMENT "Payment date",
+PRIMARY KEY(number, workorderid, budgetid),
+CONSTRAINT fk_work_orders__payments FOREIGN KEY(workorderid) REFERENCES work_orders(workorderid),
+CONSTRAINT fk_budgets__payments FOREIGN KEY(budgetid) REFERENCES budgets(budgetid)
+)COMMENT = "WORK ORDER PAYMENTS";
+
+--2025-03-31 01:20 - Portugal - Isaias Lima - Migration of payments from wo_installments.
+INSERT INTO PAYMENTS (paynumber, workorderid, budgetid, duedate, payvalue, paytype, note, paydate)
+SELECT 	inst.number, inst.workorderid, inst.budgetid, inst.duedate, inst.payvalue,
+		IFNULL(inst.payform, 0), inst.note, inst.paydate
+FROM WO_INSTALLMENTS inst
+--WHERE NOT (inst.number = 1 AND inst.workorderid = 10 AND inst.budgetid = 46 AND inst.payvalue > 50)
+;
