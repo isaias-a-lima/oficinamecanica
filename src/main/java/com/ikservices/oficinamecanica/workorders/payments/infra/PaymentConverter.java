@@ -22,7 +22,7 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
             domain.setId(new PaymentId(request.getNumber(), request.getWorkOrderId(), request.getBudgetId()));
             domain.setDueDate(request.getDueDate());
             domain.setPaymentValue(NumberUtil.parseBigDecimal(request.getPayValue()));
-            domain.setPaymentType(PaymentTypeEnum.findByIndex(request.getPaymentType()));
+            domain.setPaymentType(Objects.nonNull(request.getPaymentType()) ? PaymentTypeEnum.findByIndex(request.getPaymentType()) : PaymentTypeEnum.NONE);
             domain.setNote(request.getNote());
             domain.setPayDate(request.getPayDate());
         }
@@ -37,7 +37,7 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
             entity.setId(new PaymentEntityId(domain.getId().getNumber(), domain.getId().getWorkOrderId(), domain.getId().getBudgetId()));
             entity.setDueDate(domain.getDueDate());
             entity.setPayValue(domain.getPaymentValue());
-            entity.setPaymentType(domain.getPaymentType());
+            entity.setPaymentType(Objects.nonNull(domain.getPaymentType()) ? domain.getPaymentType() : PaymentTypeEnum.NONE);
             entity.setNote(domain.getNote());
             entity.setPayDate(domain.getPayDate());
 
@@ -53,7 +53,7 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
             domain.setId(new PaymentId(entity.getId().getNumber(), entity.getId().getWorkOrderId(), entity.getId().getBudgetId()));
             domain.setDueDate(entity.getDueDate());
             domain.setPaymentValue(entity.getPayValue());
-            domain.setPaymentType(entity.getPaymentType());
+            domain.setPaymentType(Objects.nonNull(entity.getPaymentType()) ? entity.getPaymentType() : PaymentTypeEnum.NONE);
             domain.setNote(entity.getNote());
             domain.setPayDate(entity.getPayDate());
         }
@@ -70,7 +70,7 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
             dto.setBudgetId(domain.getId().getBudgetId());
             dto.setDueDate(domain.getDueDate());
             dto.setPayValue(NumberUtil.parseStringMoney(domain.getPaymentValue()));
-            dto.setPaymentType(domain.getPaymentType().ordinal());
+            dto.setPaymentType(Objects.nonNull(domain.getPaymentType()) ? domain.getPaymentType().ordinal() : PaymentTypeEnum.NONE.ordinal());
             dto.setNote(domain.getNote());
             dto.setPayDate(domain.getPayDate());
         }

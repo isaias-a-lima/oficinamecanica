@@ -8,6 +8,7 @@ import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntityId;
 import com.ikservices.oficinamecanica.workorders.application.SourceCriteriaEnum;
 import com.ikservices.oficinamecanica.workorders.application.gateways.WorkOrderRepository;
+import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderEndingValidations;
 import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderUpdatePaymentsValidation;
 import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderUpdateValidation;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
@@ -18,6 +19,7 @@ import com.ikservices.oficinamecanica.workorders.infra.constants.WorkOrderConsta
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntityId;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderRepositoryJPA;
+import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConverter;
 import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentEntity;
 import org.slf4j.Logger;
@@ -119,9 +121,8 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 			if (optional.isPresent()) {
 				WorkOrderEntity workOrderEntity = optional.get();
 
-				//TODO Check the need to maintain this logic
-				//List<Payment> payments = WorkOrderEndingValidations.definePayments(converter.parseWorkOrder(workOrderEntity));
-				//workOrderEntity.addPayments(paymentConverter.parseDomainToEntityList(payments));
+				List<Payment> payments = WorkOrderEndingValidations.definePayments(converter.parseWorkOrder(workOrderEntity));
+				workOrderEntity.addPayments(paymentConverter.parseDomainToEntityList(payments));
 
 				workOrderEntity.setWoStatus(WorkOrderStatusEnum.DONE);
 
