@@ -1,0 +1,18 @@
+package com.ikservices.oficinamecanica.workorders.payments.application.usecases;
+
+import com.ikservices.oficinamecanica.workorders.payments.application.gateways.PaymentRepository;
+import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
+
+import java.util.List;
+
+public class ListOverduePayments {
+    private final PaymentRepository repository;
+
+    public ListOverduePayments(PaymentRepository repository) {
+        this.repository = repository;
+    }
+
+    public List<Payment> execute(Long workshopId) {
+        return this.repository.listOverduePayments(workshopId);
+    }
+}

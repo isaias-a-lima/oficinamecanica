@@ -1,12 +1,11 @@
 package com.ikservices.oficinamecanica.workorders.application.gateways;
 
-import java.util.List;
-
 import com.ikservices.oficinamecanica.workorders.application.SourceCriteriaEnum;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
-import com.ikservices.oficinamecanica.workorders.installments.infra.persistence.WorkOrderInstallmentEntity;
+
+import java.util.List;
 
 public interface WorkOrderRepository {
 	List<WorkOrder> getWorkOrderList(SourceCriteriaEnum source, Object criteriaId, WorkOrderStatusEnum status);

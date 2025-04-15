@@ -6,11 +6,9 @@ import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.workorders.application.gateways.IWorkOrderBusiness;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
-import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
-import com.ikservices.oficinamecanica.workorders.installments.domain.PayTypeEnum;
-import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
-import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallmentId;
+import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
+import com.ikservices.oficinamecanica.workorders.payments.domain.PaymentId;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,30 +37,30 @@ public class WorkOrderEndingValidations implements IWorkOrderBusiness {
         }
     }
 
-    public static List<WorkOrderInstallment> defineInstallments(WorkOrder workOrder) {
+    public static List<Payment> definePayments(WorkOrder workOrder) {
 
         new WorkOrderEndingValidations().validate(workOrder);
 
-        List<WorkOrderInstallment> list = new ArrayList<>();
+        List<Payment> list = new ArrayList<>();
 
         if (Objects.nonNull(workOrder.getPayQty()) && workOrder.getPayQty() > 0) {
-            BigDecimal installmentValue = workOrder.getAmount().divide(new BigDecimal(workOrder.getPayQty()), RoundingMode.HALF_UP);
+            BigDecimal paymentValue = workOrder.getAmount().divide(new BigDecimal(workOrder.getPayQty()), RoundingMode.HALF_UP);
             BigDecimal auxValue = BigDecimal.ZERO;
 
             for (int i = 1; i <= workOrder.getPayQty(); i++) {
-                WorkOrderInstallment installment = new WorkOrderInstallment();
-                installment.setId(new WorkOrderInstallmentId((long) i, workOrder.getId().getWorkOrderId(), workOrder.getId().getBudgetId(), PayTypeEnum.INSTALLMENT));
-                installment.setDueDate(i == 1 ? LocalDate.now() : LocalDate.now().plusMonths(i - 1));
+                Payment payment = new Payment();
+                payment.setId(new PaymentId(i, workOrder.getId().getWorkOrderId(), workOrder.getId().getBudgetId()));
+                payment.setDueDate(i == 1 ? LocalDate.now() : LocalDate.now().plusMonths(i - 1));
 
                 if (i == workOrder.getPayQty()) {
-                    installment.setPayValue(workOrder.getAmount().subtract(auxValue));
+                    payment.setPaymentValue(workOrder.getAmount().subtract(auxValue));
                 } else {
-                    installment.setPayValue(installmentValue);
+                    payment.setPaymentValue(paymentValue);
                 }
 
-                auxValue = auxValue.add(installmentValue);
+                auxValue = auxValue.add(paymentValue);
 
-                list.add(installment);
+                list.add(payment);
 
             }
         }

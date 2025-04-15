@@ -2,11 +2,10 @@ package com.ikservices.oficinamecanica.workorders.domain;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
-import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
-import com.ikservices.oficinamecanica.workorders.installments.domain.WorkOrderInstallment;
 import com.ikservices.oficinamecanica.workorders.items.parts.domain.WorkOrderPartItem;
 import com.ikservices.oficinamecanica.workorders.items.services.domain.WorkOrderServiceItem;
+import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,10 +33,10 @@ public class WorkOrder {
 	private WorkOrderStatusEnum workOrderStatus;
 	private BigDecimal amount;
 	private Integer payQty;
-	private List<WorkOrderInstallment> installments;
 	private Boolean paid;
 	private List<WorkOrderServiceItem> serviceItems;
 	private List<WorkOrderPartItem> partItems;
+    private List<Payment> payments;
 
 	public String sumPartItems() {
 		BigDecimal sum = BigDecimal.ZERO;

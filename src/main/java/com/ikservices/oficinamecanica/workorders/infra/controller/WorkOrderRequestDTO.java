@@ -1,10 +1,9 @@
 package com.ikservices.oficinamecanica.workorders.infra.controller;
 
-import com.ikservices.oficinamecanica.workorders.domain.enumarates.PayFormEnum;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
-import com.ikservices.oficinamecanica.workorders.installments.infra.dto.WorkOrderInstallmentsDTO;
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.dto.WorkOrderPartItemRequestDTO;
 import com.ikservices.oficinamecanica.workorders.items.services.infra.dto.WorkOrderServiceItemRequestDTO;
+import com.ikservices.oficinamecanica.workorders.payments.infra.dto.PaymentDTO;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,7 @@ public class WorkOrderRequestDTO {
 	private BigDecimal amount;
 	private Integer payQty;
 	private boolean paid;
-	private List<WorkOrderInstallmentsDTO> installments;
 	private List<WorkOrderServiceItemRequestDTO> serviceItems;
 	private List<WorkOrderPartItemRequestDTO> partItems;
+	private List<PaymentDTO> payments;
 }
