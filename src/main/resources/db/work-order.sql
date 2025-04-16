@@ -86,7 +86,7 @@ payvalue DECIMAL(12,2) NOT NULL COMMENT "Payment value",
 paytype TINYINT NOT NULL COMMENT "Payment type.",
 note VARCHAR(255) NULL COMMENT "Payment notes",
 paydate DATE NULL COMMENT "Payment date",
-PRIMARY KEY(number, workorderid, budgetid),
+PRIMARY KEY(paynumber, workorderid, budgetid),
 CONSTRAINT fk_work_orders__payments FOREIGN KEY(workorderid) REFERENCES work_orders(workorderid),
 CONSTRAINT fk_budgets__payments FOREIGN KEY(budgetid) REFERENCES budgets(budgetid)
 )COMMENT = "WORK ORDER PAYMENTS";
@@ -98,3 +98,10 @@ SELECT 	inst.number, inst.workorderid, inst.budgetid, inst.duedate, inst.payvalu
 FROM WO_INSTALLMENTS inst
 --WHERE NOT (inst.number = 1 AND inst.workorderid = 10 AND inst.budgetid = 46 AND inst.payvalue > 50)
 ;
+
+--2025-04-16 17:50 - Brazil - Mateus Lima - Insert into payments.
+INSERT INTO PAYMENTS (paynumber, workorderid, budgetid, duedate, payvalue, paytype, note, paydate)
+VALUES (1, 1, 1, '2025-04-01', 100, 1, 'teste', null);
+
+--2025-04-16 18:03 - Brazil - Mateus Lima - Update duedate in payments.
+UPDATE PAYMENTS SET duedate = '2025-04-20' WHERE paynumber = 1;
