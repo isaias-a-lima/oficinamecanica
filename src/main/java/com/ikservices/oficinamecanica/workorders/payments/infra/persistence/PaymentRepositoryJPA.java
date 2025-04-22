@@ -12,4 +12,8 @@ public interface PaymentRepositoryJPA extends JpaRepository<PaymentEntity, Payme
 	@Query("SELECT p FROM PaymentEntity p WHERE p.workOrder.id = :workOrderEntityId")
 	public List<PaymentEntity> findAllByworkOrderId(@Param("workOrderEntityId") WorkOrderEntityId workOrderEntityId);
 
+	@Query("SELECT p FROM PaymentEntity p WHERE "
+			+ "p.workOrder.budget.vehicle.workshopId = workshopId"
+			+ " and p.dueDate < curdate()")
+	public List<PaymentEntity> listOverduePaymentsByWorkshopId(@Param("workshopId") Long workshopId);
 }

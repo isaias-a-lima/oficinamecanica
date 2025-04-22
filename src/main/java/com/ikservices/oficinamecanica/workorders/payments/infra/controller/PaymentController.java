@@ -22,6 +22,7 @@ import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.payables.infra.PayableConstant;
 import com.ikservices.oficinamecanica.payables.infra.controller.PayableDTO;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
+import com.ikservices.oficinamecanica.workorders.payments.application.usecases.ListOverduePayments;
 import com.ikservices.oficinamecanica.workorders.payments.application.usecases.ListPayments;
 import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConstant;
 import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConverter;
@@ -40,9 +41,12 @@ public class PaymentController {
 	private PaymentConverter converter;
 	
 	ListPayments listPayments;
+	ListOverduePayments listOverduePayments;
 	
-	public PaymentController(ListPayments listPayments) {
+	
+	public PaymentController(ListPayments listPayments, ListOverduePayments listOverduePayments) {
 		this.listPayments = listPayments;
+		this.listOverduePayments = listOverduePayments;
 	}
 	
 	@GetMapping("list")
@@ -54,6 +58,25 @@ public class PaymentController {
 			List<PaymentDTO> paymentDTOList = converter.parseDomainToResponseList(listPayments.execute(woId));
 			
 			return ResponseEntity.ok(IKResponse.<PaymentDTO>build().body(paymentDTOList));			
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).
+					body(IKResponse.<PaymentDTO>build().addMessage(ike.getIkMessage().getCode(),
+							IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
+					body(IKResponse.<PaymentDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, 
+							IKMessageType.ERROR, environment.getProperty(PaymentConstant.LIST_ERROR_MESSAGE)));
+		}
+	}
+	
+	@GetMapping("list/overdue")
+	public ResponseEntity<IKResponse<PaymentDTO>> listOverduePayments(@RequestParam(name = "workshopId") Long workshopId) {
+		try {
+			List<PaymentDTO> paymentDTOLIst = converter.parseDomainToResponseList(listOverduePayments.execute(workshopId));
+			
+			return ResponseEntity.ok(IKResponse.<PaymentDTO>build().body(paymentDTOLIst));			
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).

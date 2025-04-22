@@ -30,7 +30,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
 	@Override
 	public List<Payment> listOverduePayments(Long workshopId) {
-		return null;
+		return this.converter.parseEntityToDomainList(repositoryJPA.listOverduePaymentsByWorkshopId(workshopId));
 	}
 
 	@Override
