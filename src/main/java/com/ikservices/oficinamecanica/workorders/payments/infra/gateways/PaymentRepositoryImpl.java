@@ -36,8 +36,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
 	@Override
 	public List<Payment> listPaymentsByDuePeriod(Long workshopId, LocalDate dueDateBegin, LocalDate dueDateEnd) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.converter.parseEntityToDomainList(repositoryJPA.listPaymentsByDuePeriod(workshopId, dueDateBegin, dueDateEnd));
 	}
 
 	@Override
