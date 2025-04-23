@@ -9,7 +9,7 @@ import com.ikservices.oficinamecanica.customers.infra.persistence.CustomerEntity
 import com.ikservices.oficinamecanica.workorders.application.SourceCriteriaEnum;
 import com.ikservices.oficinamecanica.workorders.application.gateways.WorkOrderRepository;
 import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderEndingValidations;
-import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderUpdatePaymentsValidation;
+import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderPaymentsUpdateValidations;
 import com.ikservices.oficinamecanica.workorders.application.usecases.business.WorkOrderUpdateValidation;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
@@ -150,7 +150,7 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 			try {
 				WorkOrderEntity workOrderEntity = optional.get();
 
-				WorkOrderUpdatePaymentsValidation.verify(converter.parseWorkOrder(workOrderEntity));
+				WorkOrderPaymentsUpdateValidations.verify(workOrder);
 
 				workOrderEntity.updatePayments(converter.parseWorkOrderEntity(workOrder).getPayments());
 

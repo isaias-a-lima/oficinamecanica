@@ -13,9 +13,9 @@ public class PaymentDTO {
     private Integer number;
     private Long workOrderId;
     private Long budgetId;
-    private LocalDate dueDate;
+    private String dueDate;
     private String payValue;
     private Integer paymentType;
     private String note;
-    private LocalDate payDate;
+    private String payDate;
 }

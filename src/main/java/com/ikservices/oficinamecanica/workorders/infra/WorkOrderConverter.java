@@ -60,7 +60,7 @@ public class WorkOrderConverter {
 		workOrder.setOpeningDate(entity.getOpeningDate());
 		workOrder.setKm(entity.getKm());
 		workOrder.setWorkOrderStatus(entity.getWoStatus());
-		workOrder.setAmount(entity.getAmount());
+		//workOrder.setAmount(entity.getAmount());
 		workOrder.setPayQty(entity.getPayQty());
 		workOrder.setPaid(entity.getPaid());
 		workOrder.setServiceItems(Objects.nonNull(entity.getServiceItems()) ? serviceItemsConverter.parseEntityToDomainList(entity.getServiceItems()) : new ArrayList<>());
@@ -141,7 +141,7 @@ public class WorkOrderConverter {
 		workOrder.setOpeningDate(LocalDate.parse(requestDTO.getOpeningDate()));
 		workOrder.setKm(requestDTO.getKm());
 		workOrder.setWorkOrderStatus(requestDTO.getWorkOrderStatus());
-		workOrder.setAmount(requestDTO.getAmount());
+		//workOrder.setAmount(requestDTO.getAmount());
 		workOrder.setPayQty(requestDTO.getPayQty());
 		workOrder.setPaid(requestDTO.isPaid());
 		workOrder.setServiceItems(Objects.nonNull(requestDTO.getServiceItems()) ? serviceItemsConverter.parseRequestToDomainList(requestDTO.getServiceItems()) : new ArrayList<>());
