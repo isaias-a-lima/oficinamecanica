@@ -1,6 +1,7 @@
 package com.ikservices.oficinamecanica.workorders.payments.infra;
 
 import com.ikservices.oficinamecanica.commons.generics.IKConverter;
+import com.ikservices.oficinamecanica.commons.utils.DateUtil;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 import com.ikservices.oficinamecanica.workorders.payments.domain.PaymentId;
@@ -20,11 +21,11 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
         if (Objects.nonNull(request)) {
             domain = new Payment();
             domain.setId(new PaymentId(request.getNumber(), request.getWorkOrderId(), request.getBudgetId()));
-            domain.setDueDate(request.getDueDate());
+            domain.setDueDate(DateUtil.parseToLocalDate(request.getDueDate()));
             domain.setPaymentValue(NumberUtil.parseBigDecimal(request.getPayValue()));
             domain.setPaymentType(Objects.nonNull(request.getPaymentType()) ? PaymentTypeEnum.findByIndex(request.getPaymentType()) : PaymentTypeEnum.NONE);
             domain.setNote(request.getNote());
-            domain.setPayDate(request.getPayDate());
+            domain.setPayDate(DateUtil.parseToLocalDate(request.getPayDate()));
         }
         return domain;
     }
@@ -68,11 +69,11 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
             dto.setNumber(domain.getId().getNumber());
             dto.setWorkOrderId(domain.getId().getWorkOrderId());
             dto.setBudgetId(domain.getId().getBudgetId());
-            dto.setDueDate(domain.getDueDate());
+            dto.setDueDate(DateUtil.parseToString(domain.getDueDate()));
             dto.setPayValue(NumberUtil.parseStringMoney(domain.getPaymentValue()));
             dto.setPaymentType(Objects.nonNull(domain.getPaymentType()) ? domain.getPaymentType().ordinal() : PaymentTypeEnum.NONE.ordinal());
             dto.setNote(domain.getNote());
-            dto.setPayDate(domain.getPayDate());
+            dto.setPayDate(DateUtil.parseToString(domain.getPayDate()));
         }
         return dto;
     }

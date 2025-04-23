@@ -18,25 +18,43 @@ import java.util.Map;
 import java.util.Objects;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @EqualsAndHashCode
 public class WorkOrder {
+	@Setter
 	private WorkOrderId id;
 	/**
 	 * First Map key: Long vehicleId
 	 * Second Map key: Long budgetId
 	 */
+	@Setter
 	private Map<Long, Map<Long, Budget>> budget;
+	@Setter
 	private LocalDate openingDate;
+	@Setter
 	private Long km;
+	@Setter
 	private WorkOrderStatusEnum workOrderStatus;
+
 	private BigDecimal amount;
+	@Setter
 	private Integer payQty;
+	@Setter
 	private Boolean paid;
 	private List<WorkOrderServiceItem> serviceItems;
 	private List<WorkOrderPartItem> partItems;
+	@Setter
     private List<Payment> payments;
+
+	public void setServiceItems(List<WorkOrderServiceItem> serviceItems) {
+		this.serviceItems = serviceItems;
+		this.updateAmount();
+	}
+
+	public void setPartItems(List<WorkOrderPartItem> partItems) {
+		this.partItems = partItems;
+		this.updateAmount();
+	}
 
 	public String sumPartItems() {
 		BigDecimal sum = BigDecimal.ZERO;
@@ -56,5 +74,20 @@ public class WorkOrder {
 			}
 		}
 		return NumberUtil.parseStringMoney(sum);
+	}
+
+	private void updateAmount() {
+		BigDecimal sum = BigDecimal.ZERO;
+		if (Objects.nonNull(serviceItems) && !serviceItems.isEmpty()) {
+			for (WorkOrderServiceItem serviceItem : serviceItems) {
+				sum = sum.add(serviceItem.getTotal());
+			}
+		}
+		if (Objects.nonNull(partItems) && !partItems.isEmpty()) {
+			for (WorkOrderPartItem partItem : partItems) {
+				sum = sum.add(partItem.getTotal());
+			}
+		}
+		amount = sum;
 	}
 }
