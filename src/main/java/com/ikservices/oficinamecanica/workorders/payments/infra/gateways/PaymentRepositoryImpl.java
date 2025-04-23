@@ -10,6 +10,7 @@ import com.ikservices.oficinamecanica.workorders.payments.application.gateways.P
 import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 import com.ikservices.oficinamecanica.workorders.payments.domain.PaymentId;
 import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConverter;
+import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentEntityId;
 import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentRepositoryJPA;
 
 public class PaymentRepositoryImpl implements PaymentRepository {
@@ -41,8 +42,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
 	@Override
 	public Payment getPayment(PaymentId id) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.converter.parseEntityToDomain(repositoryJPA.getById(new PaymentEntityId(id.getNumber(),
+				id.getWorkOrderId(), id.getBudgetId())));
 	}
-
 }
