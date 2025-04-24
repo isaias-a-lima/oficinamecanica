@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.workorders.payments.application.usecases;
 
+import com.ikservices.oficinamecanica.workorders.payments.application.enumerates.PaymentStateEnum;
 import com.ikservices.oficinamecanica.workorders.payments.application.gateways.PaymentRepository;
 import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 
@@ -13,7 +14,7 @@ public class ListPaymentsByDuePeriod {
         this.repository = repository;
     }
 
-    public List<Payment> execute(Long workshopId, LocalDate dueDateBegin, LocalDate dueDateEnd) {
-        return  this.repository.listPaymentsByDuePeriod(workshopId, dueDateBegin, dueDateEnd);
+    public List<Payment> execute(Long workshopId, LocalDate dueDateBegin, LocalDate dueDateEnd, PaymentStateEnum paymentState) {
+        return  this.repository.listPaymentsByDuePeriod(workshopId, dueDateBegin, dueDateEnd, paymentState);
     }
 }
