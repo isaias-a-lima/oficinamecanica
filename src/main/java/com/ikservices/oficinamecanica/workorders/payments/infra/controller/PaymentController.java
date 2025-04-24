@@ -20,10 +20,12 @@ import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
+import com.ikservices.oficinamecanica.commons.utils.DateUtil;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.payables.infra.PayableConstant;
 import com.ikservices.oficinamecanica.payables.infra.controller.PayableDTO;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
+import com.ikservices.oficinamecanica.workorders.payments.application.enumerates.PaymentStateEnum;
 import com.ikservices.oficinamecanica.workorders.payments.application.usecases.GetPayment;
 import com.ikservices.oficinamecanica.workorders.payments.application.usecases.ListOverduePayments;
 import com.ikservices.oficinamecanica.workorders.payments.application.usecases.ListPayments;
@@ -122,9 +124,10 @@ public class PaymentController {
 	
 	@GetMapping("list/dueperiod")
 	public ResponseEntity<IKResponse<PaymentDTO>> listPaymentsByDuePeriod(@RequestParam(name = "workshopId") Long workshopId,
-			@RequestParam(name = "startDate") LocalDate startDate, @RequestParam(name = "endDate") LocalDate endDate) {
+			@RequestParam(name = "startDate") String startDate, @RequestParam(name = "endDate") String endDate, @RequestParam(name = "paymentState") PaymentStateEnum paymentState) {
 		try {
-			List<PaymentDTO> paymentDTOList = converter.parseDomainToResponseList(listPaymentsByDuePeriod.execute(workshopId, startDate, endDate));
+			List<PaymentDTO> paymentDTOList = converter.parseDomainToResponseList(listPaymentsByDuePeriod.execute(workshopId, DateUtil.parseToLocalDate(startDate),
+					DateUtil.parseToLocalDate(endDate), paymentState));
 		
 			return ResponseEntity.ok(IKResponse.<PaymentDTO>build().body(paymentDTOList));
 		}catch(IKException ike) {

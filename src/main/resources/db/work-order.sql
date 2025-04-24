@@ -105,3 +105,17 @@ VALUES (1, 1, 1, '2025-04-01', 100, 1, 'teste', null);
 
 --2025-04-16 18:03 - Brazil - Mateus Lima - Update duedate in payments.
 UPDATE PAYMENTS SET duedate = '2025-04-20' WHERE paynumber = 1;
+
+--2025-04-24 16:13 - Brazil - Mateus Lima - Insert into payments.
+INSERT INTO PAYMENTS (paynumber, workorderid, budgetid, duedate, payvalue, paytype, note, paydate)
+VALUES (4, 1, 1, '2025-04-23', 100, 1, 'teste', '2025-04-24');
+
+--2025-04-24 16:53 - Brazil - Mateus Lima - Insert into payments.
+INSERT INTO PAYMENTS (paynumber, workorderid, budgetid, duedate, payvalue, paytype, note, paydate)
+VALUES (5, 1, 1, '2025-04-30', 100, 1, 'teste', '2025-04-07');
+
+INSERT INTO PAYMENTS (paynumber, workorderid, budgetid, duedate, payvalue, paytype, note, paydate)
+VALUES (6, 1, 1, '2025-05-10', 100, 1, 'teste', null);
+
+INSERT INTO PAYMENTS (paynumber, workorderid, budgetid, duedate, payvalue, paytype, note, paydate)
+VALUES (7, 1, 1, '2025-05-17', 100, 1, 'teste', '2025-05-11');

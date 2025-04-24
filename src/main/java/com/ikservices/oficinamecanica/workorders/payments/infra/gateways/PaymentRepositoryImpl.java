@@ -6,6 +6,7 @@ import java.util.List;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
 import com.ikservices.oficinamecanica.workorders.infra.WorkOrderConverter;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntityId;
+import com.ikservices.oficinamecanica.workorders.payments.application.enumerates.PaymentStateEnum;
 import com.ikservices.oficinamecanica.workorders.payments.application.gateways.PaymentRepository;
 import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 import com.ikservices.oficinamecanica.workorders.payments.domain.PaymentId;
@@ -35,8 +36,8 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 	}
 
 	@Override
-	public List<Payment> listPaymentsByDuePeriod(Long workshopId, LocalDate dueDateBegin, LocalDate dueDateEnd) {
-		return this.converter.parseEntityToDomainList(repositoryJPA.listPaymentsByDuePeriod(workshopId, dueDateBegin, dueDateEnd));
+	public List<Payment> listPaymentsByDuePeriod(Long workshopId, LocalDate dueDateBegin, LocalDate dueDateEnd, PaymentStateEnum paymentState) {
+		return this.converter.parseEntityToDomainList(repositoryJPA.listPaymentsByDuePeriod(workshopId, dueDateBegin, dueDateEnd, paymentState.toString()));
 	}
 
 	@Override
