@@ -124,10 +124,10 @@ public class PaymentController {
 	
 	@GetMapping("list/dueperiod")
 	public ResponseEntity<IKResponse<PaymentDTO>> listPaymentsByDuePeriod(@RequestParam(name = "workshopId") Long workshopId,
-			@RequestParam(name = "startDate") String startDate, @RequestParam(name = "endDate") String endDate, @RequestParam(name = "paymentState") PaymentStateEnum paymentState) {
+			@RequestParam(name = "startDate") String startDate, @RequestParam(name = "endDate") String endDate, @RequestParam(name = "paymentState") Integer paymentState) {
 		try {
 			List<PaymentDTO> paymentDTOList = converter.parseDomainToResponseList(listPaymentsByDuePeriod.execute(workshopId, DateUtil.parseToLocalDate(startDate),
-					DateUtil.parseToLocalDate(endDate), paymentState));
+					DateUtil.parseToLocalDate(endDate), PaymentStateEnum.findByIndex(paymentState)));
 		
 			return ResponseEntity.ok(IKResponse.<PaymentDTO>build().body(paymentDTOList));
 		}catch(IKException ike) {

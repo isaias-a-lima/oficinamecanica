@@ -119,3 +119,13 @@ VALUES (6, 1, 1, '2025-05-10', 100, 1, 'teste', null);
 
 INSERT INTO PAYMENTS (paynumber, workorderid, budgetid, duedate, payvalue, paytype, note, paydate)
 VALUES (7, 1, 1, '2025-05-17', 100, 1, 'teste', '2025-05-11');
+
+--2025-04-25 18.00 - Portugal - Isaias Lima - Synchronization between work order and payment tables.
+insert into payments (paynumber, workorderid, budgetid, duedate, payvalue, paytype)
+select 1, wo.workorderid, wo.budgetid, curdate() , wo.amount, 0
+from work_orders wo
+where not exists (
+	select 1 from payments p
+	where p.workorderid = wo.workorderid
+	and p.budgetid = wo.budgetid
+);

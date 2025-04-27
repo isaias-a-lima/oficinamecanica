@@ -61,9 +61,18 @@ public class WorkOrderEndingValidations implements IWorkOrderBusiness {
                 auxValue = auxValue.add(paymentValue);
 
                 list.add(payment);
-
             }
+
+            return list;
         }
+
+        //If a payQty value was not defined, a unique payment will be defined.
+        Payment payment = new Payment();
+        payment.setId(new PaymentId(1, workOrder.getId().getWorkOrderId(), workOrder.getId().getBudgetId()));
+        payment.setDueDate(LocalDate.now());
+        payment.setPaymentValue(workOrder.getAmount());
+
+        list.add(payment);
 
         return list;
     }
