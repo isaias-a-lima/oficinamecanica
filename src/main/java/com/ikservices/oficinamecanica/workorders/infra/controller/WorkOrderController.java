@@ -193,11 +193,11 @@ public class WorkOrderController {
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
-					IKResponse.<WorkOrderResponseDTO>build().body(converter.parseResponseDTO(workOrder)).addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+					IKResponse.<WorkOrderResponseDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-					IKResponse.<WorkOrderResponseDTO>build().body(converter.parseResponseDTO(workOrder)).addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(WorkOrderConstant.UPDATE_ERROR_MESSAGE)));
+					IKResponse.<WorkOrderResponseDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(WorkOrderConstant.UPDATE_ERROR_MESSAGE)));
 		}
 	}
 }
