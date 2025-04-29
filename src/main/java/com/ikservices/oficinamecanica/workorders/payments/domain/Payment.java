@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.workorders.payments.domain;
 
+import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(of = "id")
 public class Payment {
     private PaymentId id;
+    private WorkOrder workOrder;
     private LocalDate dueDate;
     private BigDecimal paymentValue;
     private PaymentTypeEnum paymentType;

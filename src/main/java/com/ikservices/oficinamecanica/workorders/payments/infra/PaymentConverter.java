@@ -3,18 +3,26 @@ package com.ikservices.oficinamecanica.workorders.payments.infra;
 import com.ikservices.oficinamecanica.commons.generics.IKConverter;
 import com.ikservices.oficinamecanica.commons.utils.DateUtil;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
+import com.ikservices.oficinamecanica.workorders.infra.WorkOrderConverter;
 import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 import com.ikservices.oficinamecanica.workorders.payments.domain.PaymentId;
 import com.ikservices.oficinamecanica.workorders.payments.domain.PaymentTypeEnum;
 import com.ikservices.oficinamecanica.workorders.payments.infra.dto.PaymentDTO;
 import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentEntity;
 import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentEntityId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
 @Component
 public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEntity, PaymentDTO> {
+
+    @Autowired
+    @Lazy
+    private WorkOrderConverter workOrderConverter;
+
     @Override
     public Payment parseRequestToDomain(PaymentDTO request) {
         Payment domain = null;
@@ -52,6 +60,11 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
         if (Objects.nonNull(entity)) {
             domain = new Payment();
             domain.setId(new PaymentId(entity.getId().getNumber(), entity.getId().getWorkOrderId(), entity.getId().getBudgetId()));
+            if (Objects.nonNull(entity.getWorkOrder())) {
+                //avoid stackOverFlowError
+                entity.getWorkOrder().setPayments(null);
+                domain.setWorkOrder(workOrderConverter.parseWorkOrder(entity.getWorkOrder()));
+            }
             domain.setDueDate(entity.getDueDate());
             domain.setPaymentValue(entity.getPayValue());
             domain.setPaymentType(Objects.nonNull(entity.getPaymentType()) ? entity.getPaymentType() : PaymentTypeEnum.NONE);
@@ -68,6 +81,7 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
             dto = new PaymentDTO();
             dto.setNumber(domain.getId().getNumber());
             dto.setWorkOrderId(domain.getId().getWorkOrderId());
+            dto.setWorkOrder(Objects.nonNull(domain.getWorkOrder()) ? workOrderConverter.parseResponseDTO(domain.getWorkOrder()) : null);
             dto.setBudgetId(domain.getId().getBudgetId());
             dto.setDueDate(DateUtil.parseToString(domain.getDueDate()));
             dto.setPayValue(NumberUtil.parseStringMoney(domain.getPaymentValue()));
