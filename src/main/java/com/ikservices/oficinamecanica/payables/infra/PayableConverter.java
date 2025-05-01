@@ -41,7 +41,7 @@ public class PayableConverter extends IKConverter<PayableDTO, Payable, PayableEn
 			payable.setPayDate(Objects.nonNull(dto.getPayDate()) 
 					&& !dto.getPayDate().isEmpty() ? 
 					LocalDate.parse(dto.getPayDate()) : null);
-			payable.setCategory(categoryConverter.parseRequestToDomain(dto.getCategoryDTO()));
+			payable.setCategory(categoryConverter.parseRequestToDomain(dto.getCategory()));
 		}
 		
 		return payable;
@@ -107,7 +107,7 @@ public class PayableConverter extends IKConverter<PayableDTO, Payable, PayableEn
 					domain.getPayValue().toString() : null);
 			dto.setPayDate(Objects.nonNull(domain.getPayDate()) ?
 					domain.getPayDate().toString() : null);
-			dto.setCategoryDTO(categoryConverter.parseDomainToResponse(domain.getCategory()));
+			dto.setCategory(categoryConverter.parseDomainToResponse(domain.getCategory()));
 		}
 		
 		return dto;

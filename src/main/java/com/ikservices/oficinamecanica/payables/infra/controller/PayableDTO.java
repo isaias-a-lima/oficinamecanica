@@ -20,5 +20,5 @@ public class PayableDTO {
 	private String dueDate;
 	private String payValue;
 	private String payDate;
-	private CategoryDTO categoryDTO;
+	private CategoryDTO category;
 }

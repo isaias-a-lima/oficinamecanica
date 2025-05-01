@@ -1,10 +1,12 @@
 package com.ikservices.oficinamecanica.payables.infra.gateways;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import com.ikservices.oficinamecanica.commons.exception.IKException;
+import com.ikservices.oficinamecanica.payables.application.enumerates.PayableStateEnum;
 import com.ikservices.oficinamecanica.payables.application.gateways.PayableRepository;
 import com.ikservices.oficinamecanica.payables.domain.Payable;
 import com.ikservices.oficinamecanica.payables.domain.PayableId;
@@ -23,13 +25,12 @@ public class PayableRepositoryImpl implements PayableRepository {
 	}
 	
 	@Override
-	public List<Payable> listPayables(Long workshopId) {
-		return this.converter.parseEntityToDomainList(repositoryJPA.findAllByWorkshopId(workshopId));
+	public List<Payable> listPayables(Long workshopId, LocalDate startDate, LocalDate endDate, PayableStateEnum payableState) {
+		return this.converter.parseEntityToDomainList(repositoryJPA.findAllByWorkshopId(workshopId, startDate, endDate, payableState.toString()));
 	}
 	@Override
 	public Payable getPayable(PayableId id) {
-		return this.converter.parseEntityToDomain(repositoryJPA.getById(new PayableEntityId(id.getPayableId(),
-				id.getWorkshopId())));
+		return this.converter.parseEntityToDomain(repositoryJPA.getById(new PayableEntityId(id.getPayableId(), id.getWorkshopId())));
 	}
 	
 	@Override

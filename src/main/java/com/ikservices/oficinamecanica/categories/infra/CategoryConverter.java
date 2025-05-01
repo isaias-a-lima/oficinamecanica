@@ -2,8 +2,8 @@ package com.ikservices.oficinamecanica.categories.infra;
 
 import java.util.Objects;
 
-import javax.persistence.Entity;
-
+import com.ikservices.oficinamecanica.categories.domain.CategoryTypeEnum;
+import com.ikservices.oficinamecanica.commons.utils.DateUtil;
 import org.springframework.stereotype.Component;
 
 import com.ikservices.oficinamecanica.categories.domain.Category;
@@ -24,9 +24,9 @@ public class CategoryConverter extends IKConverter<CategoryDTO, Category, Catego
 			domain = new Category();
 			
 			domain.setId(new CategoryId(request.getCategoryId(), request.getWorkshopId()));
-			domain.setCreationDate(request.getCreationDate());
+			domain.setCreationDate(DateUtil.parseToLocalDate(request.getCreationDate()));
 			domain.setDescription(request.getDescription());
-			domain.setCategType(request.getCategType());
+			domain.setCategType(CategoryTypeEnum.findByIndex(request.getCategoryType()));
 			domain.setActivated(request.isActivated());
 		}
 		
@@ -76,9 +76,9 @@ public class CategoryConverter extends IKConverter<CategoryDTO, Category, Catego
 			
 			dto.setCategoryId(domain.getId().getCategoryId());
 			dto.setWorkshopId(domain.getId().getWorkshopId());
-			dto.setCreationDate(domain.getCreationDate());
+			dto.setCreationDate(DateUtil.parseToString(domain.getCreationDate()));
 			dto.setDescription(domain.getDescription());
-			dto.setCategType(domain.getCategType());
+			dto.setCategoryType(Objects.nonNull(domain.getCategType()) ? domain.getCategType().ordinal(): null);
 			dto.setActivated(domain.getActivated());
 		}
 		
