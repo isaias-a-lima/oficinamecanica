@@ -21,4 +21,5 @@ public class PayableDTO {
 	private String payValue;
 	private String payDate;
 	private CategoryDTO category;
+	private String note;
 }

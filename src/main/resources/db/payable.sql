@@ -9,6 +9,7 @@ duedate DATE NOT NULL COMMENT "Payable due date",
 payvalue DECIMAL(12, 2) NOT NULL COMMENT "Pay value",
 paydate DATE NULL COMMENT "Pay date",
 categoryid INT COMMENT "Category identification number",
+note VARCHAR(255) DEFAULT NULL COMMENT 'Payable notes',
 PRIMARY KEY(id, workshopid),
 CONSTRAINT fk_workshops_payable FOREIGN KEY (workshopid) REFERENCES workshops(workshopid),
 CONSTRAINT fk__mov_category__payable FOREIGN KEY (categoryid) REFERENCES mov_category(categoryid)
@@ -28,12 +29,12 @@ CONSTRAINT fk_workshops_mov_category FOREIGN KEY (workshopid) REFERENCES worksho
 
 --2025-02-28 17:05 - Brazil - Mateus Lima - insert into mov_category.
 INSERT INTO MOV_CATEGORY(categoryid, workshopid, creation, description,
-categtype, activated) VALUES(1, 1, "2025-02-28", "Contas de consumo",
+categtype, activated) VALUES(1, 1, "2025-02-28", "Conta de consumo",
 1, true);
 
 --2025-02-28 17:13 - Brazil - Mateus Lima - insert into mov_category.
 INSERT INTO MOV_CATEGORY(categoryid, workshopid, creation, description,
-categtype, activated) VALUES(2, 1, "2025-02-28", "Contas fixas",
+categtype, activated) VALUES(2, 1, "2025-02-28", "Conta fixa",
 1, true);
 
 --2025-03-25 17:00 - Brazil - Mateus Lima - insert into payable.

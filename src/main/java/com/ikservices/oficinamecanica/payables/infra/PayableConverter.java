@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,11 +38,12 @@ public class PayableConverter extends IKConverter<PayableDTO, Payable, PayableEn
 			payable.setDueDate(Objects.nonNull(dto.getDueDate()) 
 					&& !dto.getDueDate().isEmpty() ? 
 					LocalDate.parse(dto.getDueDate()) : null);
-			payable.setPayValue(Objects.nonNull(dto.getPayValue()) ? new BigDecimal(dto.getPayValue()) : null);
+			payable.setPayValue(NumberUtil.parseBigDecimal(dto.getPayValue()));
 			payable.setPayDate(Objects.nonNull(dto.getPayDate()) 
 					&& !dto.getPayDate().isEmpty() ? 
 					LocalDate.parse(dto.getPayDate()) : null);
 			payable.setCategory(categoryConverter.parseRequestToDomain(dto.getCategory()));
+			payable.setNote(dto.getNote());
 		}
 		
 		return payable;
@@ -63,6 +65,7 @@ public class PayableConverter extends IKConverter<PayableDTO, Payable, PayableEn
 			entity.setPayValue(domain.getPayValue());
 			entity.setPayDate(domain.getPayDate());
 			entity.setCategoryId(domain.getCategory().getId().getCategoryId());
+			entity.setNote(domain.getNote());
 		}
 		
 		return entity;
@@ -83,6 +86,7 @@ public class PayableConverter extends IKConverter<PayableDTO, Payable, PayableEn
 			payable.setPayValue(entity.getPayValue());
 			payable.setPayDate(entity.getPayDate());
 			payable.setCategory(categoryConverter.parseEntityToDomain(entity.getCategory()));
+			payable.setNote(entity.getNote());
 		}
 		
 		return payable;
@@ -108,6 +112,7 @@ public class PayableConverter extends IKConverter<PayableDTO, Payable, PayableEn
 			dto.setPayDate(Objects.nonNull(domain.getPayDate()) ?
 					domain.getPayDate().toString() : null);
 			dto.setCategory(categoryConverter.parseDomainToResponse(domain.getCategory()));
+			dto.setNote(domain.getNote());
 		}
 		
 		return dto;
