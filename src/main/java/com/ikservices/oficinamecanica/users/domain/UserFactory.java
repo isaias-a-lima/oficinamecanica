@@ -10,7 +10,7 @@ public class UserFactory {
     }
 
     public UserFactory ativo() {
-        this.user.ativar();
+        this.user.setAtivo(true);
         return this;
     }
 

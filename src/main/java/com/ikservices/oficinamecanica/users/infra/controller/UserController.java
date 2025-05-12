@@ -1,8 +1,10 @@
 package com.ikservices.oficinamecanica.users.infra.controller;
 
 import com.ikservices.oficinamecanica.commons.constants.Constants;
+import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
+import com.ikservices.oficinamecanica.commons.vo.CPFVO;
 import com.ikservices.oficinamecanica.users.application.gateways.PasswordHandler;
 import com.ikservices.oficinamecanica.users.application.usecases.*;
 import com.ikservices.oficinamecanica.users.domain.User;
@@ -73,7 +75,9 @@ public class UserController {
     public ResponseEntity<IKResponse<UserResponse>> save(@RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
 
         try {
-            User newUser = new User(request.getCpf(), request.getName(), request.getEmail(), passwordHandler.encode(request.getPassword()), request.getActive());
+            CPFVO cpfvo = new CPFVO(request.getCpf());
+
+            User newUser = new User(cpfvo.getCpf(), request.getName(), request.getEmail(), passwordHandler.encode(request.getPassword()), request.getActive());
 
             User userSaved = cadastrarUsusario.execute(newUser);
 
@@ -81,6 +85,12 @@ public class UserController {
 
             return ResponseEntity.created(uri).body(IKResponse.<UserResponse>build().body(UserResponse.parse(userSaved))
                     .addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(UserConstants.SAVE_SUCCESS_MESSAGE)));
+
+        } catch (IKException ike) {
+            LOGGER.warn(ike.getMessage(), ike);
+            int httpCode = Integer.parseInt(ike.getIkMessage().getCode()) > 100 ? Integer.parseInt(ike.getIkMessage().getCode()) : HttpStatus.EXPECTATION_FAILED.value();
+            return ResponseEntity.status(httpCode).body(IKResponse.<UserResponse>build().addMessage(ike.getIkMessage().getCode(),IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
@@ -118,11 +128,17 @@ public class UserController {
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<IKResponse<UserResponse>> getUser(@PathVariable("cpf") Long cpf) {
+    public ResponseEntity<IKResponse<UserResponse>> getUser(@PathVariable("cpf") String cpf) {
         try {
-            User user = obterUsuario.execute(cpf);
+            CPFVO cpfvo = new CPFVO(cpf);
+            User user = obterUsuario.execute(cpfvo.getCpf());
             return ResponseEntity.ok(IKResponse.<UserResponse>build().body(UserResponse.parse(user)));
+        } catch (IKException ike) {
+            LOGGER.warn(ike.getMessage(), ike);
+            int httpCode = Integer.parseInt(ike.getIkMessage().getCode()) > 100 ? Integer.parseInt(ike.getIkMessage().getCode()) : HttpStatus.EXPECTATION_FAILED.value();
+            return ResponseEntity.status(httpCode).body(IKResponse.<UserResponse>build().addMessage(ike.getIkMessage().getCode(),IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     IKResponse.<UserResponse>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(UserConstants.GET_ERROR_MESSAGE)));
         }
