@@ -93,8 +93,13 @@ public class UserController {
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    IKResponse.<UserResponse>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(UserConstants.SAVE_ERROR_MESSAGE)));
+            if (e.getMessage().contains("is marked non-null but is null")) {
+                String[] str = e.getMessage().split(" ");
+                String fieldName = str[0].substring(0, 1).toUpperCase() + str[0].substring(1);
+                String msg = String.format(UserConstants.USER_MANDATORY_FIELD_MESSAGE, fieldName);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(IKResponse.<UserResponse>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING, msg));
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<UserResponse>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(UserConstants.SAVE_ERROR_MESSAGE)));
         }
     }
 

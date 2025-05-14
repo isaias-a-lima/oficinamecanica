@@ -40,13 +40,21 @@ public class UserRepositoryJPAImpl implements UserRepository {
 
     @Override
     public User createUser(User user) {
+        Optional<UserEntity> optional = repository.findById(user.getCpf());
+        if (optional.isPresent()) {
+            throw new IKException(new IKMessage(Constants.IK_HTTP_ALREADY_EXISTS, IKMessageType.WARNING.getCode(), UserConstants.SAVE_ERROR_ALREADY_EXISTS_MESSAGE));
+        }
         UserEntity saved = repository.save(converter.toEntity(user));
         return converter.toModel(saved);
     }
 
     @Override
     public User updateUser(User user) {
-        UserEntity userEntity = repository.findByCpf(user.getCpf());
+        Optional<UserEntity> optional = repository.findById(user.getCpf());
+        if (!optional.isPresent()) {
+            throw new IKException(new IKMessage(Constants.IK_HTTP_NOT_FOUND_CODE, IKMessageType.WARNING.getCode(), UserConstants.USER_TO_UPDATE_NOT_FOUND_MESSAGE));
+        }
+        UserEntity userEntity = optional.get();
         userEntity.atualizar(converter.toEntity(user));
         return converter.toModel(userEntity);
     }
@@ -56,7 +64,7 @@ public class UserRepositoryJPAImpl implements UserRepository {
         Optional<UserEntity> optional = repository.findById(cpf);
 
         if(!optional.isPresent()) {
-            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), environment.getProperty(UserConstants.GET_ERROR_MESSAGE)));
+            throw new IKException(new IKMessage(Constants.IK_HTTP_NOT_FOUND_CODE, IKMessageType.WARNING.getCode(), UserConstants.USER_NOT_FOUND_MESSAGE));
         }
 
         return converter.toModel(optional.get());

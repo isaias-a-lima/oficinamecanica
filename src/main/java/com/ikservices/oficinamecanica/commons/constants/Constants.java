@@ -20,6 +20,8 @@ public class Constants {
     public static final String IK_HTTP_BAD_REQUEST_CODE = "400";
     public static final String IK_HTTP_NOT_FOUND_CODE = "404";
 
+    public static final String IK_HTTP_ALREADY_EXISTS = "409";
+
     @Autowired
     private Environment environment;
 
