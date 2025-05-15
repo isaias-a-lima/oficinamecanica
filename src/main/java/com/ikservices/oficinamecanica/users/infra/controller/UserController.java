@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
@@ -72,7 +73,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<IKResponse<UserResponse>> save(@RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<IKResponse<UserResponse>> save(@Valid @RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
 
         try {
             CPFVO cpfvo = new CPFVO(request.getCpf());
