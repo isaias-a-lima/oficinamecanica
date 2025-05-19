@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.users.infra.controller.requests;
 
+import com.ikservices.oficinamecanica.commons.constants.IKConstants;
 import com.ikservices.oficinamecanica.users.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,13 +21,13 @@ public class CadastroUserRequest {
     @NotNull(message = "Nome não deve ser nulo")
     @NotBlank(message = "Nome não deve estar em branco")
     @Size(min = 2, max = 100, message = "Nome deve ter de 2 a 100 caracteres")
-    @Pattern(regexp = "[a-zA-ZáàãâçéêíôõúüÃÂÁÀÉÊÕÔÚÜ]+", message = "Nome deve conter apenas caracteres latinos comuns")
+    @Pattern(regexp = "[a-zA-ZáàãâçéêíôõúüÃÂÁÀÉÊÕÔÚÜ ]+", message = "Nome deve conter apenas caracteres latinos comuns")
     private String name;
 
     @NotNull(message = "E-mail não deve ser nulo")
     @NotBlank(message = "E-mail não deve estar em branco")
     @Size(min = 2, max = 100, message = "E-mail deve ter de 2 a 100 caracteres")
-    @Pattern(regexp = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "E-mail inválido.")
+    @Pattern(regexp = IKConstants.EMAIL_PATTERN, message = "E-mail inválido.")
     private String email;
 
     @Setter
