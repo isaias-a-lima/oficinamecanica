@@ -11,7 +11,11 @@ public class IKConstants {
     public static final String IK_HTTP_NOT_FOUND_CODE = "404";
     public static final String IK_HTTP_ALREADY_EXISTS = "409";
     public static final String EMAIL_PATTERN = "^[^.]+[a-zA-Z0-9-_.]*[a-zA-Z-_]+[a-zA-Z0-9-_]*@[a-zA-Z0-9]+\\.[a-zA-Z]{2,}$";
-
-    public static String RESOURCE_NOT_FOUND_MESSAGE;
-    public static String RESOURCE_TO_UPDATE_NOT_FOUND_MESSAGE;
+    public static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{4,}$";
+    public static final String PASSWORD_LATIN_PATTERN = "^[a-zA-Z0-9@$!%*?&#-_]+$";
+    public static String PASSWORD_INVALID_MESSAGE = "Invalid password";
+    public static String PASSWORD_NO_LATIN_MESSAGE = "Password must have latin letters";
+    public static String PASSWORD_NULL_OR_EMPTY_MESSAGE = "Password cannot be null or empty";
+    public static String RESOURCE_NOT_FOUND_MESSAGE = "Resource not found";
+    public static String RESOURCE_TO_UPDATE_NOT_FOUND_MESSAGE = "Resource to update not found";
 }

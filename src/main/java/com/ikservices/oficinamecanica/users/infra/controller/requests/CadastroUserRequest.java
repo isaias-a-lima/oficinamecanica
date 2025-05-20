@@ -33,6 +33,8 @@ public class CadastroUserRequest {
     @Setter
     @NotNull(message = "Senha não deve ser nulo")
     @NotBlank(message = "Senha não deve estar em branco")
+    @Pattern(regexp = IKConstants.PASSWORD_LATIN_PATTERN, message = "Senha deve conter apenas caracteres latino")
+    @Pattern(regexp = IKConstants.PASSWORD_PATTERN, message = "Senha inválida.")
     @Size(min = 4, max = 8, message = "Senha deve ter de 4 a 8 caracteres")
     private String password;
 
