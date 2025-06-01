@@ -3,23 +3,17 @@ package com.ikservices.oficinamecanica.users.domain;
 import com.ikservices.oficinamecanica.commons.vo.CPFVO;
 import lombok.*;
 
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "cpf")
 public class User {
-    @Getter
+
     private Long cpf;
-    @Getter
-    @Setter
     private String nome;
-    @Getter
-    @Setter
     private String email;
-    @Getter
-    @Setter
     private String senha;
-    @Getter
-    @Setter
     private boolean ativo;
 
     public User(Long cpf, String nome, String email, String senha) {
@@ -30,7 +24,4 @@ public class User {
         this.ativo = false;
     }
 
-    public void setCpf(Long cpf) {
-        this.cpf = cpf;
-    }
 }

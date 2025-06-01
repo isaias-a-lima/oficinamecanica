@@ -55,7 +55,7 @@ public class UserRepositoryJPAImpl implements UserRepository {
             throw new IKException(new IKMessage(Constants.IK_HTTP_NOT_FOUND_CODE, IKMessageType.WARNING.getCode(), UserConstants.USER_TO_UPDATE_NOT_FOUND_MESSAGE));
         }
         UserEntity userEntity = optional.get();
-        userEntity.atualizar(converter.toEntity(user));
+        userEntity.update(converter.toEntity(user));
         return converter.toModel(userEntity);
     }
 
