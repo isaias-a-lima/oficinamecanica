@@ -11,10 +11,7 @@ import com.ikservices.oficinamecanica.users.domain.User;
 import com.ikservices.oficinamecanica.users.infra.UserConverter;
 import com.ikservices.oficinamecanica.users.infra.config.TokenService;
 import com.ikservices.oficinamecanica.users.infra.constants.UserConstants;
-import com.ikservices.oficinamecanica.users.infra.controller.requests.CadastroUserRequest;
-import com.ikservices.oficinamecanica.users.infra.controller.requests.LoginUserRequest;
-import com.ikservices.oficinamecanica.users.infra.controller.requests.LoginUserResponse;
-import com.ikservices.oficinamecanica.users.infra.controller.requests.UserResponse;
+import com.ikservices.oficinamecanica.users.infra.controller.requests.*;
 import com.ikservices.oficinamecanica.users.infra.persistence.UserEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
@@ -72,7 +70,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<IKResponse<UserResponse>> save(@RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<IKResponse<UserResponse>> save(@Valid @RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
 
         try {
             CPFVO cpfvo = new CPFVO(request.getCpf());
@@ -105,14 +103,17 @@ public class UserController {
 
     @PutMapping
     @Transactional
-    public ResponseEntity<IKResponse<UserResponse>> update(@RequestBody CadastroUserRequest request) {
+    public ResponseEntity<IKResponse<UserResponse>> update(@Valid @RequestBody UpdateUserRequest request) {
         try {
-            if (Objects.nonNull(request.getPassword()) && !request.getPassword().isEmpty()) {
-                request.setPassword(passwordHandler.encode(request.getPassword()));
-            }
-            User updatedUser = updateUser.execute(request.toUser());
+            User updatedUser = updateUser.execute(request.getNewUser(), request.getOldUser());
             return  ResponseEntity.ok(IKResponse.<UserResponse>build().body(UserResponse.parse(updatedUser))
                     .addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(UserConstants.UPDATE_SUCCESS_MESSAGE)));
+
+        } catch (IKException ike) {
+            LOGGER.warn(ike.getMessage(), ike);
+            int httpCode = Integer.parseInt(ike.getIkMessage().getCode()) > 100 ? Integer.parseInt(ike.getIkMessage().getCode()) : HttpStatus.EXPECTATION_FAILED.value();
+            return ResponseEntity.status(httpCode).body(IKResponse.<UserResponse>build().addMessage(ike.getIkMessage().getCode(),IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(

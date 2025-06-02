@@ -14,6 +14,12 @@ import java.util.Locale;
 @PropertySource(name = "autorepairshop.properties", value = "classpath:autorepairshop.properties", encoding = "UTF-8")
 public class PropertyConfig {
 
+    @Value("password.null.or.empty.message")
+    private String passwordNullOrEmptyMessage;
+    @Value("password.invalid.message")
+    private String passwordInvalidMessage;
+    @Value("password.no.latin.message")
+    private String passwordNoLatinMessage;
     @Value("resource.not.found.message")
     private String resourceNotFoundMessage;
     @Value("resource.to.update.not.found.message")
@@ -21,6 +27,9 @@ public class PropertyConfig {
 
     @PostConstruct
     private void loadProperties() {
+        IKConstants.PASSWORD_NULL_OR_EMPTY_MESSAGE = this.passwordNullOrEmptyMessage;
+        IKConstants.PASSWORD_INVALID_MESSAGE = this.passwordInvalidMessage;
+        IKConstants.PASSWORD_NO_LATIN_MESSAGE = this.passwordNoLatinMessage;
         IKConstants.RESOURCE_NOT_FOUND_MESSAGE = this.resourceNotFoundMessage;
         IKConstants.RESOURCE_TO_UPDATE_NOT_FOUND_MESSAGE = this.resourceToUpdateNotFoundMessage;
     }

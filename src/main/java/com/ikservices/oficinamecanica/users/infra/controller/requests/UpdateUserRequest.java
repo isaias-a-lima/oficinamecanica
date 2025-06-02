@@ -1,7 +1,9 @@
 package com.ikservices.oficinamecanica.users.infra.controller.requests;
 
+import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.constants.IKConstants;
 import com.ikservices.oficinamecanica.users.domain.User;
+import com.ikservices.oficinamecanica.users.infra.constants.UserConstants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,10 +13,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-@Getter
-@AllArgsConstructor
-public class CadastroUserRequest {
 
+@Getter
+@Setter
+public class UpdateUserRequest {
     @NotNull(message = "CPF não deve ser nulo")
     private Long cpf;
 
@@ -30,18 +32,14 @@ public class CadastroUserRequest {
     @Pattern(regexp = IKConstants.EMAIL_PATTERN, message = "E-mail inválido.")
     private String email;
 
-    @Setter
-    @NotNull(message = "Senha não deve ser nulo")
-    @NotBlank(message = "Senha não deve estar em branco")
-    @Pattern(regexp = IKConstants.PASSWORD_LATIN_PATTERN, message = "Senha deve conter apenas caracteres latino")
-    @Pattern(regexp = IKConstants.PASSWORD_PATTERN, message = "Senha inválida.")
-    @Size(min = 4, max = 8, message = "Senha deve ter de 4 a 8 caracteres")
-    private String password;
+    @NotNull(message = "Os dados antigos não podem ser nulos")
+    private UserResponse oldUser;
 
-    @NotNull(message = "Ativo não deve ser nulo")
-    private Boolean active;
+    public User getNewUser() {
+        return new User(cpf, name, email, "", true);
+    }
 
-    public User toUser() {
-        return new User(cpf, name, email, password);
+    public User getOldUser() {
+        return new User(oldUser.getCpf(), oldUser.getName(), oldUser.getEmail(), null, oldUser.isActive());
     }
 }
