@@ -24,7 +24,6 @@ public class CreateBudgetPDF extends PDFTemplateBuilder {
     private final String logo;
     private final String title;
 
-
     public CreateBudgetPDF(String pdfName, String logo, String title) {
         super(pdfName);
         this.logo = logo;
@@ -87,7 +86,6 @@ public class CreateBudgetPDF extends PDFTemplateBuilder {
                 this.addTableWithNoHeaderOrFooter(4, 100, vehicleColumnWiths, vehicleContents);
 
                 //Services table created
-                this.addTitleH4("Serviços");
                 String[][] serviceAndPartHeaderColumns = {
                         {"#", LEFT},
                         {"Descrição", LEFT},
@@ -117,7 +115,11 @@ public class CreateBudgetPDF extends PDFTemplateBuilder {
 
                     x++;
                 }
-                this.addFullTable(serviceAndPartHeaderColumns, serviceColumnWidths, serviceAndPartFooterColumns, serviceItems);
+
+                if (!budget.getServiceItems().isEmpty()) {
+                    this.addTitleH4("Serviços");
+                    this.addFullTable(serviceAndPartHeaderColumns, serviceColumnWidths, serviceAndPartFooterColumns, serviceItems);
+                }
 
                 //Parts table created
                 this.addTitleH4("Peças/Produtos");
@@ -131,7 +133,7 @@ public class CreateBudgetPDF extends PDFTemplateBuilder {
                     partItems[y][3] = "0";
                     partItems[y][4] = partItem.getQuantity().toString();
                     partItems[y][5] = "0";
-                    partItems[y][6] = NumberUtil.parseStringMoney(partItem.getPart().getCost());
+                    partItems[y][6] = NumberUtil.parseStringMoney(partItem.getValue().add(partItem.getServiceCost()));
                     partItems[y][7] = "0";
                     partItems[y][8] = NumberUtil.parseStringPercent(partItem.getDiscount());
                     partItems[y][9] = "0";

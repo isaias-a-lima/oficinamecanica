@@ -21,10 +21,12 @@ import java.util.Map;
 import java.util.Objects;
 
 public class CreateWorkOrderPDF extends PDFTemplateBuilder {
+
     private static final Logger LOGGER = IKLoggerUtil.getLogger(CreateWorkOrderPDF.class);
 
     private final String logo;
     private final String title;
+
     public CreateWorkOrderPDF(String pdfName, String logo, String title) {
         super(pdfName);
         this.logo = logo;
@@ -32,6 +34,7 @@ public class CreateWorkOrderPDF extends PDFTemplateBuilder {
     }
 
     public byte[] execute(WorkOrder workOrder) {
+
         String loggerID = IKLoggerUtil.getLoggerID();
         String json = "";
         LOGGER.info(loggerID + " - " + this.getClass().getName() + ".execute");
@@ -92,7 +95,6 @@ public class CreateWorkOrderPDF extends PDFTemplateBuilder {
 
 
                 //Services table created
-                this.addTitleH4("Serviços");
                 String[][] serviceAndPartHeaderColumns = {
                         {"#", LEFT},
                         {"Descrição", LEFT},
@@ -122,8 +124,11 @@ public class CreateWorkOrderPDF extends PDFTemplateBuilder {
 
                     x++;
                 }
-                this.addFullTable(serviceAndPartHeaderColumns, serviceColumnWidths, serviceAndPartFooterColumns, serviceItems);
 
+                if (!workOrder.getServiceItems().isEmpty()) {
+                    this.addTitleH4("Serviços");
+                    this.addFullTable(serviceAndPartHeaderColumns, serviceColumnWidths, serviceAndPartFooterColumns, serviceItems);
+                }
 
                 //Parts table created
                 this.addTitleH4("Peças/Produtos");
@@ -137,7 +142,7 @@ public class CreateWorkOrderPDF extends PDFTemplateBuilder {
                     partItems[y][3] = "0";
                     partItems[y][4] = partItem.getQuantity().toString();
                     partItems[y][5] = "0";
-                    partItems[y][6] = NumberUtil.parseStringMoney(partItem.getPart().getCost());
+                    partItems[y][6] = NumberUtil.parseStringMoney(partItem.getItemValue().add(partItem.getServiceCost()));
                     partItems[y][7] = "0";
                     partItems[y][8] = NumberUtil.parseStringPercent(partItem.getDiscount());
                     partItems[y][9] = "0";

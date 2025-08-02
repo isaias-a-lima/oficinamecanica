@@ -42,18 +42,24 @@ public class WorkOrderEndingValidations implements IWorkOrderBusiness {
         new WorkOrderEndingValidations().validate(workOrder);
 
         List<Payment> list = new ArrayList<>();
+        int index = workOrder.getPayments().size() + 1;
+        BigDecimal paidValue = workOrder.getPayments().stream().filter(p-> p.getPayDate() != null).map(Payment::getPaymentValue).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal toPay = workOrder.getAmount().subtract(paidValue);
 
         if (Objects.nonNull(workOrder.getPayQty()) && workOrder.getPayQty() > 0) {
-            BigDecimal paymentValue = workOrder.getAmount().divide(new BigDecimal(workOrder.getPayQty()), RoundingMode.HALF_UP);
+            int installments = workOrder.getPayQty() >= index ? workOrder.getPayQty() : workOrder.getPayQty() + workOrder.getPayments().stream().mapToInt(p-> 1).sum();
+            int auxDivValue = installments - (index-1);
+
+            BigDecimal paymentValue = toPay.divide(new BigDecimal(auxDivValue), RoundingMode.HALF_UP);
             BigDecimal auxValue = BigDecimal.ZERO;
 
-            for (int i = 1; i <= workOrder.getPayQty(); i++) {
+            for (int i = index; i <= installments; i++) {
                 Payment payment = new Payment();
                 payment.setId(new PaymentId(i, workOrder.getId().getWorkOrderId(), workOrder.getId().getBudgetId()));
-                payment.setDueDate(i == 1 ? LocalDate.now() : LocalDate.now().plusMonths(i - 1));
+                payment.setDueDate(i == index ? LocalDate.now() : LocalDate.now().plusMonths(i - 1));
 
-                if (i == workOrder.getPayQty()) {
-                    payment.setPaymentValue(workOrder.getAmount().subtract(auxValue));
+                if (i == installments) {
+                    payment.setPaymentValue(toPay.subtract(auxValue));
                 } else {
                     payment.setPaymentValue(paymentValue);
                 }
@@ -68,9 +74,9 @@ public class WorkOrderEndingValidations implements IWorkOrderBusiness {
 
         //If a payQty value was not defined, a unique payment will be defined.
         Payment payment = new Payment();
-        payment.setId(new PaymentId(1, workOrder.getId().getWorkOrderId(), workOrder.getId().getBudgetId()));
+        payment.setId(new PaymentId(index, workOrder.getId().getWorkOrderId(), workOrder.getId().getBudgetId()));
         payment.setDueDate(LocalDate.now());
-        payment.setPaymentValue(workOrder.getAmount());
+        payment.setPaymentValue(toPay);
 
         list.add(payment);
 

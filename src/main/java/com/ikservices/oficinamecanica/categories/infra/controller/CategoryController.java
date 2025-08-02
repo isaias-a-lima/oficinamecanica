@@ -134,7 +134,7 @@ public class CategoryController {
             LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 					IKResponse.<CategoryDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, 
-							environment.getProperty(CategoryConstant.SAVE_SUCCESS_MESSAGE)));
+							environment.getProperty(CategoryConstant.SAVE_ERROR_MESSAGE)));
         }
 	}
 	

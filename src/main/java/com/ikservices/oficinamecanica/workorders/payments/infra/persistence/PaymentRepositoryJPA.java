@@ -11,7 +11,7 @@ import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEnti
 
 public interface PaymentRepositoryJPA extends JpaRepository<PaymentEntity, PaymentEntityId> {
 	@Query("SELECT p FROM PaymentEntity p WHERE p.workOrder.id = :workOrderEntityId")
-	public List<PaymentEntity> findAllByworkOrderId(@Param("workOrderEntityId") WorkOrderEntityId workOrderEntityId);
+	public List<PaymentEntity> findAllByWorkOrderId(@Param("workOrderEntityId") WorkOrderEntityId workOrderEntityId);
 
 	@Query("SELECT p FROM PaymentEntity p WHERE "
 			+ "p.workOrder.budget.vehicle.workshopId = :workshopId "

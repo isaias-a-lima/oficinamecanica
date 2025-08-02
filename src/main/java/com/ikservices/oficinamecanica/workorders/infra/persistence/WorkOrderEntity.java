@@ -13,6 +13,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -174,6 +175,25 @@ public class WorkOrderEntity {
 	//Payments begin
 	public void updatePayments(List<PaymentEntity> newEntityList) {
 
+		for (PaymentEntity oldPayment : this.payments) {
+
+			int index = newEntityList.indexOf(oldPayment);
+			if (index >= 0) {
+				oldPayment.update(newEntityList.get(index));
+			}
+		}
+
+		for (PaymentEntity newPayment : newEntityList) {
+			boolean isToAdd = !this.payments.contains(newPayment);
+
+			if (isToAdd) {
+				this.payments.add(newPayment);
+			}
+
+		}
+
+
+		/*
 		this.payments.removeIf(existingItem ->
 				newEntityList.stream().noneMatch(newEntity -> newEntity.equals(existingItem))
 		);
@@ -191,6 +211,8 @@ public class WorkOrderEntity {
 				this.setNextPaymentNumberId(newEntity);
 			}
 		}
+
+		 */
 
 	}
 

@@ -143,8 +143,7 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 
 	@Override
 	public WorkOrder updatePayments(WorkOrder workOrder) {
-		Optional<WorkOrderEntity> optional = repository.findById(new WorkOrderEntityId(workOrder.getId().getWorkOrderId(),
-				workOrder.getId().getBudgetId()));
+		Optional<WorkOrderEntity> optional = repository.findById(new WorkOrderEntityId(workOrder.getId().getWorkOrderId(), workOrder.getId().getBudgetId()));
 
 		if(optional.isPresent()) {
 			try {
@@ -152,7 +151,9 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
 
 				WorkOrderPaymentsUpdateValidations.verify(workOrder);
 
-				workOrderEntity.updatePayments(converter.parseWorkOrderEntity(workOrder).getPayments());
+				List<PaymentEntity> newPayments = converter.parseWorkOrderEntity(workOrder).getPayments();
+
+				workOrderEntity.updatePayments(newPayments);
 
                 BigDecimal paidValue = BigDecimal.ZERO;
 

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -56,14 +57,19 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
 
     @Override
     public Payment parseEntityToDomain(PaymentEntity entity) {
+        return this.parseEntityToDomain(entity, false);
+    }
+
+    public Payment parseEntityToDomain(PaymentEntity entity, boolean avoidStackOverflow) {
         Payment domain = null;
         if (Objects.nonNull(entity)) {
             domain = new Payment();
             domain.setId(new PaymentId(entity.getId().getNumber(), entity.getId().getWorkOrderId(), entity.getId().getBudgetId()));
-            if (Objects.nonNull(entity.getWorkOrder())) {
+            if (Objects.nonNull(entity.getWorkOrder()) && !avoidStackOverflow) {
                 //avoid stackOverFlowError
-                entity.getWorkOrder().setPayments(null);
-                domain.setWorkOrder(workOrderConverter.parseWorkOrder(entity.getWorkOrder()));
+                //entity.getWorkOrder().setPayments(null);
+                domain.setWorkOrder(workOrderConverter.parseWorkOrder(entity.getWorkOrder(), true));
+                //domain.getWorkOrder().setPayments(null);
             }
             domain.setDueDate(entity.getDueDate());
             domain.setPaymentValue(entity.getPayValue());

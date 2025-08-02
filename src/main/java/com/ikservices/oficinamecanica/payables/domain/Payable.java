@@ -23,4 +23,5 @@ public class Payable {
 	private BigDecimal payValue;
 	private LocalDate payDate;
 	private Category category;
+	private String note;
 }

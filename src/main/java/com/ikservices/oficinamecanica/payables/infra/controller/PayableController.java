@@ -3,6 +3,9 @@ package com.ikservices.oficinamecanica.payables.infra.controller;
 import java.net.URI;
 import java.util.List;
 
+import com.ikservices.oficinamecanica.commons.utils.DateUtil;
+import com.ikservices.oficinamecanica.payables.application.enumerates.PayableStateEnum;
+import com.ikservices.oficinamecanica.workorders.payments.application.enumerates.PaymentStateEnum;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -10,13 +13,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ikservices.oficinamecanica.categories.infra.constants.CategoryConstant;
@@ -48,11 +45,11 @@ public class PayableController {
 	@Lazy
 	private PayableConverter converter;
 	
-	private ListPayable listPayable;
-	private GetPayable getPayable;
-	private SavePayable savePayable;
-	private GetNextPayableId getNextPayableId;
-	private UpdatePayable updatePayable;
+	private final ListPayable listPayable;
+	private final GetPayable getPayable;
+	private final SavePayable savePayable;
+	private final GetNextPayableId getNextPayableId;
+	private final UpdatePayable updatePayable;
 	
 	public PayableController(ListPayable listPayable, GetPayable getPayable,
 			SavePayable savePayable, GetNextPayableId getNextPayableId, 
@@ -65,9 +62,11 @@ public class PayableController {
 	}
 	
 	@GetMapping("list/{workshopId}")
-	public ResponseEntity<IKResponse<PayableDTO>> listPayable(@PathVariable Long workshopId) {
+	public ResponseEntity<IKResponse<PayableDTO>> listPayable(@PathVariable Long workshopId, @RequestParam(name = "startDate") String startDate, @RequestParam(name = "endDate") String endDate,
+															  @RequestParam(name = "paymentState") Integer payableState) {
 		try {
-			List<PayableDTO> payableDTOList = converter.parseDomainToResponseList(listPayable.execute(workshopId));
+			List<PayableDTO> payableDTOList = converter.parseDomainToResponseList(listPayable.execute(workshopId, DateUtil.parseToLocalDate(startDate),
+					DateUtil.parseToLocalDate(endDate), PayableStateEnum.findByIndex(payableState)));
 			
 			return ResponseEntity.ok(IKResponse.<PayableDTO>build().body(payableDTOList));
 		}catch(IKException ike) {
@@ -135,7 +134,7 @@ public class PayableController {
 	
 	@Transactional
 	@PutMapping
-	public ResponseEntity<IKResponse<PayableDTO>> savePayable(@RequestBody PayableDTO payableDTO) {
+	public ResponseEntity<IKResponse<PayableDTO>> updatePayable(@RequestBody PayableDTO payableDTO) {
 		try {
 			Payable payable = updatePayable.execute(converter.parseRequestToDomain(payableDTO));
 			return ResponseEntity.ok(IKResponse.<PayableDTO>build().body(converter.parseDomainToResponse(payable)).

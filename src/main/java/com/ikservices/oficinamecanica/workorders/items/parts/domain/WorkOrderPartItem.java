@@ -18,9 +18,10 @@ public class WorkOrderPartItem {
     private Part part;
     private Integer quantity;
     private BigDecimal itemValue;
+    private BigDecimal serviceCost;
     private BigDecimal discount;
 
     public BigDecimal getTotal() {
-        return NumberUtil.calcPrice(this.quantity, this.itemValue, this.discount);
+        return NumberUtil.calcPrice(this.quantity, this.itemValue, this.serviceCost, this.discount);
     }
 }

@@ -1,18 +1,17 @@
 package com.ikservices.oficinamecanica.users.infra.controller;
 
 import com.ikservices.oficinamecanica.commons.constants.Constants;
+import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
+import com.ikservices.oficinamecanica.commons.vo.CPFVO;
 import com.ikservices.oficinamecanica.users.application.gateways.PasswordHandler;
 import com.ikservices.oficinamecanica.users.application.usecases.*;
 import com.ikservices.oficinamecanica.users.domain.User;
 import com.ikservices.oficinamecanica.users.infra.UserConverter;
 import com.ikservices.oficinamecanica.users.infra.config.TokenService;
 import com.ikservices.oficinamecanica.users.infra.constants.UserConstants;
-import com.ikservices.oficinamecanica.users.infra.controller.requests.CadastroUserRequest;
-import com.ikservices.oficinamecanica.users.infra.controller.requests.LoginUserRequest;
-import com.ikservices.oficinamecanica.users.infra.controller.requests.LoginUserResponse;
-import com.ikservices.oficinamecanica.users.infra.controller.requests.UserResponse;
+import com.ikservices.oficinamecanica.users.infra.controller.requests.*;
 import com.ikservices.oficinamecanica.users.infra.persistence.UserEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
@@ -70,10 +70,12 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<IKResponse<UserResponse>> save(@RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<IKResponse<UserResponse>> save(@Valid @RequestBody CadastroUserRequest request, UriComponentsBuilder uriBuilder) {
 
         try {
-            User newUser = new User(request.getCpf(), request.getName(), request.getEmail(), passwordHandler.encode(request.getPassword()), request.getActive());
+            CPFVO cpfvo = new CPFVO(request.getCpf());
+
+            User newUser = new User(cpfvo.getCpf(), request.getName(), request.getEmail(), passwordHandler.encode(request.getPassword()), request.getActive());
 
             User userSaved = cadastrarUsusario.execute(newUser);
 
@@ -81,23 +83,37 @@ public class UserController {
 
             return ResponseEntity.created(uri).body(IKResponse.<UserResponse>build().body(UserResponse.parse(userSaved))
                     .addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(UserConstants.SAVE_SUCCESS_MESSAGE)));
+
+        } catch (IKException ike) {
+            LOGGER.warn(ike.getMessage(), ike);
+            int httpCode = Integer.parseInt(ike.getIkMessage().getCode()) > 100 ? Integer.parseInt(ike.getIkMessage().getCode()) : HttpStatus.EXPECTATION_FAILED.value();
+            return ResponseEntity.status(httpCode).body(IKResponse.<UserResponse>build().addMessage(ike.getIkMessage().getCode(),IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    IKResponse.<UserResponse>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(UserConstants.SAVE_ERROR_MESSAGE)));
+            if (e.getMessage().contains("is marked non-null but is null")) {
+                String[] str = e.getMessage().split(" ");
+                String fieldName = str[0].substring(0, 1).toUpperCase() + str[0].substring(1);
+                String msg = String.format(UserConstants.USER_MANDATORY_FIELD_MESSAGE, fieldName);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(IKResponse.<UserResponse>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING, msg));
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(IKResponse.<UserResponse>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(UserConstants.SAVE_ERROR_MESSAGE)));
         }
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity<IKResponse<UserResponse>> update(@RequestBody CadastroUserRequest request) {
+    public ResponseEntity<IKResponse<UserResponse>> update(@Valid @RequestBody UpdateUserRequest request) {
         try {
-            if (Objects.nonNull(request.getPassword()) && !request.getPassword().isEmpty()) {
-                request.setPassword(passwordHandler.encode(request.getPassword()));
-            }
-            User updatedUser = updateUser.execute(request.toUser());
+            User updatedUser = updateUser.execute(request.getNewUser(), request.getOldUser());
             return  ResponseEntity.ok(IKResponse.<UserResponse>build().body(UserResponse.parse(updatedUser))
                     .addMessage(Constants.DEFAULT_SUCCESS_CODE, IKMessageType.SUCCESS, environment.getProperty(UserConstants.UPDATE_SUCCESS_MESSAGE)));
+
+        } catch (IKException ike) {
+            LOGGER.warn(ike.getMessage(), ike);
+            int httpCode = Integer.parseInt(ike.getIkMessage().getCode()) > 100 ? Integer.parseInt(ike.getIkMessage().getCode()) : HttpStatus.EXPECTATION_FAILED.value();
+            return ResponseEntity.status(httpCode).body(IKResponse.<UserResponse>build().addMessage(ike.getIkMessage().getCode(),IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
@@ -118,11 +134,17 @@ public class UserController {
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<IKResponse<UserResponse>> getUser(@PathVariable("cpf") Long cpf) {
+    public ResponseEntity<IKResponse<UserResponse>> getUser(@PathVariable("cpf") String cpf) {
         try {
-            User user = obterUsuario.execute(cpf);
+            CPFVO cpfvo = new CPFVO(cpf);
+            User user = obterUsuario.execute(cpfvo.getCpf());
             return ResponseEntity.ok(IKResponse.<UserResponse>build().body(UserResponse.parse(user)));
+        } catch (IKException ike) {
+            LOGGER.warn(ike.getMessage(), ike);
+            int httpCode = Integer.parseInt(ike.getIkMessage().getCode()) > 100 ? Integer.parseInt(ike.getIkMessage().getCode()) : HttpStatus.EXPECTATION_FAILED.value();
+            return ResponseEntity.status(httpCode).body(IKResponse.<UserResponse>build().addMessage(ike.getIkMessage().getCode(),IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     IKResponse.<UserResponse>build().addMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, environment.getProperty(UserConstants.GET_ERROR_MESSAGE)));
         }

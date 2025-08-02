@@ -40,6 +40,7 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
             domain.setPart(new Part(new PartId(request.getPartId(), request.getWorkshopId())));
             domain.setQuantity(request.getQuantity());
             domain.setItemValue(request.getItemValue());
+            domain.setServiceCost(request.getServiceCost());
             domain.setDiscount(request.getDiscount());
         }
 
@@ -58,6 +59,7 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
             entity.setPart(partConverter.parseEntity(domain.getPart()));
             entity.setQuantity(domain.getQuantity());
             entity.setItemValue(domain.getItemValue());
+            entity.setServiceCost(domain.getServiceCost());
             entity.setDiscount(domain.getDiscount());
         }
 
@@ -74,6 +76,7 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
             domain.setPart(partConverter.parsePart(entity.getPart()));
             domain.setQuantity(entity.getQuantity());
             domain.setItemValue(entity.getItemValue());
+            domain.setServiceCost(entity.getServiceCost());
             domain.setDiscount(entity.getDiscount());
         }
 
@@ -92,6 +95,8 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
             response.setPart(Objects.nonNull(domain.getPart()) ? partConverter.parseDTO(domain.getPart()): null);
             response.setQuantity(domain.getQuantity());
             response.setItemValue(NumberUtil.parseStringMoney(domain.getItemValue()));
+            response.setServiceCost(NumberUtil.parseStringMoney(domain.getServiceCost()));
+            response.setPartAndServiceValue(NumberUtil.parseStringMoney(domain.getItemValue().add(domain.getServiceCost())));
             response.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
             response.setAmount(NumberUtil.parseStringMoney(domain.getTotal()));
         }
@@ -121,6 +126,7 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
         request.setWorkshopId(response.getPart().getWorkshopId());
         request.setQuantity(response.getQuantity());
         request.setItemValue(NumberUtil.parseBigDecimal(response.getItemValue()));
+        request.setServiceCost(NumberUtil.parseBigDecimal(response.getServiceCost()));
         request.setDiscount(NumberUtil.parseBigDecimal(response.getDiscount()));
         return request;
     }

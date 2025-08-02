@@ -39,15 +39,13 @@ public class UserEntity implements UserDetails {
     @Getter
     private boolean active;
 
-    public void atualizar(UserEntity entity) {
-        if (Objects.nonNull(entity.getName()) && !entity.getName().isEmpty()) {
-            this.name = entity.getName();
+    public void update(UserEntity newUser) {
+
+        if (Objects.nonNull(newUser.getName()) && !newUser.getName().isEmpty()) {
+            this.name = newUser.getName();
         }
-        if (Objects.nonNull(entity.getUsername()) && !entity.getUsername().isEmpty()) {
-            this.username = entity.getUsername();
-        }
-        if (Objects.nonNull(entity.getPassword()) && !entity.getPassword().isEmpty()) {
-            this.password = entity.getPassword();
+        if (Objects.nonNull(newUser.getUsername()) && !newUser.getUsername().isEmpty()) {
+            this.username = newUser.getUsername();
         }
     }
 

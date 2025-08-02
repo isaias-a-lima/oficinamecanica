@@ -75,6 +75,13 @@ public class NumberUtilTest {
         Assertions.assertEquals(expected, tested);
     }
 
+    @Test
+    public void testCalcPriceWithPartAndServiceCost() {
+        BigDecimal expected = BigDecimal.valueOf(190).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal actual = NumberUtil.calcPrice(5,BigDecimal.valueOf(20), BigDecimal.valueOf(20), BigDecimal.valueOf(5));
+        Assertions.assertEquals(expected, actual);
+    }
+
     private List<String> getValues() {
         return Arrays.asList(new String[]{
                 "R$ 1.299,50",

@@ -15,4 +15,6 @@ public interface PaymentRepository {
     		LocalDate dueDateBegin, LocalDate dueDateEnd,
     		PaymentStateEnum paymentState);
     Payment getPayment(PaymentId id);
+    Payment updatePayment(Payment payment);
+    List<Payment> updatePaymentList(List<Payment> paymentList, WorkOrderId workOrderId);
 }

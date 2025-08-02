@@ -51,6 +51,9 @@ public class WorkOrderPartItemEntity {
     @Column(name = "DISCOUNT")
     private BigDecimal discount;
 
+    @Column(name = "SERVICE_COST")
+    private BigDecimal serviceCost;
+
     public void update(WorkOrderPartItemEntity newItem) {
         if (Objects.nonNull(newItem.getPartId())) {
             this.partId = newItem.getPartId();
@@ -65,9 +68,12 @@ public class WorkOrderPartItemEntity {
         if(Objects.nonNull(newItem.getDiscount())) {
             this.discount = newItem.getDiscount();
         }
+        if(Objects.nonNull(newItem.getServiceCost())) {
+            this.serviceCost = newItem.getServiceCost();
+        }
     }
 
     public BigDecimal getTotal() {
-        return NumberUtil.calcPrice(quantity, itemValue, discount).setScale(2, RoundingMode.HALF_UP);
+        return NumberUtil.calcPrice(quantity, itemValue, serviceCost, discount);
     }
 }
