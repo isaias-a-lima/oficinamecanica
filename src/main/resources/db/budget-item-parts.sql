@@ -11,3 +11,7 @@ CONSTRAINT fk_budgets_budget_item_part FOREIGN KEY (budgetid) REFERENCES budgets
 CONSTRAINT fk_part1_budget_item_part FOREIGN KEY (part_id) REFERENCES parts(partid),
 CONSTRAINT fk_part2_budget_item_part FOREIGN KEY (workshop_id) REFERENCES parts(workshopid)
 )COMMENT = "BUDGET_ITEM_PART";
+
+--2025-06-03 23:12 - Portugal - Isaias Lima - Add SERVICE_COST column.
+ALTER TABLE BUDGET_ITEM_PART
+ADD COLUMN service_cost DECIMAL(12,2) DEFAULT 0 COMMENT 'Service Cost' AFTER cost;

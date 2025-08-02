@@ -18,6 +18,8 @@ public class BudgetItemPartResponseDTO {
     private PartDTO part;
     private Integer quantity;
     private String cost;
+    private String serviceCost;
+    private String partAndServiceValue;
     private String discount;
     private String amount;
 }

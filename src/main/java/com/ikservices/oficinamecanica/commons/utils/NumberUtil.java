@@ -94,6 +94,24 @@ public class NumberUtil {
         return costValue.multiply(BigDecimal.valueOf(quantity.doubleValue())).setScale(2, RoundingMode.HALF_UP);
     }
 
+    /**
+     *
+     * @param quantity Part quantity
+     * @param partCost Part cost value
+     * @param discount discount value
+     * @param serviceCost Service cost value
+     * @return Formula = ((partCost + serviceCost) * quantity) * ((100-discount) / 100)
+     */
+    public static BigDecimal calcPrice(Integer quantity, BigDecimal partCost, BigDecimal serviceCost, BigDecimal discount) {
+
+        BigDecimal discountPercentage = (BigDecimal.valueOf(100).subtract(discount)).divide(BigDecimal.valueOf(100));
+        BigDecimal costValue = partCost.add(serviceCost);
+        costValue = costValue.multiply(BigDecimal.valueOf(quantity));
+        costValue = costValue.multiply(discountPercentage);
+
+        return costValue.setScale(2, RoundingMode.HALF_UP);
+    }
+
     public static String parseStringNumberWithLeftZeros(Long number, int qtyLeftZeros) {
         String str = "%0" + qtyLeftZeros + "d";
         return String.format(str, number);

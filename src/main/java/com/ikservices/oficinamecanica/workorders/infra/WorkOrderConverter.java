@@ -13,6 +13,7 @@ import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEnti
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntityId;
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.WorkOrderPartItemConverter;
 import com.ikservices.oficinamecanica.workorders.items.services.infra.WorkOrderServiceItemsConverter;
+import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -37,24 +38,28 @@ public class WorkOrderConverter {
 	private PaymentConverter paymentConverter;
 	
 	public WorkOrder parseWorkOrder(WorkOrderEntity entity) {
+		return this.parseWorkOrder(entity, false);
+	}
+
+	public WorkOrder parseWorkOrder(WorkOrderEntity entity, boolean avoidStackoverflow) {
 		if(Objects.isNull(entity)) {
 			throw new IKException("Null Object.");
 		}
-		
+
 		WorkOrder workOrder = new WorkOrder();
-		workOrder.setId(new WorkOrderId(entity.getId().getWorkOrderId(), 
+		workOrder.setId(new WorkOrderId(entity.getId().getWorkOrderId(),
 				entity.getId().getBudgetId()));
-		
-		if(Objects.nonNull(entity.getBudget()) && 
+
+		if(Objects.nonNull(entity.getBudget()) &&
 				Objects.nonNull(entity.getBudget().getVehicle())) {
 			Budget budget = budgetConverter.parseBudget(entity.getBudget(), true);
-			
+
 			Map<Long, Budget> budgetMap = new HashMap<>();
 			budgetMap.put(entity.getBudget().getBudgetId(), budget);
-			
+
 			Map<Long, Map<Long, Budget>> map = new HashMap<>();
 			map.put(entity.getBudget().getVehicleId(), budgetMap);
-			
+
 			workOrder.setBudget(map);
 		}
 		workOrder.setOpeningDate(entity.getOpeningDate());
@@ -62,10 +67,10 @@ public class WorkOrderConverter {
 		workOrder.setWorkOrderStatus(entity.getWoStatus());
 		//workOrder.setAmount(entity.getAmount());
 		workOrder.setPayQty(entity.getPayQty());
-		workOrder.setPaid(entity.getPaid());
+		workOrder.setPaid(Objects.nonNull(entity.getPaid()) ? entity.getPaid() : false);
 		workOrder.setServiceItems(Objects.nonNull(entity.getServiceItems()) ? serviceItemsConverter.parseEntityToDomainList(entity.getServiceItems()) : new ArrayList<>());
 		workOrder.setPartItems(Objects.nonNull(entity.getPartItems()) ? partItemConverter.parseEntityToDomainList(entity.getPartItems()) : new ArrayList<>());
-		workOrder.setPayments(Objects.nonNull(entity.getPayments()) ? paymentConverter.parseEntityToDomainList(entity.getPayments()) : new ArrayList<>());
+		workOrder.setPayments(Objects.nonNull(entity.getPayments()) && !avoidStackoverflow ? paymentConverter.parseEntityToDomainList(entity.getPayments()) : new ArrayList<>());
 		return workOrder;
 	}
 	
@@ -91,11 +96,19 @@ public class WorkOrderConverter {
 		entity.setWoStatus(workOrder.getWorkOrderStatus());
 		entity.setAmount(workOrder.getAmount());
 		entity.setPayQty(workOrder.getPayQty());
-		entity.setPaid(workOrder.getPaid());
+		entity.setPaid(Objects.nonNull(workOrder.getPaid()) ? workOrder.getPaid() : false);
 		entity.setServiceItems(Objects.nonNull(workOrder.getServiceItems()) ? serviceItemsConverter.parseDomainToEntityList(workOrder.getServiceItems()) : new ArrayList<>());
 		entity.setPartItems(Objects.nonNull(workOrder.getPartItems()) ? partItemConverter.parseDomainToEntityList(workOrder.getPartItems()) : new ArrayList<>());
-		entity.setPayments(Objects.nonNull(workOrder.getPayments()) ? paymentConverter.parseDomainToEntityList(workOrder.getPayments()) : new ArrayList<>());
-		
+		//entity.setPayments(Objects.nonNull(workOrder.getPayments()) ? paymentConverter.parseDomainToEntityList(workOrder.getPayments()) : new ArrayList<>());
+		if (Objects.nonNull(workOrder.getPayments())) {
+			for (Payment payment : workOrder.getPayments()) {
+				payment.setWorkOrder(null);
+			}
+			entity.setPayments(paymentConverter.parseDomainToEntityList(workOrder.getPayments()));
+		} else {
+			entity.setPayments(new ArrayList<>());
+		}
+
 		return entity;
 	}
 	

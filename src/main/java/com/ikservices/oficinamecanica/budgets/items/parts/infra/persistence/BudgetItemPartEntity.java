@@ -46,6 +46,9 @@ public class BudgetItemPartEntity {
     @Column(name = "COST")
     private BigDecimal cost;
 
+    @Column(name = "SERVICE_COST")
+    private BigDecimal serviceCost;
+
     @Column(name = "DISCOUNT")
     private BigDecimal discount;
 
@@ -63,9 +66,12 @@ public class BudgetItemPartEntity {
         if(Objects.nonNull(entity.getDiscount())) {
             this.discount = entity.getDiscount();
         }
+        if(Objects.nonNull(entity.getServiceCost())) {
+            this.serviceCost = entity.getServiceCost();
+        }
     }
 
     public BigDecimal getTotal() {
-        return NumberUtil.calcPrice(quantity, cost, discount).setScale(2, RoundingMode.HALF_UP);
+        return NumberUtil.calcPrice(quantity, cost, serviceCost, discount);
     }
 }

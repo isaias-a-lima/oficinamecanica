@@ -18,6 +18,15 @@ public class EmailVOTest {
     }
 
     @Test
+    public void testEmail2(){
+
+        String expected = "logistica@jalmeida.com.br";
+        subject = new EmailVO(expected);
+        String mailAddress = subject.getMailAddress();
+        Assertions.assertEquals(expected, mailAddress);
+    }
+
+    @Test
     public void testPattern() {
         String email = "aa9@u.co";
         boolean matches = email.matches(IKConstants.EMAIL_PATTERN);

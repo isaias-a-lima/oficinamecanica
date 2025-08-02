@@ -24,6 +24,11 @@ public class PropertyConfig {
     private String resourceNotFoundMessage;
     @Value("resource.to.update.not.found.message")
     private String resourceToUpdateNotFoundMessage;
+    @Value("empty.list.message")
+    private String emptyListMessage;
+
+    @Value("expired.deletion.date")
+    private String expiredDeletionDate;
 
     @PostConstruct
     private void loadProperties() {
@@ -32,6 +37,8 @@ public class PropertyConfig {
         IKConstants.PASSWORD_NO_LATIN_MESSAGE = this.passwordNoLatinMessage;
         IKConstants.RESOURCE_NOT_FOUND_MESSAGE = this.resourceNotFoundMessage;
         IKConstants.RESOURCE_TO_UPDATE_NOT_FOUND_MESSAGE = this.resourceToUpdateNotFoundMessage;
+        IKConstants.EMPTY_LIST_MESSAGE = this.emptyListMessage;
+        IKConstants.EXPIRED_DELETE_DATE = this.expiredDeletionDate;
     }
 
 }

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import com.ikservices.oficinamecanica.workorders.domain.WorkOrderId;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,4 +25,9 @@ public class WorkOrderEntityId implements Serializable {
 	private Long workOrderId;
 	@Column(name = "BUDGETID")
 	private Long budgetId;
+
+	public WorkOrderEntityId(WorkOrderId workOrderId) {
+		this.workOrderId = workOrderId.getWorkOrderId();
+		this.budgetId = workOrderId.getBudgetId();
+	}
 }

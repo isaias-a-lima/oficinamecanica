@@ -8,6 +8,7 @@ import com.ikservices.oficinamecanica.budgets.items.parts.infra.persistence.Budg
 import com.ikservices.oficinamecanica.budgets.items.parts.infra.persistence.BudgetItemPartEntityId;
 import com.ikservices.oficinamecanica.commons.generics.IKConverter;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
+import com.ikservices.oficinamecanica.commons.utils.StringUtil;
 import com.ikservices.oficinamecanica.parts.domain.Part;
 import com.ikservices.oficinamecanica.parts.domain.PartId;
 import com.ikservices.oficinamecanica.parts.infra.PartConverter;
@@ -41,8 +42,10 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         );
         domain.setPart(new Part(new PartId(request.getPartId(), request.getWorkshopId())));
         domain.setQuantity(request.getQuantity());
+        domain.setValue(request.getCost());
         domain.getPart().setCost(request.getCost());
         domain.setDiscount(request.getDiscount());
+        domain.setServiceCost(request.getServiceCost());
 
         return domain;
     }
@@ -56,8 +59,9 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         entity.setWorkshopId(part.getId().getWorkshopId());
         entity.setPart(part);
         entity.setQuantity(domain.getQuantity());
-        entity.setCost(domain.getPart().getCost());
+        entity.setCost(domain.getValue());
         entity.setDiscount(domain.getDiscount());
+        entity.setServiceCost(domain.getServiceCost());
         return entity;
     }
 
@@ -68,8 +72,9 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         Part part = partConverter.parsePart(entity.getPart());
         domain.setPart(part);
         domain.setQuantity(entity.getQuantity());
-        domain.getPart().setCost(part.getCost());
+        domain.setValue(entity.getCost());
         domain.setDiscount(entity.getDiscount());
+        domain.setServiceCost(entity.getServiceCost());
         return domain;
     }
 
@@ -80,7 +85,9 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         dto.setBudgetId(domain.getId().getBudgetId());
         dto.setPart(partConverter.parseDTO(domain.getPart()));
         dto.setQuantity(domain.getQuantity());
-        dto.setCost(NumberUtil.parseStringMoney(domain.getPart().getCost()));
+        dto.setCost(NumberUtil.parseStringMoney(domain.getValue()));
+        dto.setServiceCost(NumberUtil.parseStringMoney(domain.getServiceCost()));
+        dto.setPartAndServiceValue(NumberUtil.parseStringMoney(domain.getValue().add(domain.getServiceCost())));
         dto.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
         dto.setAmount(NumberUtil.parseStringMoney(domain.getTotal()));
         return dto;
@@ -95,6 +102,7 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         target.setQuantity(source.getQuantity());
         target.setItemValue(source.getCost());
         target.setDiscount(source.getDiscount());
+        target.setServiceCost(source.getServiceCost());
         return target;
     }
 

@@ -51,9 +51,7 @@ public class PaymentEntity {
 
         this.payDate = entity.getPayDate();
 
-        if(Objects.nonNull(entity.getNote())) {
-            this.note = entity.getNote();
-        }
+        this.note = entity.getNote();
     }
 
 }

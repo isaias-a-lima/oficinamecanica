@@ -16,10 +16,11 @@ public class BudgetItemPart {
     private Part part;
     private Integer quantity;
     private BigDecimal value;
+    private BigDecimal serviceCost;
     private BigDecimal discount;
 
     public BigDecimal getTotal() {
-        return NumberUtil.calcPrice(quantity, part.getCost(), discount);
+        return NumberUtil.calcPrice(quantity, value, serviceCost, discount);
     }
 
 }

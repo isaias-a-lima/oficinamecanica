@@ -42,7 +42,7 @@ public class WorkOrderPaymentsUpdateValidationsTest {
         List<WorkOrderServiceItem> serviceItems = Collections.singletonList(getServiceItem(1L, WORK_ORDER_ID, BUDGET_ID, BigDecimal.valueOf(100)));
         workOrder.setServiceItems(serviceItems);
 
-        List<WorkOrderPartItem> partItems = Collections.singletonList(getPartItem(1L, WORK_ORDER_ID, BUDGET_ID, BigDecimal.valueOf(100)));
+        List<WorkOrderPartItem> partItems = Collections.singletonList(getPartItem(1L, WORK_ORDER_ID, BUDGET_ID, BigDecimal.valueOf(100), BigDecimal.valueOf(100)));
         workOrder.setPartItems(partItems);
     }
 
@@ -51,7 +51,7 @@ public class WorkOrderPaymentsUpdateValidationsTest {
 
         workOrder.getPayments().add(getPayment(1, WORK_ORDER_ID, BUDGET_ID, BigDecimal.valueOf(100), true));
 
-        workOrder.getPayments().add(getPayment(2, WORK_ORDER_ID, BUDGET_ID, BigDecimal.valueOf(150), true));
+        workOrder.getPayments().add(getPayment(2, WORK_ORDER_ID, BUDGET_ID, BigDecimal.valueOf(250), true));
 
         Assertions.assertThrows(IKException.class, () -> subject.validate(workOrder));
     }
@@ -67,7 +67,7 @@ public class WorkOrderPaymentsUpdateValidationsTest {
     @Test
     public void TestIfThePaymentAmountIsEqualToTheWorkOrderAmountRaiseAnException() {
 
-        workOrder.getPayments().add(getPayment(1, WORK_ORDER_ID, BUDGET_ID, BigDecimal.valueOf(50), true));
+        workOrder.getPayments().add(getPayment(1, WORK_ORDER_ID, BUDGET_ID, BigDecimal.valueOf(150), true));
 
         workOrder.getPayments().add(getPayment(2, WORK_ORDER_ID, BUDGET_ID, BigDecimal.valueOf(150), true));
 
@@ -111,12 +111,13 @@ public class WorkOrderPaymentsUpdateValidationsTest {
         return serviceItem;
     }
 
-    private WorkOrderPartItem getPartItem(Long itemId, Long workOrderId, Long budgetId, BigDecimal itemValue) {
+    private WorkOrderPartItem getPartItem(Long itemId, Long workOrderId, Long budgetId, BigDecimal itemValue, BigDecimal serviceCost) {
         WorkOrderPartItem partItem = new WorkOrderPartItem();
         partItem.setId(new WorkOrderPartItemId(itemId, workOrderId, budgetId));
         partItem.setPart(new Part(new PartId(1L, 1L)));
         partItem.setQuantity(1);
         partItem.setItemValue(itemValue);
+        partItem.setServiceCost(serviceCost);
         partItem.setDiscount(BigDecimal.ZERO);
         return partItem;
     }

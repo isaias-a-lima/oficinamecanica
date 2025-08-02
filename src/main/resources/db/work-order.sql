@@ -129,3 +129,6 @@ where not exists (
 	where p.workorderid = wo.workorderid
 	and p.budgetid = wo.budgetid
 );
+
+--2025-06-04 00:31 - Portugal - Isaias Lima - Add service_cost column into WO_PARTS_ITEMS.
+ALTER TABLE WO_PARTS_ITEMS ADD COLUMN service_cost DECIMAL(12,2) DEFAULT 0 COMMENT 'Service cost';
