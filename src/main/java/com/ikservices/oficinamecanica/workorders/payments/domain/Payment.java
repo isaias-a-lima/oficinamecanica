@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.workorders.payments.domain;
 
+import com.ikservices.oficinamecanica.suppliers.domain.Supplier;
 import com.ikservices.oficinamecanica.workorders.domain.WorkOrder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,4 +20,12 @@ public class Payment {
     private PaymentTypeEnum paymentType;
     private String note;
     private LocalDate payDate;
+    private Boolean isOutsourcePay;
+    private Integer supplierId;
+
+    public Payment() {
+        if (null == this.isOutsourcePay) {
+            this.isOutsourcePay = false;
+        }
+    }
 }

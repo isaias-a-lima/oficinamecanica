@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.workorders.payments.infra.dto;
 
+import com.ikservices.oficinamecanica.suppliers.infra.controller.SupplierDTO;
 import com.ikservices.oficinamecanica.workorders.infra.controller.WorkOrderResponseDTO;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,4 +21,12 @@ public class PaymentDTO {
     private Integer paymentType;
     private String note;
     private String payDate;
+    private Boolean isOutsourcePay;
+    private Integer supplierId;
+
+    public PaymentDTO() {
+        if (null == this.isOutsourcePay) {
+            this.isOutsourcePay = false;
+        }
+    }
 }
