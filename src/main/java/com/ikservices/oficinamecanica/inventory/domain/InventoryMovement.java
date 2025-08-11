@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of="id")
-public class Inventory {
+public class InventoryMovement {
 	private InventoryId id;
 	private LocalDate movementDate;
 	private MovementTypeEnum movementType;
