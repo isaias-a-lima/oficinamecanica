@@ -108,7 +108,7 @@ public class PaymentController {
 			return ResponseEntity.ok(IKResponse.<PaymentDTO>build().body(paymentDTO));			
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).
+			return ResponseEntity.status(HttpStatus.valueOf(Integer.parseInt(ike.getIkMessage().getCode()))).
 					body(IKResponse.<PaymentDTO>build().addMessage(ike.getIkMessage().getCode(),
 							IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
