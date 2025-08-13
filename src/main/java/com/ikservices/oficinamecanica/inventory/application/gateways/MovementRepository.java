@@ -10,4 +10,5 @@ public interface MovementRepository {
 	public InventoryMovement getMovement(Long workshopId, Long inventoryId);
 	public List<InventoryMovement> ListMovementByPartAndType(Integer partId, MovementTypeEnum movementTypeEnum);
 	public Integer getBalanceByPart(Integer partId);
+	public InventoryMovement updateMovement(InventoryMovement movement);
 }
