@@ -16,6 +16,7 @@ import com.ikservices.oficinamecanica.workorders.payments.application.gateways.P
 import com.ikservices.oficinamecanica.workorders.payments.application.usecases.business.PaymentUpdateValidator;
 import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 import com.ikservices.oficinamecanica.workorders.payments.domain.PaymentId;
+import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConstant;
 import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConverter;
 import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentEntity;
 import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentEntityId;
@@ -61,8 +62,12 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
 	@Override
 	public Payment getPayment(PaymentId id) {
-		return this.converter.parseEntityToDomain(repositoryJPA.getById(new PaymentEntityId(id.getNumber(),
-				id.getWorkOrderId(), id.getBudgetId())));
+
+		Optional<PaymentEntity> optional = repositoryJPA.findById(new PaymentEntityId(id.getNumber(), id.getWorkOrderId(), id.getBudgetId()));
+
+		PaymentEntity entity = optional.orElseThrow(() -> new IKException(new IKMessage(IKConstants.IK_HTTP_NOT_FOUND_CODE, IKMessageType.WARNING.getCode(), PaymentConstant.GET_NOT_FOUND_MESSAGE)));
+
+		return this.converter.parseEntityToDomain(entity);
 	}
 
 	@Override
@@ -134,7 +139,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
 		BigDecimal paidValue = result.stream().filter(p -> p.getPayDate() != null).map(PaymentEntity::getPayValue).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		Optional<WorkOrderEntity> optional = workOrderRepositoryJPA.findById(result.get(0).getWorkOrder().getId());
+		Optional<WorkOrderEntity> optional = workOrderRepositoryJPA.findById(new WorkOrderEntityId(workOrderId));
 		optional.ifPresent(w -> {
 			if (paidValue.compareTo(w.getAmount()) >= 0) {
 				w.setPaid(true);

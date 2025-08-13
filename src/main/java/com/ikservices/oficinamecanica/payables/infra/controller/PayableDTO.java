@@ -22,4 +22,5 @@ public class PayableDTO {
 	private String payDate;
 	private CategoryDTO category;
 	private String note;
+	private Integer supplierId;
 }

@@ -3,6 +3,7 @@ package com.ikservices.oficinamecanica.workorders.payments.infra.config;
 import com.ikservices.oficinamecanica.workorders.infra.WorkOrderConverter;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderRepositoryJPA;
 import com.ikservices.oficinamecanica.workorders.payments.application.usecases.*;
+import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,8 @@ import com.ikservices.oficinamecanica.workorders.payments.application.gateways.P
 import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConverter;
 import com.ikservices.oficinamecanica.workorders.payments.infra.gateways.PaymentRepositoryImpl;
 import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentRepositoryJPA;
+
+import javax.annotation.PostConstruct;
 
 @Configuration
 @PropertySource(name="payments.properties", value ="classpath:payments.properties", encoding="UTF-8")
@@ -51,5 +54,11 @@ public class PaymentConfig {
 	@Bean
 	public UpdatePayment updatePayment(PaymentRepository repository) {
 		return new UpdatePayment(repository);
+	}
+
+	@PostConstruct
+	public void setupConstants() {
+		PaymentConstant.LIST_ERROR_MESSAGE = environment.getProperty(PaymentConstant.LIST_ERROR_KEY, PaymentConstant.LIST_ERROR_ALT);
+		PaymentConstant.GET_NOT_FOUND_MESSAGE = environment.getProperty(PaymentConstant.GET_NOT_FOUND_KEY, PaymentConstant.GET_NOT_FOUND_ALT);
 	}
 }

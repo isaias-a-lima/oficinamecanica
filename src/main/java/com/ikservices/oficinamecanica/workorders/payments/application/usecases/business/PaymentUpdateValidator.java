@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class PaymentUpdateValidator implements IPaymentBusiness {
 
-    private static final String PAID_MSG = "Esta ordem de serviço já está paga";
+    private static final String PAID_MSG = "Esta ordem de serviço já está paga e não pode ser alterada.";
     private static final String PAYMENT_AMOUNT_IS_GREATER_THAN_WORK_ORDER_AMOUNT = "A soma de todos os pagamentos não pode ultrapassar o valor total da Ordem de Serviço.";
     private static final String CANNOT_BE_PAID = "Esta ordem de serviço não pode ser totalmente paga enquanto não for finalizada.";
 
