@@ -135,5 +135,8 @@ ALTER TABLE WO_PARTS_ITEMS ADD COLUMN service_cost DECIMAL(12,2) DEFAULT 0 COMME
 
 --2025-08-04 17:00 - Portugal - Isaias Lima - Add new columns to the payments table.
 ALTER TABLE payments
-ADD COLUMN outsourcepay TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'Is an outsource pay?',
+ADD COLUMN outsourcepay TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Is an outsource pay?',
 ADD COLUMN supplierid INT DEFAULT NULL COMMENT 'Supplier identification number';
+
+ALTER TABLE work_orders
+ADD COLUMN discount DECIMAL(5,2) NULL DEFAULT 0 COMMENT 'Discount value on the amount' AFTER amount;

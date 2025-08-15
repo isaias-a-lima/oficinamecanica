@@ -141,7 +141,8 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
 		Optional<WorkOrderEntity> optional = workOrderRepositoryJPA.findById(new WorkOrderEntityId(workOrderId));
 		optional.ifPresent(w -> {
-			if (paidValue.compareTo(w.getAmount()) >= 0) {
+			BigDecimal finalValue = WorkOrder.calculateFinalValue(w.getDiscount(), w.getAmount());
+			if (paidValue.compareTo(finalValue) >= 0) {
 				w.setPaid(true);
 			}
 		});

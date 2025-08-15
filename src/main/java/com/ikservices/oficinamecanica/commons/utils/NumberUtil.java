@@ -67,23 +67,29 @@ public class NumberUtil {
      * @param value
      * @return
      */
-    public static String parseStringPercent(BigDecimal value) {
+    public static String parseStringPercentWithScale(BigDecimal value, Integer scale) {
 
         if (Objects.isNull(value)) {
             return ZERO_PERCENT;
         }
+
+        scale = null != scale ? (scale.compareTo(2) < 0 ? 2 : scale) : 2;
 
         String valueAux = value.toString();
 
         String fraction = valueAux.contains(".") ? valueAux.substring(valueAux.indexOf(".")+1) : "0";
 
         if (Integer.parseInt(fraction) > 0) {
-            valueAux = value.setScale(2, RoundingMode.HALF_UP).toString().replace(".", ",").concat(" %");
+            valueAux = value.setScale(scale, RoundingMode.HALF_UP).toString().replace(".", ",").concat(" %");
         } else {
             valueAux = value.setScale(0, RoundingMode.HALF_UP).toString().concat(" %");
         }
 
         return valueAux;
+    }
+
+    public static String parseStringPercent(BigDecimal value) {
+        return parseStringPercentWithScale(value, 2);
     }
 
     public static BigDecimal calcPrice(Integer quantity, BigDecimal cost, BigDecimal discount) {

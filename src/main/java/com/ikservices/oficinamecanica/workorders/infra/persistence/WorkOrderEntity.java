@@ -44,6 +44,9 @@ public class WorkOrderEntity {
 	
 	@Column(name = "AMOUNT")
 	private BigDecimal amount;
+
+	@Column(name = "DISCOUNT")
+	private BigDecimal discount;
 	
 	@Column(name = "PAYQTY")
 	private Integer payQty;
@@ -73,6 +76,8 @@ public class WorkOrderEntity {
 		if(Objects.nonNull(entity.getPayQty())) {
 			this.payQty = entity.getPayQty();
 		}
+
+		this.discount = entity.getDiscount();
 
 		this.updateServiceItems(entity.getServiceItems());
 		

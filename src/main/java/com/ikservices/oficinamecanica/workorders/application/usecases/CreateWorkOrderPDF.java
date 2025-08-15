@@ -155,8 +155,13 @@ public class CreateWorkOrderPDF extends PDFTemplateBuilder {
 
                 //Amount table created
                 float[] columnWidths = {8.4f, 1.6f};
-                String [][] amountTableContents = {{"TOTAL GERAL: ",RIGHT}, {NumberUtil.parseStringMoney(workOrder.getAmount()), LEFT}};
+                String [][] amountTableContents = {
+                        {"TOTAL GERAL: ",RIGHT}, {NumberUtil.parseStringMoney(workOrder.getAmount()), LEFT},
+                        {"DESCONTO: ",RIGHT}, {NumberUtil.parseStringPercentWithScale(workOrder.getDiscount(), 4), LEFT},
+                        {"VALOR FINAL: ",RIGHT}, {NumberUtil.parseStringMoney(workOrder.getFinalValue()), LEFT}
+                };
                 this.addTableFooter(2, 100, columnWidths, amountTableContents);
+
 
             } catch (Exception e) {
                 LOGGER.error(loggerID + " - " + e.getMessage(), e);

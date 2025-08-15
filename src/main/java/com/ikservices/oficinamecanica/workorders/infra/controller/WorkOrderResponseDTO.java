@@ -23,6 +23,8 @@ public class WorkOrderResponseDTO {
 	private Long km;
 	private Integer workOrderStatus;
 	private String amount;
+	private String discount;
+	private String finalValue;
 	private Integer payQty;
 	private boolean paid;
 	private List<WorkOrderServiceItemResponseDTO> serviceItems;

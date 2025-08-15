@@ -23,6 +23,7 @@ public class WorkOrderRequestDTO {
 	private Long km;
 	private WorkOrderStatusEnum workOrderStatus;
 	private BigDecimal amount;
+	private BigDecimal discount;
 	private Integer payQty;
 	private boolean paid;
 	private List<WorkOrderServiceItemRequestDTO> serviceItems;
