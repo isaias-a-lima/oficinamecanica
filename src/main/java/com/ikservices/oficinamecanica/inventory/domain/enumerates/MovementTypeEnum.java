@@ -1,6 +1,21 @@
 package com.ikservices.oficinamecanica.inventory.domain.enumerates;
 
+import java.util.Objects;
+
 public enum MovementTypeEnum {
 	CREDIT,
-	DEBIT;
+	DEBIT,
+	NONE;
+	
+	public static MovementTypeEnum findByIndex(Integer index) {
+		if(Objects.nonNull(index)) {
+			for(MovementTypeEnum value : MovementTypeEnum.values()) {
+				if(value.ordinal() == index) {
+					return value;
+				}
+			}
+		}
+		
+		return NONE;
+	}
 }

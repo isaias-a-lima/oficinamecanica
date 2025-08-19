@@ -16,7 +16,7 @@ import lombok.Setter;
 		"workshopId",
 		"inventoryId"
 })
-public class MovementRequestDTO {
+public class MovementDTO {
 	private Long workshopId;
 	private Long inventoryId;
 	private LocalDate movementDate;
