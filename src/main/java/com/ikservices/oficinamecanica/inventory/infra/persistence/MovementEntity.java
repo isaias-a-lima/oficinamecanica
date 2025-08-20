@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,13 +28,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "INVENTORY_MOV")
 public class MovementEntity {
-	@Column(name="WORKSHOPID")
-	private Long workshopId;
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="INVENTORYID")
-	private Long inventoryId;
+	@EmbeddedId
+	private MovementEntityId id;
 	
 	@Column(name="MOVDATE")
 	private LocalDate movementDate;

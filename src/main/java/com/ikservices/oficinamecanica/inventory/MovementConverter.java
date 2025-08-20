@@ -11,6 +11,7 @@ import com.ikservices.oficinamecanica.inventory.domain.enumerates.MovementTypeEn
 import com.ikservices.oficinamecanica.inventory.domain.enumerates.SourceEnum;
 import com.ikservices.oficinamecanica.inventory.infra.controller.MovementDTO;
 import com.ikservices.oficinamecanica.inventory.infra.persistence.MovementEntity;
+import com.ikservices.oficinamecanica.inventory.infra.persistence.MovementEntityId;
 
 import net.bytebuddy.implementation.bytecode.constant.IntegerConstant;
 
@@ -43,8 +44,7 @@ public class MovementConverter extends IKConverter<MovementDTO, InventoryMovemen
 		if(Objects.nonNull(domain)) {
 			entity = new MovementEntity();
 			
-			entity.setWorkshopId(domain.getId().getWorkshopId());
-			entity.setInventoryId(domain.getId().getInventoryId());
+			entity.setId(new MovementEntityId(domain.getId().getWorkshopId(), domain.getId().getInventoryId()));
 			entity.setMovementDate(domain.getMovementDate());
 			entity.setMovementType(domain.getMovementType());
 			entity.setDocumentNumber(domain.getDocumentNumber());
@@ -64,7 +64,7 @@ public class MovementConverter extends IKConverter<MovementDTO, InventoryMovemen
 		if(Objects.nonNull(entity)) {
 			domain = new InventoryMovement();
 			
-			domain.setId(new InventoryId(entity.getWorkshopId(), entity.getInventoryId()));
+			domain.setId(new InventoryId(entity.getId().getWorkshopId(), entity.getId().getInventoryId()));
 			domain.setMovementDate(entity.getMovementDate());
 			domain.setMovementType(entity.getMovementType());
 			domain.setDocumentNumber(entity.getDocumentNumber());
