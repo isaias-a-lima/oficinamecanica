@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.inventory.application.usecases;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.ikservices.oficinamecanica.inventory.application.gateways.MovementRepository;
@@ -13,7 +14,8 @@ public class ListMovementByPartAndType {
 		this.repository = repository;
 	}
 	
-	public List<InventoryMovement> execute(Integer partId, MovementTypeEnum movementTypeEnum) {
-		return repository.ListMovementByPartAndType(partId, movementTypeEnum);
+	public List<InventoryMovement> execute(Integer partId, Long workshopId, 
+			LocalDate startDate, LocalDate endDate, MovementTypeEnum movementTypeEnum) {
+		return repository.ListMovementByPartAndType(partId, workshopId, startDate, endDate, movementTypeEnum);
 	}
 }
