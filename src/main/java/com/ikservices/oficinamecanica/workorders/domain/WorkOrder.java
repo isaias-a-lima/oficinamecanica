@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Objects;
 
 @Getter
-@NoArgsConstructor
 @EqualsAndHashCode
 public class WorkOrder {
 	@Setter
@@ -46,6 +45,8 @@ public class WorkOrder {
 	@Setter
 	private BigDecimal discount;
 	@Setter
+	private Boolean isFinalValueRounded;
+	@Setter
 	private Integer payQty;
 	@Setter
 	private Boolean paid;
@@ -53,6 +54,10 @@ public class WorkOrder {
 	private List<WorkOrderPartItem> partItems;
 	@Setter
     private List<Payment> payments;
+
+	public WorkOrder() {
+		this.isFinalValueRounded = false;
+	}
 
 	public void setServiceItems(List<WorkOrderServiceItem> serviceItems) {
 		this.serviceItems = serviceItems;
@@ -102,19 +107,21 @@ public class WorkOrder {
 	public BigDecimal getFinalValue() {
 		this.discount = Objects.isNull(this.discount) ? BigDecimal.ZERO : this.discount;
 		BigDecimal discountValue = this.discount.divide(BigDecimal.valueOf(100.0));
-		BigDecimal value = this.amount.subtract(this.amount.multiply(discountValue)).setScale(2, RoundingMode.HALF_UP);
+		int scale = this.isFinalValueRounded ? 0 : 2;
+		BigDecimal value = this.amount.subtract(this.amount.multiply(discountValue)).setScale(scale, RoundingMode.HALF_UP);
 		if (this.discount.compareTo(new BigDecimal("100")) > 0) {
 			throw new IKException(new IKMessage(IKConstants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), "Excessive discount"));
 		}
-		return value;
+		return value.setScale(2, RoundingMode.HALF_UP);
 	}
 
-	public static BigDecimal calculateFinalValue(BigDecimal discount, BigDecimal amount) {
+	public static BigDecimal calculateFinalValue(BigDecimal discount, BigDecimal amount, boolean isFinalValueRounded) {
 		BigDecimal discountValue = discount.divide(BigDecimal.valueOf(100.0));
-		BigDecimal value = amount.subtract(amount.multiply(discountValue)).setScale(2, RoundingMode.HALF_UP);
+		int scale = isFinalValueRounded ? 0 : 2;
+		BigDecimal value = amount.subtract(amount.multiply(discountValue)).setScale(scale, RoundingMode.HALF_UP);
 		if (discount.compareTo(new BigDecimal("100")) > 0) {
 			throw new IKException(new IKMessage(IKConstants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), "Excessive discount"));
 		}
-		return value;
+		return value.setScale(2, RoundingMode.HALF_UP);
 	}
 }

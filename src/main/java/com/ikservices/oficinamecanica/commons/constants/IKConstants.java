@@ -11,7 +11,7 @@ public class IKConstants {
     public static final String IK_HTTP_BAD_REQUEST_CODE = "400";
     public static final String IK_HTTP_NOT_FOUND_CODE = "404";
     public static final String IK_HTTP_ALREADY_EXISTS = "409";
-    public static final String EMAIL_PATTERN = "^[^.]+[a-zA-Z0-9-_.]*[a-zA-Z-_]+[a-zA-Z0-9-_]*@[a-zA-Z0-9]+\\.[a-zA-Z.]{2,}$";
+    public static final String EMAIL_PATTERN = "^[^.]+[a-zA-Z0-9-_.]*[a-zA-Z-_]+[a-zA-Z0-9-_.]*@[a-zA-Z0-9]+\\.[a-zA-Z.]{2,}$";
     public static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{4,}$";
     public static final String PASSWORD_LATIN_PATTERN = "^[a-zA-Z0-9@$!%*?&#-_]+$";
     public static String PASSWORD_INVALID_MESSAGE = "Invalid password";

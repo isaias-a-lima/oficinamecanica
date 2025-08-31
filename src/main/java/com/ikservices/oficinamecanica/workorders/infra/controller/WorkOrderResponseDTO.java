@@ -24,6 +24,7 @@ public class WorkOrderResponseDTO {
 	private Integer workOrderStatus;
 	private String amount;
 	private String discount;
+	private Boolean isFinalValueRounded;
 	private String finalValue;
 	private Integer payQty;
 	private boolean paid;

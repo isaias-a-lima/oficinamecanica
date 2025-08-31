@@ -20,7 +20,6 @@ import java.util.Optional;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "WORK_ORDERS")
@@ -47,6 +46,9 @@ public class WorkOrderEntity {
 
 	@Column(name = "DISCOUNT")
 	private BigDecimal discount;
+
+	@Column(name = "ROUNDFLAG")
+	private Boolean isFinalValueRounded;
 	
 	@Column(name = "PAYQTY")
 	private Integer payQty;
@@ -63,6 +65,10 @@ public class WorkOrderEntity {
 	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PaymentEntity> payments;
 
+	public WorkOrderEntity() {
+		this.isFinalValueRounded = false;
+	}
+
 	public void update(WorkOrderEntity entity) {
 
 		if(Objects.nonNull(entity.getKm())) {
@@ -78,6 +84,7 @@ public class WorkOrderEntity {
 		}
 
 		this.discount = entity.getDiscount();
+		this.isFinalValueRounded = entity.getIsFinalValueRounded();
 
 		this.updateServiceItems(entity.getServiceItems());
 		

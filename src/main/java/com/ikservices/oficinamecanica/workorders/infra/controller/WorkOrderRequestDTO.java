@@ -24,6 +24,7 @@ public class WorkOrderRequestDTO {
 	private WorkOrderStatusEnum workOrderStatus;
 	private BigDecimal amount;
 	private BigDecimal discount;
+	private Boolean isFinalValueRounded;
 	private Integer payQty;
 	private boolean paid;
 	private List<WorkOrderServiceItemRequestDTO> serviceItems;

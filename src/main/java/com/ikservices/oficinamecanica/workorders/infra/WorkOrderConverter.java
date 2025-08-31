@@ -67,6 +67,7 @@ public class WorkOrderConverter {
 		workOrder.setKm(entity.getKm());
 		workOrder.setWorkOrderStatus(entity.getWoStatus());
 		workOrder.setDiscount(entity.getDiscount());
+		workOrder.setIsFinalValueRounded(entity.getIsFinalValueRounded());
 		workOrder.setPayQty(entity.getPayQty());
 		workOrder.setPaid(Objects.nonNull(entity.getPaid()) ? entity.getPaid() : false);
 		workOrder.setServiceItems(Objects.nonNull(entity.getServiceItems()) ? serviceItemsConverter.parseEntityToDomainList(entity.getServiceItems()) : new ArrayList<>());
@@ -97,6 +98,7 @@ public class WorkOrderConverter {
 		entity.setWoStatus(workOrder.getWorkOrderStatus());
 		entity.setAmount(workOrder.getAmount());
 		entity.setDiscount(workOrder.getDiscount());
+		entity.setIsFinalValueRounded(workOrder.getIsFinalValueRounded());
 		entity.setPayQty(workOrder.getPayQty());
 		entity.setPaid(Objects.nonNull(workOrder.getPaid()) ? workOrder.getPaid() : false);
 		entity.setServiceItems(Objects.nonNull(workOrder.getServiceItems()) ? serviceItemsConverter.parseDomainToEntityList(workOrder.getServiceItems()) : new ArrayList<>());
@@ -156,6 +158,7 @@ public class WorkOrderConverter {
 		workOrder.setKm(requestDTO.getKm());
 		workOrder.setWorkOrderStatus(requestDTO.getWorkOrderStatus());
 		workOrder.setDiscount(requestDTO.getDiscount());
+		workOrder.setIsFinalValueRounded(requestDTO.getIsFinalValueRounded());
 		workOrder.setPayQty(requestDTO.getPayQty());
 		workOrder.setPaid(requestDTO.isPaid());
 		workOrder.setServiceItems(Objects.nonNull(requestDTO.getServiceItems()) ? serviceItemsConverter.parseRequestToDomainList(requestDTO.getServiceItems()) : new ArrayList<>());
@@ -187,6 +190,7 @@ public class WorkOrderConverter {
 		responseDTO.setWorkOrderStatus(workOrder.getWorkOrderStatus().ordinal());
 		responseDTO.setAmount(NumberUtil.parseStringMoney(workOrder.getAmount()));
 		responseDTO.setDiscount(Objects.nonNull(workOrder.getDiscount()) ? String.valueOf(workOrder.getDiscount()) : "0,00");
+		responseDTO.setIsFinalValueRounded(workOrder.getIsFinalValueRounded());
 		responseDTO.setFinalValue(NumberUtil.parseStringMoney(workOrder.getFinalValue()));
 		responseDTO.setPayQty(workOrder.getPayQty());
 		responseDTO.setPaid(Objects.nonNull(workOrder.getPaid()) ? workOrder.getPaid() : false);
@@ -222,6 +226,7 @@ public class WorkOrderConverter {
 		request.setWorkOrderStatus(WorkOrderStatusEnum.findByIndex(response.getWorkOrderStatus()));
 		request.setAmount(NumberUtil.parseBigDecimal(response.getAmount()));
 		request.setDiscount(Objects.nonNull(response.getDiscount()) ? new BigDecimal(NumberUtil.parseStringNumber(response.getDiscount())) : BigDecimal.ZERO);
+		request.setIsFinalValueRounded(response.getIsFinalValueRounded());
 		request.setPayQty(response.getPayQty());
 		request.setPaid(response.isPaid());
 		request.setServiceItems(serviceItemsConverter.createRequestList(response.getServiceItems()));
