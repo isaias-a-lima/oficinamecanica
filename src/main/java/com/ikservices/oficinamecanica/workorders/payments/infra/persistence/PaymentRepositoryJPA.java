@@ -25,8 +25,21 @@ public interface PaymentRepositoryJPA extends JpaRepository<PaymentEntity, Payme
 			+ "(:paymentState = 'UNPAID' AND p.payDate IS NULL) OR "
 			+ "(:paymentState = 'NONE')) "
 			+ "AND p.dueDate BETWEEN :startDate AND :endDate "
+			+ "AND p.isOutsourcePay = FALSE "
 			+ "ORDER BY p.dueDate, p.id.workOrderId, p.id.number")
 	public List<PaymentEntity> listPaymentsByDuePeriod(@Param("workshopId") Long workshopId, 
 			@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,
 			@Param("paymentState") String paymentState);
+
+	@Query("SELECT p FROM PaymentEntity p WHERE "
+			+ "p.workOrder.budget.vehicle.workshopId = :workshopId "
+			+ "AND ((:paymentState = 'PAID' AND p.payDate IS NOT NULL) OR "
+			+ "(:paymentState = 'UNPAID' AND p.payDate IS NULL) OR "
+			+ "(:paymentState = 'NONE')) "
+			+ "AND p.dueDate BETWEEN :startDate AND :endDate "
+			+ "AND p.isOutsourcePay = TRUE "
+			+ "ORDER BY p.dueDate, p.id.workOrderId, p.id.number")
+	public List<PaymentEntity> listOutsourcePayments(@Param("workshopId") Long workshopId,
+													   @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,
+													   @Param("paymentState") String paymentState);
 }

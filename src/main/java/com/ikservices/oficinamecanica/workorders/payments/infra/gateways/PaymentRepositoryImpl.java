@@ -61,6 +61,11 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 	}
 
 	@Override
+	public List<Payment> listOutsourcePayments(Long workshopId, LocalDate dueDateBegin, LocalDate dueDateEnd, PaymentStateEnum paymentState) {
+		return this.converter.parseEntityToDomainList(repositoryJPA.listOutsourcePayments(workshopId, dueDateBegin, dueDateEnd, paymentState.toString()));
+	}
+
+	@Override
 	public Payment getPayment(PaymentId id) {
 
 		Optional<PaymentEntity> optional = repositoryJPA.findById(new PaymentEntityId(id.getNumber(), id.getWorkOrderId(), id.getBudgetId()));

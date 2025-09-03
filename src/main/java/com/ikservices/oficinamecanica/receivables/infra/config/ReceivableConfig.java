@@ -1,10 +1,7 @@
 package com.ikservices.oficinamecanica.receivables.infra.config;
 
 import com.ikservices.oficinamecanica.receivables.application.gatways.ReceivableRepository;
-import com.ikservices.oficinamecanica.receivables.application.usecases.GetReceivable;
-import com.ikservices.oficinamecanica.receivables.application.usecases.ListReceivable;
-import com.ikservices.oficinamecanica.receivables.application.usecases.SaveReceivable;
-import com.ikservices.oficinamecanica.receivables.application.usecases.UpdateReceivable;
+import com.ikservices.oficinamecanica.receivables.application.usecases.*;
 import com.ikservices.oficinamecanica.receivables.infra.ReceivableConstant;
 import com.ikservices.oficinamecanica.receivables.infra.ReceivableConverter;
 import com.ikservices.oficinamecanica.receivables.infra.gateways.ReceivableRepositoryImpl;
@@ -51,6 +48,11 @@ public class ReceivableConfig {
     @Bean
     public ListReceivable getListReceivable(ReceivableRepository repository) {
         return new ListReceivable(repository);
+    }
+
+    @Bean
+    public ListOutsourceReceivables getListOutsourceReceivable(ReceivableRepository repository) {
+        return new ListOutsourceReceivables(repository);
     }
 
     @PostConstruct

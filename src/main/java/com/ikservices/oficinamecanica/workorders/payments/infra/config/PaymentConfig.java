@@ -45,6 +45,11 @@ public class PaymentConfig {
 	public ListOverduePayments listOverduePayments(PaymentRepository repository) {
 		return new ListOverduePayments(repository);
 	}
+
+	@Bean
+	public ListOutsourcePayments listOutsourcePayments(PaymentRepository repository) {
+		return new ListOutsourcePayments(repository);
+	}
 	
 	@Bean
 	public ListPaymentsByDuePeriod listPaymentsByDuePeriod(PaymentRepository repository) {

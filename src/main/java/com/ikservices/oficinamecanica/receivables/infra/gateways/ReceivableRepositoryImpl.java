@@ -88,4 +88,13 @@ public class ReceivableRepositoryImpl implements ReceivableRepository {
         List<ReceivableEntity> entityList = jpa.listReceivableByDuePeriod(workshopId, startDate, endDate, status.toString());
         return new ArrayList<>(converter.parseEntityToDomainList(entityList));
     }
+
+    @Override
+    public List<Receivable> listOutsourceReceivables(Long workshopId, LocalDate startDate, LocalDate endDate, ReceivableStatusEnum status) {
+        if (Objects.isNull(workshopId) || Objects.isNull(startDate) || Objects.isNull(endDate) || Objects.isNull(status)) {
+            throw new IKException(new IKMessage(IKConstants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), IKConstants.NULL_OBJECT_MESSAGE));
+        }
+        List<ReceivableEntity> entityList = jpa.listOutsourceReceivables(workshopId, startDate, endDate, status.toString());
+        return new ArrayList<>(converter.parseEntityToDomainList(entityList));
+    }
 }

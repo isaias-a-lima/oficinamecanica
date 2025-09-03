@@ -12,7 +12,10 @@ import com.ikservices.oficinamecanica.receivables.domain.ReceivableTypeEnum;
 import com.ikservices.oficinamecanica.receivables.infra.controller.ReceivableDTO;
 import com.ikservices.oficinamecanica.receivables.infra.persistence.ReceivableEntity;
 import com.ikservices.oficinamecanica.receivables.infra.persistence.ReceivableEntityId;
+import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ReceivableConverter extends IKConverter<ReceivableDTO, Receivable, ReceivableEntity, ReceivableDTO> {
@@ -91,5 +94,35 @@ public class ReceivableConverter extends IKConverter<ReceivableDTO, Receivable, 
         dto.setNote(domain.getNote());
 
         return dto;
+    }
+
+    public ReceivableDTO parsePaymentToReceivable(Payment payment) {
+        if (Objects.isNull(payment)) {
+            throw new IKException(new IKMessage(IKConstants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), IKConstants.NULL_OBJECT_MESSAGE));
+        }
+
+        ReceivableDTO dto = new ReceivableDTO();
+        dto.setPaymentNumber(payment.getId().getNumber());
+        dto.setWorkOrderId(payment.getId().getWorkOrderId());
+        dto.setBudgetId(payment.getId().getBudgetId());
+        dto.setDueDate(payment.getDueDate());
+        dto.setPaymentValue(NumberUtil.parseStringMoney(payment.getPaymentValue()));
+        dto.setReceivableType(payment.getPaymentType().ordinal());
+        dto.setPaymentDate(payment.getPayDate());
+        dto.setOutsourcePayment(payment.getIsOutsourcePay());
+        dto.setSupplierId(payment.getSupplierId());
+        dto.setNote(payment.getNote());
+
+        return dto;
+    }
+
+    public List<ReceivableDTO> parsePaymentToReceivableList(List<Payment> paymentList) {
+        List<ReceivableDTO> domainList = new ArrayList<>();
+        if (Objects.nonNull(paymentList) && !paymentList.isEmpty()) {
+            for (Payment payment : paymentList) {
+                domainList.add(this.parsePaymentToReceivable(payment));
+            }
+        }
+        return domainList;
     }
 }

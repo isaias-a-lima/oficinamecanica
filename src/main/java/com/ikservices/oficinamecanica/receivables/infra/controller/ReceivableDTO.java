@@ -9,10 +9,12 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"receivableId", "workshopId"})
 public class ReceivableDTO implements Serializable {
     private Long receivableId;
     private Long workshopId;
+    private Integer paymentNumber;
+    private Long workOrderId;
+    private Long budgetId;
     private LocalDate dueDate;
     private String paymentValue;
     private Integer receivableType;

@@ -12,4 +12,5 @@ public interface ReceivableRepository {
     Receivable getReceivable(ReceivableId id);
     Receivable updateReceivable(Receivable receivable);
     List<Receivable> listReceivables(Long workshopId, LocalDate startDate, LocalDate endDate, ReceivableStatusEnum status);
+    List<Receivable> listOutsourceReceivables(Long workshopId, LocalDate startDate, LocalDate endDate, ReceivableStatusEnum status);
 }
