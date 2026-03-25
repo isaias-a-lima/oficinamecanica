@@ -17,7 +17,7 @@ import java.util.Objects;
 public class PaymentUpdateValidator implements IPaymentBusiness {
 
     private static final String PAID_MSG = "Esta ordem de serviço já está paga e não pode ser alterada.";
-    private static final String PAYMENT_AMOUNT_IS_GREATER_THAN_WORK_ORDER_AMOUNT = "A soma de todos os pagamentos não pode ultrapassar o valor total da Ordem de Serviço.";
+    private static final String PAYMENT_AMOUNT_IS_GREATER_THAN_WORK_ORDER_FINAL_VALUE = "A soma de todos os pagamentos não pode ultrapassar o valor final da Ordem de Serviço.";
     private static final String CANNOT_BE_PAID = "Esta ordem de serviço não pode ser totalmente paga enquanto não for finalizada.";
 
     @Override
@@ -45,15 +45,15 @@ public class PaymentUpdateValidator implements IPaymentBusiness {
             for (Payment payment : paymentList) {
                 aux = aux.add(payment.getPaymentValue());
 
-                if (aux.compareTo(workOrder.getAmount()) > 0) {
-                    throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), PAYMENT_AMOUNT_IS_GREATER_THAN_WORK_ORDER_AMOUNT));
+                if (aux.compareTo(workOrder.getFinalValue()) > 0) {
+                    throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), PAYMENT_AMOUNT_IS_GREATER_THAN_WORK_ORDER_FINAL_VALUE));
                 }
 
                 if (Objects.nonNull(payment.getPayDate())) {
                     amountPaid = amountPaid.add(payment.getPaymentValue());
                 }
 
-                if (!WorkOrderStatusEnum.DONE.equals(workOrder.getWorkOrderStatus()) && amountPaid.compareTo(workOrder.getAmount()) == 0) {
+                if (!WorkOrderStatusEnum.DONE.equals(workOrder.getWorkOrderStatus()) && amountPaid.compareTo(workOrder.getFinalValue()) == 0) {
                     throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), CANNOT_BE_PAID));
                 }
             }

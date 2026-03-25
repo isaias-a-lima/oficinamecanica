@@ -1,6 +1,5 @@
 package com.ikservices.oficinamecanica.workorders.payments.infra.gateways;
 
-import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.constants.IKConstants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessage;
@@ -22,7 +21,6 @@ import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.Paym
 import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentEntityId;
 import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentRepositoryJPA;
 
-import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -58,6 +56,11 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 	@Override
 	public List<Payment> listPaymentsByDuePeriod(Long workshopId, LocalDate dueDateBegin, LocalDate dueDateEnd, PaymentStateEnum paymentState) {
 		return this.converter.parseEntityToDomainList(repositoryJPA.listPaymentsByDuePeriod(workshopId, dueDateBegin, dueDateEnd, paymentState.toString()));
+	}
+
+	@Override
+	public List<Payment> listOutsourcePayments(Long workshopId, LocalDate dueDateBegin, LocalDate dueDateEnd, PaymentStateEnum paymentState) {
+		return this.converter.parseEntityToDomainList(repositoryJPA.listOutsourcePayments(workshopId, dueDateBegin, dueDateEnd, paymentState.toString()));
 	}
 
 	@Override
@@ -141,11 +144,17 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
 		Optional<WorkOrderEntity> optional = workOrderRepositoryJPA.findById(new WorkOrderEntityId(workOrderId));
 		optional.ifPresent(w -> {
-			if (paidValue.compareTo(w.getAmount()) >= 0) {
+			BigDecimal finalValue = WorkOrder.calculateFinalValue(w.getDiscount(), w.getAmount(), w.getIsFinalValueRounded());
+			if (paidValue.compareTo(finalValue) >= 0) {
 				w.setPaid(true);
 			}
 		});
 
 		return converter.parseEntityToDomainList(result);
+	}
+
+	@Override
+	public List<Payment> listPaymentsBySupplierAndPayDate(Long workshopId, Integer supplierId, LocalDate startDate, LocalDate endDate) {
+		return converter.parseEntityToDomainList(repositoryJPA.listPaymentsBySupplierAndPayDate(workshopId, supplierId, startDate, endDate));
 	}
 }

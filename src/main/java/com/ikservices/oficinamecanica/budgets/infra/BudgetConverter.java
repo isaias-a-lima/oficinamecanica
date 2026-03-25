@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.budgets.infra;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -187,6 +188,7 @@ public class BudgetConverter {
 		workOrderEntity.setKm(budgetEntity.getKm());
 		workOrderEntity.setWoStatus(WorkOrderStatusEnum.QUEUE);
 		workOrderEntity.setAmount(budgetEntity.getAmount());
+		workOrderEntity.setDiscount(BigDecimal.ZERO);
 		workOrderEntity.setServiceItems(budgetItemServiceConverter.parseToWorkOrderServiceItemList(budgetEntity.getServiceItems(), workOrderId));
 		workOrderEntity.setPartItems(budgetItemPartConverter.parseToWorkOrderPartItemEntityList(budgetEntity.getPartItems(), workOrderId));
 
