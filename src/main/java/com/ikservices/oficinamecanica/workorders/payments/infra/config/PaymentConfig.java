@@ -2,18 +2,17 @@ package com.ikservices.oficinamecanica.workorders.payments.infra.config;
 
 import com.ikservices.oficinamecanica.workorders.infra.WorkOrderConverter;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderRepositoryJPA;
+import com.ikservices.oficinamecanica.workorders.payments.application.gateways.PaymentRepository;
 import com.ikservices.oficinamecanica.workorders.payments.application.usecases.*;
 import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConstant;
+import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConverter;
+import com.ikservices.oficinamecanica.workorders.payments.infra.gateways.PaymentRepositoryImpl;
+import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentRepositoryJPA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-
-import com.ikservices.oficinamecanica.workorders.payments.application.gateways.PaymentRepository;
-import com.ikservices.oficinamecanica.workorders.payments.infra.PaymentConverter;
-import com.ikservices.oficinamecanica.workorders.payments.infra.gateways.PaymentRepositoryImpl;
-import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentRepositoryJPA;
 
 import javax.annotation.PostConstruct;
 
@@ -59,6 +58,11 @@ public class PaymentConfig {
 	@Bean
 	public UpdatePayment updatePayment(PaymentRepository repository) {
 		return new UpdatePayment(repository);
+	}
+
+	@Bean
+	public ListPaymentsBySupplier listPaymentsBySupplier(PaymentRepository repository) {
+		return new ListPaymentsBySupplier(repository);
 	}
 
 	@PostConstruct

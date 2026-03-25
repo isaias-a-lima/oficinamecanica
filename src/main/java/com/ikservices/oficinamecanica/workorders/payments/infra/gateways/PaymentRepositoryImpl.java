@@ -1,6 +1,5 @@
 package com.ikservices.oficinamecanica.workorders.payments.infra.gateways;
 
-import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.constants.IKConstants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessage;
@@ -22,7 +21,6 @@ import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.Paym
 import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentEntityId;
 import com.ikservices.oficinamecanica.workorders.payments.infra.persistence.PaymentRepositoryJPA;
 
-import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -153,5 +151,10 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 		});
 
 		return converter.parseEntityToDomainList(result);
+	}
+
+	@Override
+	public List<Payment> listPaymentsBySupplierAndPayDate(Long workshopId, Integer supplierId, LocalDate startDate, LocalDate endDate) {
+		return converter.parseEntityToDomainList(repositoryJPA.listPaymentsBySupplierAndPayDate(workshopId, supplierId, startDate, endDate));
 	}
 }

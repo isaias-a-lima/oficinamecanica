@@ -7,11 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
-public class PayableDTO {
+@EqualsAndHashCode(of = {"id", "workshopId"})
+public class PayableDTO implements Serializable {
 	private Integer id;
 	private Long workshopId;
 	private String creationDate;

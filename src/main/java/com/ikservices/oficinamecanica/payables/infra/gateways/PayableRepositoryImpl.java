@@ -65,4 +65,9 @@ public class PayableRepositoryImpl implements PayableRepository {
 	public Integer getNextPayableId(Long workshopId) {
 		return repositoryJPA.getNextPayableId(workshopId);
 	}
+
+	@Override
+	public List<Payable> listPayableBySuppliers(Long workshopId, Integer supplierId, LocalDate startDate, LocalDate endDate) {
+		return converter.parseEntityToDomainList(repositoryJPA.findAllBySupplierAndDueDate(workshopId, supplierId, startDate, endDate));
+	}
 }

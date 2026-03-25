@@ -42,4 +42,9 @@ public interface PaymentRepositoryJPA extends JpaRepository<PaymentEntity, Payme
 	public List<PaymentEntity> listOutsourcePayments(@Param("workshopId") Long workshopId,
 													   @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,
 													   @Param("paymentState") String paymentState);
+
+	@Query("SELECT p FROM PaymentEntity p WHERE p.workOrder.budget.vehicle.workshopId = :workshopId  AND p.supplierId = :supplierId "
+			+ "AND p.payDate BETWEEN :startDate AND :endDate "
+			+ "ORDER BY p.payDate")
+	public List<PaymentEntity> listPaymentsBySupplierAndPayDate(@Param("workshopId") Long workshopId, @Param("supplierId") Integer supplierId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

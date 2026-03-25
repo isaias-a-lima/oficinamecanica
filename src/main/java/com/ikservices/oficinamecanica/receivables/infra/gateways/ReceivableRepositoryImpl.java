@@ -97,4 +97,9 @@ public class ReceivableRepositoryImpl implements ReceivableRepository {
         List<ReceivableEntity> entityList = jpa.listOutsourceReceivables(workshopId, startDate, endDate, status.toString());
         return new ArrayList<>(converter.parseEntityToDomainList(entityList));
     }
+
+    @Override
+    public List<Receivable> listReceivableBySupplierAndPayDate(Long workshopId, Integer supplierId, LocalDate startDate, LocalDate endDate) {
+        return converter.parseEntityToDomainList(jpa.listReceivableBySupplierAndPayDate(workshopId, supplierId, startDate, endDate));
+    }
 }

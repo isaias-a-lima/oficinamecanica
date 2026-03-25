@@ -55,6 +55,11 @@ public class ReceivableConfig {
         return new ListOutsourceReceivables(repository);
     }
 
+    @Bean
+    public ListReceivableBySupplier getListReceivableBySupplier(ReceivableRepository repository) {
+        return new ListReceivableBySupplier(repository);
+    }
+
     @PostConstruct
     private void setupConstants() {
         ReceivableConstant.RECEIVABLE_LIST_ERROR_MESSAGE = environment.getProperty(ReceivableConstant.RECEIVABLE_LIST_ERROR_KEY);

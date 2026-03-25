@@ -20,4 +20,6 @@ public interface PaymentRepository {
     Payment getPayment(PaymentId id);
     Payment updatePayment(Payment payment);
     List<Payment> updatePaymentList(List<Payment> paymentList, WorkOrderId workOrderId);
+
+    List<Payment> listPaymentsBySupplierAndPayDate(Long workshopId, Integer supplierId, LocalDate startDate, LocalDate endDate);
 }

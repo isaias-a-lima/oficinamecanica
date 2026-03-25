@@ -13,4 +13,5 @@ public interface PayableRepository {
 	Payable savePayable(Payable payable);
 	Payable updatePayable(Payable payable);
 	Integer getNextPayableId(Long workshopId);
+	List<Payable> listPayableBySuppliers(Long workshopId, Integer supplierId, LocalDate startDate, LocalDate endDate);
 }
