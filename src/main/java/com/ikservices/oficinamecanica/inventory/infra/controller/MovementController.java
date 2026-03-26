@@ -9,7 +9,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
@@ -22,9 +24,12 @@ import com.ikservices.oficinamecanica.inventory.application.usecases.ListMovemen
 import com.ikservices.oficinamecanica.inventory.application.usecases.SaveMovement;
 import com.ikservices.oficinamecanica.inventory.application.usecases.UpdateMovement;
 import com.ikservices.oficinamecanica.inventory.domain.InventoryMovement;
+import com.ikservices.oficinamecanica.inventory.domain.enumerates.MovementTypeEnum;
 import com.ikservices.oficinamecanica.inventory.infra.constants.MovementConstant;
 import com.ikservices.oficinamecanica.workorders.payments.infra.controller.PaymentController;
 
+@RestController
+@RequestMapping("movements")
 public class MovementController {
 	private static final Logger LOGGER = IKLoggerUtil.getLogger(PaymentController.class);
 	
@@ -47,13 +52,16 @@ public class MovementController {
 	}
 	
 	@GetMapping("list")
-	public ResponseEntity<IKResponse<MovementDTO>> ListMovementByPartAndType(InventoryMovement movement, 
+	public ResponseEntity<IKResponse<MovementDTO>> ListMovementByPartAndType(
+			@RequestParam(name = "partId") Integer partId,
+			@RequestParam(name = "workshopId") Long workshopId,
 			@RequestParam(name = "startDate") String startDate, 
-			@RequestParam(name="endDate") String endDate) {
+			@RequestParam(name="endDate") String endDate,
+			@RequestParam(name="movementType") Integer movementType) {
 		try {
-			List<MovementDTO> movementDTOList = converter.parseDomainToResponseList(listMovementByPartAndType.execute(movement.getPartId(), movement.getId().getWorkshopId(),
+			List<MovementDTO> movementDTOList = converter.parseDomainToResponseList(listMovementByPartAndType.execute(partId, workshopId,
 					DateUtil.parseToLocalDate(startDate), DateUtil.parseToLocalDate(endDate),
-					movement.getMovementType()));
+					MovementTypeEnum.findByIndex(movementType)));
 			
 			return ResponseEntity.ok(IKResponse.<MovementDTO>build().body(movementDTOList));			
 		}catch(IKException ike) {
