@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.commons.utils.DateUtil;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.inventory.MovementConverter;
+import com.ikservices.oficinamecanica.inventory.application.usecases.GetMovement;
 import com.ikservices.oficinamecanica.inventory.application.usecases.ListMovementByPartAndType;
 import com.ikservices.oficinamecanica.inventory.application.usecases.SaveMovement;
 import com.ikservices.oficinamecanica.inventory.application.usecases.UpdateMovement;
@@ -41,12 +43,14 @@ public class MovementController {
 	private MovementConverter converter;
 	
 	ListMovementByPartAndType listMovementByPartAndType;
+	GetMovement getMovement;
 	SaveMovement saveMovement;
 	UpdateMovement updateMovement;
 	
-	public MovementController(ListMovementByPartAndType listMovementByPartAndType, SaveMovement saveMovement, 
-			UpdateMovement updateMovement) {
+	public MovementController(ListMovementByPartAndType listMovementByPartAndType, GetMovement getMovement,
+			SaveMovement saveMovement, UpdateMovement updateMovement) {
 		this.listMovementByPartAndType = listMovementByPartAndType;
+		this.getMovement = getMovement;
 		this.saveMovement = saveMovement;
 		this.updateMovement = updateMovement;
 	}
@@ -74,6 +78,26 @@ public class MovementController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
 					body(IKResponse.<MovementDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, 
 							IKMessageType.ERROR, environment.getProperty(MovementConstant.LIST_ERROR_MESSAGE)));
+		}
+	}
+	
+	@GetMapping("get/{workshopId}/{inventoryId}")
+	public ResponseEntity<IKResponse<MovementDTO>> getMovement(@PathVariable Long workshopId, @PathVariable Long inventoryId) {
+		try {
+			MovementDTO movementDTO = converter.parseDomainToResponse(getMovement.
+					execute(workshopId, inventoryId));
+			return ResponseEntity.ok(IKResponse.<MovementDTO>build().body(movementDTO));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).
+					body(IKResponse.<MovementDTO>build().addMessage(ike.getIkMessage().getCode(), 
+							IKMessageType.getByCode(ike.getIkMessage().getType()), 
+							ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
+					body(IKResponse.<MovementDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, 
+							IKMessageType.ERROR, environment.getProperty(MovementConstant.GET_ERROR_MESSAGE)));
 		}
 	}
 }
