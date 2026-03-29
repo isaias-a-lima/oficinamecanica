@@ -1,7 +1,5 @@
 package com.ikservices.oficinamecanica.parts.infra.controller;
 
-import java.math.BigDecimal;
-
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.parts.domain.Part;
 
@@ -33,9 +31,9 @@ public class PartDTO {
 		this.brand = part.getBrand();
 		this.fits = part.getFits();
 		this.manufacturerCode = part.getManufacturerCode();
-		this.cost = NumberUtil.parseStringMoney(part.getCost());
+		this.cost = NumberUtil.parseStringLocalMoney(part.getCost());
 		this.profit = NumberUtil.parseStringPercent(part.getProfit());
-		this.value = NumberUtil.parseStringMoney(part.getValue());
+		this.value = NumberUtil.parseStringLocalMoney(part.getValue());
 		this.balance = part.getBalance();
 	}
 }

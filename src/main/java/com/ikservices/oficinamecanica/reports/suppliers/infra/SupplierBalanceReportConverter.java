@@ -50,7 +50,7 @@ public class SupplierBalanceReportConverter extends IKConverter<SupplierBalanceR
         dto.setName(domain.getName());
         dto.setPayables(NumberUtil.parseStringMoney(domain.getPayables()));
         dto.setReceivables(NumberUtil.parseStringMoney(domain.getReceivables()));
-        dto.setBalance(NumberUtil.parseStringMoney(domain.getBalance()));
+        dto.setBalance(NumberUtil.parseStringMoneyWithOperatorSymbol(domain.getBalance()));
 
         return dto;
     }

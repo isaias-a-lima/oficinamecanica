@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -96,7 +95,7 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
             dto.setWorkOrder(Objects.nonNull(domain.getWorkOrder()) ? workOrderConverter.parseResponseDTO(domain.getWorkOrder()) : null);
             dto.setBudgetId(domain.getId().getBudgetId());
             dto.setDueDate(DateUtil.parseToString(domain.getDueDate()));
-            dto.setPayValue(NumberUtil.parseStringMoney(domain.getPaymentValue()));
+            dto.setPayValue(NumberUtil.parseStringLocalMoney(domain.getPaymentValue()));
             dto.setPaymentType(Objects.nonNull(domain.getPaymentType()) ? domain.getPaymentType().ordinal() : PaymentTypeEnum.NONE.ordinal());
             dto.setNote(domain.getNote());
             dto.setPayDate(DateUtil.parseToString(domain.getPayDate()));

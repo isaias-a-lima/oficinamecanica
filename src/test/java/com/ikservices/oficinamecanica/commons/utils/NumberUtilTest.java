@@ -30,23 +30,23 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testParseStringMoney() {
+    public void testParseStringLocalMoney() {
 
         for (String value : getValues()) {
             String expected = NumberUtil.parseStringNumber(value);
 
-            String actual = NumberUtil.parseStringNumber(NumberUtil.parseStringMoney(new BigDecimal(expected)));
+            String actual = NumberUtil.parseStringNumber(NumberUtil.parseStringLocalMoney(new BigDecimal(expected)));
 
             Assertions.assertEquals(expected, actual);
         }
     }
 
     @Test
-    public void testParseStringMoneyWithNullParam() {
+    public void testParseStringLocalMoneyWithNullParam() {
 
         String expected = NumberUtil.parseStringNumber(null);
 
-        String actual = NumberUtil.parseStringNumber(NumberUtil.parseStringMoney(null));
+        String actual = NumberUtil.parseStringNumber(NumberUtil.parseStringLocalMoney(null));
 
         Assertions.assertEquals(expected, actual);
     }
@@ -80,6 +80,31 @@ public class NumberUtilTest {
         BigDecimal expected = BigDecimal.valueOf(190).setScale(2, RoundingMode.HALF_UP);
         BigDecimal actual = NumberUtil.calcPrice(5,BigDecimal.valueOf(20), BigDecimal.valueOf(20), BigDecimal.valueOf(5));
         Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testParseStringMoneyWithOperatorSymbol() {
+
+        Map<String, BigDecimal> params = new HashMap<>();
+        params.put("+1.299,50", BigDecimal.valueOf(1299.50));
+        params.put("-525,95", BigDecimal.valueOf(-525.95));
+
+        params.forEach((k,v) -> {
+            Assertions.assertEquals(k, NumberUtil.parseStringMoneyWithOperatorSymbol(v));
+        });
+    }
+
+    @Test
+    public void testParseStringMoney() {
+
+        String expected = "1.235.101,99";
+        BigDecimal actual = BigDecimal.valueOf(1235101.99);
+
+        String expected2 = "-5.101,90";
+        BigDecimal actual2 = BigDecimal.valueOf(-5101.90);
+
+        Assertions.assertEquals(expected, NumberUtil.parseStringMoney(actual));
+        Assertions.assertEquals(expected2, NumberUtil.parseStringMoney(actual2));
     }
 
     private List<String> getValues() {

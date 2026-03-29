@@ -7,13 +7,11 @@ import com.ikservices.oficinamecanica.commons.response.IKMessage;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.workorders.domain.enumarates.WorkOrderStatusEnum;
-import com.ikservices.oficinamecanica.workorders.infra.constants.WorkOrderConstant;
 import com.ikservices.oficinamecanica.workorders.items.parts.domain.WorkOrderPartItem;
 import com.ikservices.oficinamecanica.workorders.items.services.domain.WorkOrderServiceItem;
 import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -76,7 +74,7 @@ public class WorkOrder {
 				sum = sum.add(partItem.getTotal());
 			}
 		}
-		return NumberUtil.parseStringMoney(sum);
+		return NumberUtil.parseStringLocalMoney(sum);
 	}
 
 	public String sumServiceItems() {
@@ -86,7 +84,7 @@ public class WorkOrder {
 				sum = sum.add(serviceItem.getTotal());
 			}
 		}
-		return NumberUtil.parseStringMoney(sum);
+		return NumberUtil.parseStringLocalMoney(sum);
 	}
 
 	private void updateAmount() {

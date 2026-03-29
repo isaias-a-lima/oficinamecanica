@@ -68,7 +68,7 @@ public class ServiceConverter {
 		dto.setServiceId(service.getId().getId());
 		dto.setWorkshopId(service.getId().getWorkshopId());
 		dto.setDescription(service.getDescription());
-		dto.setCost(NumberUtil.parseStringMoney(service.getCost()));
+		dto.setCost(NumberUtil.parseStringLocalMoney(service.getCost()));
 		
 		return dto;
 	}

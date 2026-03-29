@@ -21,6 +21,6 @@ public class ServiceDTO {
 		this.serviceId = service.getId().getId();
 		this.workshopId = service.getId().getWorkshopId();
 		this.description = service.getDescription();
-		this.cost = NumberUtil.parseStringMoney(service.getCost());
+		this.cost = NumberUtil.parseStringLocalMoney(service.getCost());
 	}
 }

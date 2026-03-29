@@ -29,6 +29,6 @@ public class SupplierBalanceReport {
     }
 
     public BigDecimal getBalance() {
-        return this.payables.subtract(this.receivables);
+        return this.receivables.subtract(this.payables);
     }
 }

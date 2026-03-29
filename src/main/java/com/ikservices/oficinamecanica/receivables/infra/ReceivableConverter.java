@@ -86,7 +86,7 @@ public class ReceivableConverter extends IKConverter<ReceivableDTO, Receivable, 
         dto.setReceivableId(domain.getId().getOrderNumber());
         dto.setWorkshopId(domain.getId().getWorkshopId());
         dto.setDueDate(domain.getDueDate());
-        dto.setPaymentValue(NumberUtil.parseStringMoney(domain.getPaymentValue()));
+        dto.setPaymentValue(NumberUtil.parseStringLocalMoney(domain.getPaymentValue()));
         dto.setReceivableType(domain.getReceivableType().ordinal());
         dto.setPaymentDate(domain.getPaymentDate());
         dto.setOutsourcePayment(domain.getOutsourcePayment());
@@ -106,7 +106,7 @@ public class ReceivableConverter extends IKConverter<ReceivableDTO, Receivable, 
         dto.setWorkOrderId(payment.getId().getWorkOrderId());
         dto.setBudgetId(payment.getId().getBudgetId());
         dto.setDueDate(payment.getDueDate());
-        dto.setPaymentValue(NumberUtil.parseStringMoney(payment.getPaymentValue()));
+        dto.setPaymentValue(NumberUtil.parseStringLocalMoney(payment.getPaymentValue()));
         dto.setReceivableType(payment.getPaymentType().ordinal());
         dto.setPaymentDate(payment.getPayDate());
         dto.setOutsourcePayment(payment.getIsOutsourcePay());

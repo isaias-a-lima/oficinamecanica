@@ -10,7 +10,7 @@
 
 	<groupId>com.ikservices</groupId>
 	<artifactId>oficinamecanica</artifactId>
-	<version>0.15.18</version>
+	<version>0.15.19</version>
 	<packaging>war</packaging>
 
 	<name>oficinamecanica</name>

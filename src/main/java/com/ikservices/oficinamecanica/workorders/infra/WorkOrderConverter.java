@@ -188,10 +188,10 @@ public class WorkOrderConverter {
 		responseDTO.setOpeningDate(workOrder.getOpeningDate().toString());
 		responseDTO.setKm(workOrder.getKm());
 		responseDTO.setWorkOrderStatus(workOrder.getWorkOrderStatus().ordinal());
-		responseDTO.setAmount(NumberUtil.parseStringMoney(workOrder.getAmount()));
+		responseDTO.setAmount(NumberUtil.parseStringLocalMoney(workOrder.getAmount()));
 		responseDTO.setDiscount(Objects.nonNull(workOrder.getDiscount()) ? String.valueOf(workOrder.getDiscount()) : "0,00");
 		responseDTO.setIsFinalValueRounded(workOrder.getIsFinalValueRounded());
-		responseDTO.setFinalValue(NumberUtil.parseStringMoney(workOrder.getFinalValue()));
+		responseDTO.setFinalValue(NumberUtil.parseStringLocalMoney(workOrder.getFinalValue()));
 		responseDTO.setPayQty(workOrder.getPayQty());
 		responseDTO.setPaid(Objects.nonNull(workOrder.getPaid()) ? workOrder.getPaid() : false);
 

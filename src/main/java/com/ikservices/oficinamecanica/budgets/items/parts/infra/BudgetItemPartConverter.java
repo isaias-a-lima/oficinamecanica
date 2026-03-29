@@ -8,7 +8,6 @@ import com.ikservices.oficinamecanica.budgets.items.parts.infra.persistence.Budg
 import com.ikservices.oficinamecanica.budgets.items.parts.infra.persistence.BudgetItemPartEntityId;
 import com.ikservices.oficinamecanica.commons.generics.IKConverter;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
-import com.ikservices.oficinamecanica.commons.utils.StringUtil;
 import com.ikservices.oficinamecanica.parts.domain.Part;
 import com.ikservices.oficinamecanica.parts.domain.PartId;
 import com.ikservices.oficinamecanica.parts.infra.PartConverter;
@@ -85,11 +84,11 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         dto.setBudgetId(domain.getId().getBudgetId());
         dto.setPart(partConverter.parseDTO(domain.getPart()));
         dto.setQuantity(domain.getQuantity());
-        dto.setCost(NumberUtil.parseStringMoney(domain.getValue()));
-        dto.setServiceCost(NumberUtil.parseStringMoney(domain.getServiceCost()));
-        dto.setPartAndServiceValue(NumberUtil.parseStringMoney(domain.getValue().add(domain.getServiceCost())));
+        dto.setCost(NumberUtil.parseStringLocalMoney(domain.getValue()));
+        dto.setServiceCost(NumberUtil.parseStringLocalMoney(domain.getServiceCost()));
+        dto.setPartAndServiceValue(NumberUtil.parseStringLocalMoney(domain.getValue().add(domain.getServiceCost())));
         dto.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
-        dto.setAmount(NumberUtil.parseStringMoney(domain.getTotal()));
+        dto.setAmount(NumberUtil.parseStringLocalMoney(domain.getTotal()));
         return dto;
     }
 

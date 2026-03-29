@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
-import com.ikservices.oficinamecanica.budgets.domain.BudgetStatusEnum;
 import com.ikservices.oficinamecanica.budgets.items.parts.infra.dto.BudgetItemPartResponseDTO;
 import com.ikservices.oficinamecanica.budgets.items.services.infra.controller.BudgetItemServiceResponseDTO;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
@@ -38,7 +37,7 @@ public class BudgetDTO {
 		this.openingDate = budget.getOpeningDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		this.km = budget.getKm();
 		this.budgetStatus = budget.getBudgetStatus().ordinal();
-		this.amount = NumberUtil.parseStringMoney(budget.getAmount());
+		this.amount = NumberUtil.parseStringLocalMoney(budget.getAmount());
 		this.budgetId = budgetId;
 		this.vehicle = Objects.nonNull(budget.getVehicle()) && Objects.nonNull(vehicleId) ? new VehicleDTO(budget.getVehicle(), vehicleId) : null;
 	}

@@ -6,15 +6,12 @@ import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import com.ikservices.oficinamecanica.parts.domain.Part;
 import com.ikservices.oficinamecanica.parts.domain.PartId;
 import com.ikservices.oficinamecanica.parts.infra.PartConverter;
-import com.ikservices.oficinamecanica.parts.infra.persistence.PartEntity;
 import com.ikservices.oficinamecanica.workorders.items.parts.domain.WorkOrderPartItem;
 import com.ikservices.oficinamecanica.workorders.items.parts.domain.WorkOrderPartItemId;
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.dto.WorkOrderPartItemRequestDTO;
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.dto.WorkOrderPartItemResponseDTO;
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.persistence.WorkOrderPartItemEntity;
 import com.ikservices.oficinamecanica.workorders.items.parts.infra.persistence.WorkOrderPartItemEntityId;
-import com.ikservices.oficinamecanica.workorders.items.services.infra.dto.WorkOrderServiceItemRequestDTO;
-import com.ikservices.oficinamecanica.workorders.items.services.infra.dto.WorkOrderServiceItemResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -94,11 +91,11 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
             response.setBudgetId(domain.getId().getBudgetId());
             response.setPart(Objects.nonNull(domain.getPart()) ? partConverter.parseDTO(domain.getPart()): null);
             response.setQuantity(domain.getQuantity());
-            response.setItemValue(NumberUtil.parseStringMoney(domain.getItemValue()));
-            response.setServiceCost(NumberUtil.parseStringMoney(domain.getServiceCost()));
-            response.setPartAndServiceValue(NumberUtil.parseStringMoney(domain.getItemValue().add(domain.getServiceCost())));
+            response.setItemValue(NumberUtil.parseStringLocalMoney(domain.getItemValue()));
+            response.setServiceCost(NumberUtil.parseStringLocalMoney(domain.getServiceCost()));
+            response.setPartAndServiceValue(NumberUtil.parseStringLocalMoney(domain.getItemValue().add(domain.getServiceCost())));
             response.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
-            response.setAmount(NumberUtil.parseStringMoney(domain.getTotal()));
+            response.setAmount(NumberUtil.parseStringLocalMoney(domain.getTotal()));
         }
 
         return response;

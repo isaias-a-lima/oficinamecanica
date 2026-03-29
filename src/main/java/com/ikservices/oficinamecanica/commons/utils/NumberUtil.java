@@ -28,7 +28,7 @@ public class NumberUtil {
         return new BigDecimal(value);
     }
 
-    public static String parseStringMoney(BigDecimal value) {
+    public static String parseStringLocalMoney(BigDecimal value) {
         Locale locale = Objects.nonNull(Constants.getLOCALE()) ? Constants.getLOCALE() : new Locale("pt", "BR");
         NumberFormat numberFormat = DecimalFormat.getCurrencyInstance(locale);
 
@@ -37,6 +37,23 @@ public class NumberUtil {
         }
 
         return numberFormat.format(value);
+    }
+
+    public static String parseStringMoney(BigDecimal value) {
+        DecimalFormat df = new DecimalFormat("#,###,##0.00");
+        return df.format(value);
+    }
+
+    public static String parseStringMoneyWithOperatorSymbol(BigDecimal value) {
+        String operator = "";
+
+        String monetaryValue = parseStringMoney(value);
+
+        if (value.compareTo(BigDecimal.ZERO) > 0) {
+            operator = "+";
+        }
+
+        return operator.concat(monetaryValue);
     }
 
     public static String parseStringNumber(String value) {
