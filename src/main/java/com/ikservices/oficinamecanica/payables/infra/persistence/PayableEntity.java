@@ -59,6 +59,9 @@ public class PayableEntity {
 
 	@Column(name = "NOTE")
 	private String note;
+
+	@Column(name = "SUPPLIERID")
+	private Integer supplierId;
 	
 	public void update(PayableEntity entity) {
 		if(Objects.nonNull(entity.getDescription())) {
@@ -82,5 +85,7 @@ public class PayableEntity {
 		if(Objects.nonNull(entity.getNote())) {
 			this.note = entity.getNote();
 		}
+
+		this.supplierId = entity.getSupplierId();
 	}
 }

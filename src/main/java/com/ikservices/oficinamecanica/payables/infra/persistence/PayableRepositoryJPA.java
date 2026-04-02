@@ -3,6 +3,7 @@
 import java.time.LocalDate;
 import java.util.List;
 
+import com.ikservices.oficinamecanica.suppliers.domain.SupplierId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +21,9 @@ public interface PayableRepositoryJPA extends JpaRepository<PayableEntity, Payab
 			+ "AND p.dueDate BETWEEN :startDate AND :endDate "
 			+ "ORDER BY p.dueDate")
 	public List<PayableEntity> findAllByWorkshopId(@Param("workshopId") Long workshopId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("payableState") String payableState);
+
+	@Query("SELECT p FROM PayableEntity p WHERE p.id.workshopId = :workshopId AND p.supplierId = :supplierId "
+			+ "AND p.dueDate BETWEEN :startDate AND :endDate "
+			+ "ORDER BY p.dueDate")
+	public List<PayableEntity> findAllBySupplierAndDueDate(@Param("workshopId") Long workshopId, @Param("supplierId") Integer supplierId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

@@ -132,3 +132,16 @@ where not exists (
 
 --2025-06-04 00:31 - Portugal - Isaias Lima - Add service_cost column into WO_PARTS_ITEMS.
 ALTER TABLE WO_PARTS_ITEMS ADD COLUMN service_cost DECIMAL(12,2) DEFAULT 0 COMMENT 'Service cost';
+
+--2025-08-04 17:00 - Portugal - Isaias Lima - Add new columns to the payments table.
+ALTER TABLE payments
+ADD COLUMN outsourcepay TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Is an outsource pay?',
+ADD COLUMN supplierid INT DEFAULT NULL COMMENT 'Supplier identification number';
+
+--2025-08-15 17:00 - Portugal - Isaias Lima - Add new column to the work_orders table.
+ALTER TABLE work_orders
+ADD COLUMN discount DECIMAL(7,4) NULL DEFAULT 0 COMMENT 'Discount value on the amount' AFTER amount;
+
+--2025-08-23 02:16 - Portugal - Isaias Lima - Add new column to the work_orders table.
+ALTER TABLE mechanical_workshops.work_orders
+ADD COLUMN roundflag BOOL NOT NULL DEFAULT false COMMENT 'It indicates wether the final value may be rounded or not' AFTER discount;

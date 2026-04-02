@@ -43,19 +43,21 @@ public class PaymentController {
 	@Lazy
 	private PaymentConverter converter;
 	
-	ListPayments listPayments;
-	ListOverduePayments listOverduePayments;
-	GetPayment getPayment;
-	ListPaymentsByDuePeriod listPaymentsByDuePeriod;
-	UpdatePayment updatePayment;
+	private final ListPayments listPayments;
+	private final ListOverduePayments listOverduePayments;
+	private final GetPayment getPayment;
+	private final ListPaymentsByDuePeriod listPaymentsByDuePeriod;
+	private final ListOutsourcePayments listOutsourcePayments;
+	private final UpdatePayment updatePayment;
 	
 	public PaymentController(ListPayments listPayments, ListOverduePayments listOverduePayments, GetPayment
-			getPayment, ListPaymentsByDuePeriod listPaymentsByDuePeriod, UpdatePayment updatePayment) {
+			getPayment, ListPaymentsByDuePeriod listPaymentsByDuePeriod, ListOutsourcePayments listOutsourcePayments, UpdatePayment updatePayment) {
 		this.listPayments = listPayments;
 		this.listOverduePayments = listOverduePayments;
 		this.getPayment = getPayment;
 		this.listPaymentsByDuePeriod = listPaymentsByDuePeriod;
-		this.updatePayment = updatePayment;
+        this.listOutsourcePayments = listOutsourcePayments;
+        this.updatePayment = updatePayment;
 	}
 	
 	@GetMapping("list")
@@ -108,7 +110,7 @@ public class PaymentController {
 			return ResponseEntity.ok(IKResponse.<PaymentDTO>build().body(paymentDTO));			
 		}catch(IKException ike) {
 			LOGGER.error(ike.getMessage(), ike);
-			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).
+			return ResponseEntity.status(HttpStatus.valueOf(Integer.parseInt(ike.getIkMessage().getCode()))).
 					body(IKResponse.<PaymentDTO>build().addMessage(ike.getIkMessage().getCode(),
 							IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
 		}catch(Exception e) {
@@ -136,6 +138,27 @@ public class PaymentController {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
 					body(IKResponse.<PaymentDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, 
+							IKMessageType.ERROR, environment.getProperty(PaymentConstant.LIST_ERROR_MESSAGE)));
+		}
+	}
+
+	@GetMapping("list/outsource")
+	public ResponseEntity<IKResponse<PaymentDTO>> listOutsourcePayments(@RequestParam(name = "workshopId") Long workshopId,
+																		@RequestParam(name = "startDate") String startDate, @RequestParam(name = "endDate") String endDate, @RequestParam(name = "paymentState") Integer paymentState) {
+		try {
+			List<PaymentDTO> paymentDTOList = converter.parseDomainToResponseList(listOutsourcePayments.execute(workshopId, DateUtil.parseToLocalDate(startDate),
+					DateUtil.parseToLocalDate(endDate), PaymentStateEnum.findByIndex(paymentState)));
+
+			return ResponseEntity.ok(IKResponse.<PaymentDTO>build().body(paymentDTOList));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).
+					body(IKResponse.<PaymentDTO>build().addMessage(ike.getIkMessage().getCode(),
+							IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
+					body(IKResponse.<PaymentDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE,
 							IKMessageType.ERROR, environment.getProperty(PaymentConstant.LIST_ERROR_MESSAGE)));
 		}
 	}

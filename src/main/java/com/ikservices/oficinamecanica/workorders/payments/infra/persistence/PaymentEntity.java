@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.workorders.payments.infra.persistence;
 
+import com.ikservices.oficinamecanica.suppliers.infra.persistence.SupplierEntity;
 import com.ikservices.oficinamecanica.workorders.infra.persistence.WorkOrderEntity;
 import com.ikservices.oficinamecanica.workorders.payments.domain.PaymentTypeEnum;
 import lombok.EqualsAndHashCode;
@@ -35,6 +36,10 @@ public class PaymentEntity {
     private String note;
     @Column(name = "PAYDATE")
     private LocalDate payDate;
+    @Column(name = "OUTSOURCEPAY")
+    private Boolean isOutsourcePay;
+    @Column(name = "SUPPLIERID")
+    private Integer supplierId;
 
     public void update(PaymentEntity entity) {
         if(Objects.nonNull(entity.getDueDate())) {
@@ -50,6 +55,10 @@ public class PaymentEntity {
         }
 
         this.payDate = entity.getPayDate();
+
+        this.isOutsourcePay = entity.getIsOutsourcePay();
+
+        this.supplierId = entity.getSupplierId();
 
         this.note = entity.getNote();
     }

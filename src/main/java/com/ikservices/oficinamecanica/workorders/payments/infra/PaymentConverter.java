@@ -35,6 +35,8 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
             domain.setPaymentType(Objects.nonNull(request.getPaymentType()) ? PaymentTypeEnum.findByIndex(request.getPaymentType()) : PaymentTypeEnum.NONE);
             domain.setNote(request.getNote());
             domain.setPayDate(DateUtil.parseToLocalDate(request.getPayDate()));
+            domain.setIsOutsourcePay(request.getIsOutsourcePay());
+            domain.setSupplierId(request.getSupplierId());
         }
         return domain;
     }
@@ -50,6 +52,8 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
             entity.setPaymentType(Objects.nonNull(domain.getPaymentType()) ? domain.getPaymentType() : PaymentTypeEnum.NONE);
             entity.setNote(domain.getNote());
             entity.setPayDate(domain.getPayDate());
+            entity.setIsOutsourcePay(domain.getIsOutsourcePay());
+            entity.setSupplierId(domain.getSupplierId());
 
         }
         return entity;
@@ -76,6 +80,8 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
             domain.setPaymentType(Objects.nonNull(entity.getPaymentType()) ? entity.getPaymentType() : PaymentTypeEnum.NONE);
             domain.setNote(entity.getNote());
             domain.setPayDate(entity.getPayDate());
+            domain.setIsOutsourcePay(entity.getIsOutsourcePay());
+            domain.setSupplierId(entity.getSupplierId());
         }
         return domain;
     }
@@ -94,6 +100,8 @@ public class PaymentConverter extends IKConverter<PaymentDTO, Payment, PaymentEn
             dto.setPaymentType(Objects.nonNull(domain.getPaymentType()) ? domain.getPaymentType().ordinal() : PaymentTypeEnum.NONE.ordinal());
             dto.setNote(domain.getNote());
             dto.setPayDate(DateUtil.parseToString(domain.getPayDate()));
+            dto.setIsOutsourcePay(domain.getIsOutsourcePay());
+            dto.setSupplierId(domain.getSupplierId());
         }
         return dto;
     }

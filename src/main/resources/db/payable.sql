@@ -46,3 +46,12 @@ duedate, payvalue, paydate, categoryid) VALUES(1, 1, "2025-03-25", "Contas a pag
 INSERT INTO PAYABLE(id, workshopid, creation, description, docnumber,
 duedate, payvalue, paydate, categoryid) VALUES(2, 1, "2025-03-25", "Contas a pagar diferentes",
 "12345", "2025-03-30", 120.00, "2025-03-27", 1);
+
+--2025-08-04 17:00 - Portugal - Isaias Lima - Add new column to associate suppliers to the payables.
+ALTER TABLE payable
+ADD COLUMN supplierid INT COMMENT 'Supplier identification number',
+CONSTRAINT fk_suppliers_payable FOREIGN KEY (supplierid, workshopid)
+REFERENCES suppliers(supplierid, workshopid) ON DELETE RESTRICT;
+
+ALTER TABLE mechanical_workshops.payable ADD supplierid INT NULL COMMENT 'Supplier identification number';
+ALTER TABLE mechanical_workshops.payable ADD CONSTRAINT fk_suppliers__payable FOREIGN KEY (supplierid,workshopid) REFERENCES mechanical_workshops.suppliers(supplierid,workshopid) ON DELETE RESTRICT;

@@ -27,8 +27,15 @@ public class EmailVOTest {
     }
 
     @Test
-    public void testPattern() {
+    public void testPattern1() {
         String email = "aa9@u.co";
+        boolean matches = email.matches(IKConstants.EMAIL_PATTERN);
+        Assertions.assertTrue(matches);
+    }
+
+    @Test
+    public void testPattern2() {
+        String email = "jonesrobin.84@gmail.com";
         boolean matches = email.matches(IKConstants.EMAIL_PATTERN);
         Assertions.assertTrue(matches);
     }

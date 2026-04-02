@@ -19,6 +19,7 @@ import java.util.Objects;
 
 public class WorkOrderEndingValidations implements IWorkOrderBusiness {
     private final static String NULL_AMOUNT = "O valor total não pode ser nulo.";
+    private final static String NULL_FINAL_VALUE = "O valor final não pode ser nulo.";
     private final static String NULL_PAY_FORM = "Escolha uma forma de pagamento.";
     private final static String NULL_PAY_QTY = "Escolha o número de parcelas ou escolha 1 se for pagamento à vista.";
     private final static String EMPTY_LIST = "As parcelas ou pagamento à vista não puderam ser calculados.";
@@ -35,6 +36,10 @@ public class WorkOrderEndingValidations implements IWorkOrderBusiness {
         if (Objects.isNull(object.getAmount())) {
             throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), NULL_AMOUNT));
         }
+
+        if (Objects.isNull(object.getFinalValue())) {
+            throw new IKException(new IKMessage(Constants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), NULL_FINAL_VALUE));
+        }
     }
 
     public static List<Payment> definePayments(WorkOrder workOrder) {
@@ -44,7 +49,7 @@ public class WorkOrderEndingValidations implements IWorkOrderBusiness {
         List<Payment> list = new ArrayList<>();
         int index = workOrder.getPayments().size() + 1;
         BigDecimal paidValue = workOrder.getPayments().stream().filter(p-> p.getPayDate() != null).map(Payment::getPaymentValue).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal toPay = workOrder.getAmount().subtract(paidValue);
+        BigDecimal toPay = workOrder.getFinalValue().subtract(paidValue);
 
         if (Objects.nonNull(workOrder.getPayQty()) && workOrder.getPayQty() > 0) {
             int installments = workOrder.getPayQty() >= index ? workOrder.getPayQty() : workOrder.getPayQty() + workOrder.getPayments().stream().mapToInt(p-> 1).sum();

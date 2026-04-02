@@ -14,7 +14,12 @@ public interface PaymentRepository {
     List<Payment> listPaymentsByDuePeriod(Long workshopId, 
     		LocalDate dueDateBegin, LocalDate dueDateEnd,
     		PaymentStateEnum paymentState);
+    List<Payment> listOutsourcePayments(Long workshopId,
+                                          LocalDate dueDateBegin, LocalDate dueDateEnd,
+                                          PaymentStateEnum paymentState);
     Payment getPayment(PaymentId id);
     Payment updatePayment(Payment payment);
     List<Payment> updatePaymentList(List<Payment> paymentList, WorkOrderId workOrderId);
+
+    List<Payment> listPaymentsBySupplierAndPayDate(Long workshopId, Integer supplierId, LocalDate startDate, LocalDate endDate);
 }

@@ -24,4 +24,5 @@ public class Payable {
 	private LocalDate payDate;
 	private Category category;
 	private String note;
+	private Integer supplierId;
 }
