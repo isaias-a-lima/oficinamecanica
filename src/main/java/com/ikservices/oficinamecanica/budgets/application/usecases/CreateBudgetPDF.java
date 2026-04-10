@@ -12,7 +12,6 @@ import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
 import org.slf4j.Logger;
 
-import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
@@ -106,11 +105,11 @@ public class CreateBudgetPDF extends PDFTemplateBuilder {
                     serviceItems[x][3] = "0";
                     serviceItems[x][4] = serviceItem.getQuantity().toString();
                     serviceItems[x][5] = "0";
-                    serviceItems[x][6] = NumberUtil.parseStringMoney(serviceItem.getService().getCost());
+                    serviceItems[x][6] = NumberUtil.parseStringLocalMoney(serviceItem.getService().getCost());
                     serviceItems[x][7] = "0";
                     serviceItems[x][8] = NumberUtil.parseStringPercent(serviceItem.getDiscount());
                     serviceItems[x][9] = "0";
-                    serviceItems[x][10] = NumberUtil.parseStringMoney(serviceItem.getTotal());
+                    serviceItems[x][10] = NumberUtil.parseStringLocalMoney(serviceItem.getTotal());
                     serviceItems[x][11] = "0";
 
                     x++;
@@ -133,11 +132,11 @@ public class CreateBudgetPDF extends PDFTemplateBuilder {
                     partItems[y][3] = "0";
                     partItems[y][4] = partItem.getQuantity().toString();
                     partItems[y][5] = "0";
-                    partItems[y][6] = NumberUtil.parseStringMoney(partItem.getValue().add(partItem.getServiceCost()));
+                    partItems[y][6] = NumberUtil.parseStringLocalMoney(partItem.getValue().add(partItem.getServiceCost()));
                     partItems[y][7] = "0";
                     partItems[y][8] = NumberUtil.parseStringPercent(partItem.getDiscount());
                     partItems[y][9] = "0";
-                    partItems[y][10] = NumberUtil.parseStringMoney(partItem.getTotal());
+                    partItems[y][10] = NumberUtil.parseStringLocalMoney(partItem.getTotal());
                     partItems[y][11] = "0";
                     y++;
                 }
@@ -146,7 +145,7 @@ public class CreateBudgetPDF extends PDFTemplateBuilder {
 
                 //Amount table created
                 float[] columnWidths = {8.4f, 1.6f};
-                String [][] amountTableContents = {{"TOTAL GERAL: ",RIGHT}, {NumberUtil.parseStringMoney(budget.getAmount()), LEFT}};
+                String [][] amountTableContents = {{"TOTAL GERAL: ",RIGHT}, {NumberUtil.parseStringLocalMoney(budget.getAmount()), LEFT}};
                 this.addTableFooter(2, 100, columnWidths, amountTableContents);
 
                 this.closeDocument();

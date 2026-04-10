@@ -89,7 +89,7 @@ public class PartConverter {
 		PartDTO dto = new PartDTO();
 		
 		dto.setBalance(part.getBalance());
-		dto.setCost(NumberUtil.parseStringMoney(part.getCost()));
+		dto.setCost(NumberUtil.parseStringLocalMoney(part.getCost()));
 		dto.setDescription(part.getDescription());
 		dto.setFits(part.getFits());
 		dto.setManufacturerCode(part.getManufacturerCode());
@@ -97,7 +97,7 @@ public class PartConverter {
 		dto.setWorkshopId(part.getPartId().getWorkshopId());
 		dto.setProfit(NumberUtil.parseStringPercent(part.getProfit()));
 		dto.setBrand(part.getBrand());
-		dto.setValue(NumberUtil.parseStringMoney(part.getValue()));
+		dto.setValue(NumberUtil.parseStringLocalMoney(part.getValue()));
 		
 		return dto;
 	}

@@ -32,7 +32,7 @@ public class Budget {
 				sum = sum.add(serviceItem.getTotal());
 			}
 		}
-		return NumberUtil.parseStringMoney(sum);
+		return NumberUtil.parseStringLocalMoney(sum);
 	}
 
 	public String sumPartItems() {
@@ -42,6 +42,6 @@ public class Budget {
 				sum = sum.add(partItem.getTotal());
 			}
 		}
-		return NumberUtil.parseStringMoney(sum);
+		return NumberUtil.parseStringLocalMoney(sum);
 	}
 }

@@ -1,8 +1,6 @@
 package com.ikservices.oficinamecanica.workorders.application.usecases;
 
 import com.ikservices.oficinamecanica.budgets.domain.Budget;
-import com.ikservices.oficinamecanica.budgets.items.parts.domain.BudgetItemPart;
-import com.ikservices.oficinamecanica.budgets.items.services.domain.BudgetItemService;
 import com.ikservices.oficinamecanica.commons.constants.Constants;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.pdf.PDFTemplateBuilder;
@@ -115,11 +113,11 @@ public class CreateWorkOrderPDF extends PDFTemplateBuilder {
                     serviceItems[x][3] = "0";
                     serviceItems[x][4] = serviceItem.getQuantity().toString();
                     serviceItems[x][5] = "0";
-                    serviceItems[x][6] = NumberUtil.parseStringMoney(serviceItem.getService().getCost());
+                    serviceItems[x][6] = NumberUtil.parseStringLocalMoney(serviceItem.getService().getCost());
                     serviceItems[x][7] = "0";
                     serviceItems[x][8] = NumberUtil.parseStringPercent(serviceItem.getDiscount());
                     serviceItems[x][9] = "0";
-                    serviceItems[x][10] = NumberUtil.parseStringMoney(serviceItem.getTotal());
+                    serviceItems[x][10] = NumberUtil.parseStringLocalMoney(serviceItem.getTotal());
                     serviceItems[x][11] = "0";
 
                     x++;
@@ -142,11 +140,11 @@ public class CreateWorkOrderPDF extends PDFTemplateBuilder {
                     partItems[y][3] = "0";
                     partItems[y][4] = partItem.getQuantity().toString();
                     partItems[y][5] = "0";
-                    partItems[y][6] = NumberUtil.parseStringMoney(partItem.getItemValue().add(partItem.getServiceCost()));
+                    partItems[y][6] = NumberUtil.parseStringLocalMoney(partItem.getItemValue().add(partItem.getServiceCost()));
                     partItems[y][7] = "0";
                     partItems[y][8] = NumberUtil.parseStringPercent(partItem.getDiscount());
                     partItems[y][9] = "0";
-                    partItems[y][10] = NumberUtil.parseStringMoney(partItem.getTotal());
+                    partItems[y][10] = NumberUtil.parseStringLocalMoney(partItem.getTotal());
                     partItems[y][11] = "0";
                     y++;
                 }
@@ -156,9 +154,9 @@ public class CreateWorkOrderPDF extends PDFTemplateBuilder {
                 //Amount table created
                 float[] columnWidths = {8.4f, 1.6f};
                 String [][] amountTableContents = {
-                        {"TOTAL GERAL: ",RIGHT}, {NumberUtil.parseStringMoney(workOrder.getAmount()), LEFT},
+                        {"TOTAL GERAL: ",RIGHT}, {NumberUtil.parseStringLocalMoney(workOrder.getAmount()), LEFT},
                         {"DESCONTO: ",RIGHT}, {NumberUtil.parseStringPercentWithScale(workOrder.getDiscount(), 4), LEFT},
-                        {"VALOR FINAL: ",RIGHT}, {NumberUtil.parseStringMoney(workOrder.getFinalValue()), LEFT}
+                        {"VALOR FINAL: ",RIGHT}, {NumberUtil.parseStringLocalMoney(workOrder.getFinalValue()), LEFT}
                 };
                 this.addTableFooter(2, 100, columnWidths, amountTableContents);
 

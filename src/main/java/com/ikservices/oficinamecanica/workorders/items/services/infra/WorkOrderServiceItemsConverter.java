@@ -97,9 +97,9 @@ WorkOrderServiceItem, WorkOrderServiceItemEntity, WorkOrderServiceItemResponseDT
 			dto.setBudgetId(domain.getItemId().getBudgetId());
 			dto.setService(serviceConverter.parseDTO(domain.getService()));
 			dto.setQuantity(domain.getQuantity());
-			dto.setItemValue(NumberUtil.parseStringMoney(domain.getItemValue()));
+			dto.setItemValue(NumberUtil.parseStringLocalMoney(domain.getItemValue()));
 			dto.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
-			dto.setAmount(NumberUtil.parseStringMoney(domain.getTotal()));
+			dto.setAmount(NumberUtil.parseStringLocalMoney(domain.getTotal()));
 		}
 		
 		return dto;

@@ -114,7 +114,7 @@ public class BudgetConverter {
 		Set<Entry<Long, Budget>> entries = budgetMap.entrySet();
 		
 		for(Map.Entry<Long, Budget> entry : entries) {
-			dto.setAmount(NumberUtil.parseStringMoney(entry.getValue().getAmount()));
+			dto.setAmount(NumberUtil.parseStringLocalMoney(entry.getValue().getAmount()));
 			dto.setBudgetStatus(entry.getValue().getBudgetStatus().ordinal());
 			dto.setKm(entry.getValue().getKm());
 			dto.setOpeningDate(entry.getValue().getOpeningDate().toString());
