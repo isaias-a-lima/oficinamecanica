@@ -1,0 +1,9 @@
+2026-04-11 - Isaias Lima
+- WHAT
+    The DISCOUNT column on the WORK_ORDERS table has been deprecated and will be replaced by the new DISCOUNTVALUE column.
+- WHY
+    There was a precision error in the discount calculation in percentage values, so we changed to a calculation in monetary values.
+- WHAT
+    The roundflag column in the WORK_ORDERS table has been deprecated and will no longer be filled in.
+- WHY
+    With the new DISCOUNTVALUE column for calculating discounts, it no longer makes sense to keep the ROUNDFLAG column.

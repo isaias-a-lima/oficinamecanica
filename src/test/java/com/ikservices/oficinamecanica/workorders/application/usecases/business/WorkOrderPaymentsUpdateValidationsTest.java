@@ -98,6 +98,8 @@ public class WorkOrderPaymentsUpdateValidationsTest {
         workOrder.setServiceItems(new ArrayList<>());
         workOrder.setPartItems(new ArrayList<>());
         workOrder.setPayments(new ArrayList<>());
+        workOrder.setDiscountValue(BigDecimal.ZERO);
+        workOrder.setDiscount(BigDecimal.ZERO);
         return workOrder;
     }
 

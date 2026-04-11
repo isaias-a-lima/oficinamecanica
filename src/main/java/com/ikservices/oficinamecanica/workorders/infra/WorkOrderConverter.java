@@ -66,6 +66,7 @@ public class WorkOrderConverter {
 		workOrder.setOpeningDate(entity.getOpeningDate());
 		workOrder.setKm(entity.getKm());
 		workOrder.setWorkOrderStatus(entity.getWoStatus());
+		workOrder.setDiscountValue(entity.getDiscountValue());
 		workOrder.setDiscount(entity.getDiscount());
 		workOrder.setIsFinalValueRounded(entity.getIsFinalValueRounded());
 		workOrder.setPayQty(entity.getPayQty());
@@ -97,6 +98,7 @@ public class WorkOrderConverter {
 		entity.setKm(workOrder.getKm());
 		entity.setWoStatus(workOrder.getWorkOrderStatus());
 		entity.setAmount(workOrder.getAmount());
+		entity.setDiscountValue(workOrder.getDiscountValue());
 		entity.setDiscount(workOrder.getDiscount());
 		entity.setIsFinalValueRounded(workOrder.getIsFinalValueRounded());
 		entity.setPayQty(workOrder.getPayQty());
@@ -157,6 +159,7 @@ public class WorkOrderConverter {
 		workOrder.setOpeningDate(LocalDate.parse(requestDTO.getOpeningDate()));
 		workOrder.setKm(requestDTO.getKm());
 		workOrder.setWorkOrderStatus(requestDTO.getWorkOrderStatus());
+		workOrder.setDiscountValue(requestDTO.getDiscountValue());
 		workOrder.setDiscount(requestDTO.getDiscount());
 		workOrder.setIsFinalValueRounded(requestDTO.getIsFinalValueRounded());
 		workOrder.setPayQty(requestDTO.getPayQty());
@@ -189,7 +192,8 @@ public class WorkOrderConverter {
 		responseDTO.setKm(workOrder.getKm());
 		responseDTO.setWorkOrderStatus(workOrder.getWorkOrderStatus().ordinal());
 		responseDTO.setAmount(NumberUtil.parseStringLocalMoney(workOrder.getAmount()));
-		responseDTO.setDiscount(Objects.nonNull(workOrder.getDiscount()) ? String.valueOf(workOrder.getDiscount()) : "0,00");
+		responseDTO.setDiscountValue(Objects.nonNull(workOrder.getDiscountValue()) ? String.valueOf(workOrder.getDiscountValue()) : "0,00");
+		responseDTO.setDiscount(Objects.nonNull(workOrder.getDiscount()) ? workOrder.getDiscount().toPlainString() : "0,00");
 		responseDTO.setIsFinalValueRounded(workOrder.getIsFinalValueRounded());
 		responseDTO.setFinalValue(NumberUtil.parseStringLocalMoney(workOrder.getFinalValue()));
 		responseDTO.setPayQty(workOrder.getPayQty());
@@ -225,6 +229,7 @@ public class WorkOrderConverter {
 		request.setKm(response.getKm());
 		request.setWorkOrderStatus(WorkOrderStatusEnum.findByIndex(response.getWorkOrderStatus()));
 		request.setAmount(NumberUtil.parseBigDecimal(response.getAmount()));
+		request.setDiscountValue(Objects.nonNull(response.getDiscountValue()) ? new BigDecimal(NumberUtil.parseStringNumber(response.getDiscountValue())) : BigDecimal.ZERO);
 		request.setDiscount(Objects.nonNull(response.getDiscount()) ? new BigDecimal(NumberUtil.parseStringNumber(response.getDiscount())) : BigDecimal.ZERO);
 		request.setIsFinalValueRounded(response.getIsFinalValueRounded());
 		request.setPayQty(response.getPayQty());

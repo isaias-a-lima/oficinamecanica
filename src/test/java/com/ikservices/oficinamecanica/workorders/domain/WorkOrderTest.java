@@ -23,25 +23,29 @@ public class WorkOrderTest {
 
     @Test
     public void testGetFinalValue() {
-        this.setupSubject(new BigDecimal("3595.00"), new BigDecimal("2.6425"), false);
+        this.setupSubject(new BigDecimal("3595.00"), BigDecimal.ZERO, new BigDecimal("2.6425"), false);
         BigDecimal expected = new BigDecimal("3500.00");
+        Assertions.assertEquals(expected, subject.getFinalValue());
+
+        this.setupSubject(new BigDecimal("15150.00"), new BigDecimal(150), BigDecimal.ZERO, true);
+        expected = new BigDecimal("15000.00");
         Assertions.assertEquals(expected, subject.getFinalValue());
     }
 
     @Test
     public void testGetFinalValue_ThrowExcessiveDiscount() {
-        this.setupSubject(new BigDecimal("15100.00"), new BigDecimal("110"), false);
+        this.setupSubject(new BigDecimal("15100.00"), BigDecimal.ZERO, new BigDecimal("110"), false);
         Assertions.assertThrows(IKException.class, ()-> subject.getFinalValue());
     }
 
     @Test
     public void testRoundedFinalValue() {
-        this.setupSubject(new BigDecimal("15100.00"), new BigDecimal("0.6623"), true);
+        this.setupSubject(new BigDecimal("15100.00"), BigDecimal.ZERO, new BigDecimal("0.6623"), true);
         BigDecimal expected = new BigDecimal("15000.00");
         Assertions.assertEquals(expected, subject.getFinalValue());
     }
 
-    private void setupSubject(BigDecimal itemValue, BigDecimal generalDiscount, boolean isFinalValueRounded) {
+    private void setupSubject(BigDecimal itemValue, BigDecimal generalDiscountValue, BigDecimal generalDiscount, boolean isFinalValueRounded) {
         WorkOrderPartItem partItem = new WorkOrderPartItem();
         partItem.setId(new WorkOrderPartItemId(1L, 1L, 1L));
         partItem.setItemValue(itemValue);
@@ -49,6 +53,7 @@ public class WorkOrderTest {
         partItem.setDiscount(BigDecimal.ZERO);
         partItem.setQuantity(1);
         subject.setPartItems(Collections.singletonList(partItem));
+        subject.setDiscountValue(generalDiscountValue);
         subject.setDiscount(generalDiscount);
         subject.setIsFinalValueRounded(isFinalValueRounded);
     }

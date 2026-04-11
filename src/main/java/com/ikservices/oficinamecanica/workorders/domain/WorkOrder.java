@@ -41,6 +41,8 @@ public class WorkOrder {
 
 	private BigDecimal amount;
 	@Setter
+	private BigDecimal discountValue;
+	@Setter
 	private BigDecimal discount;
 	@Setter
 	private Boolean isFinalValueRounded;
@@ -102,7 +104,7 @@ public class WorkOrder {
 		amount = sum;
 	}
 
-	public BigDecimal getFinalValue() {
+	public BigDecimal getFinalValueDeprecated() {
 		this.discount = Objects.isNull(this.discount) ? BigDecimal.ZERO : this.discount;
 		BigDecimal discountValue = this.discount.divide(BigDecimal.valueOf(100.0));
 		int scale = this.isFinalValueRounded ? 0 : 2;
@@ -111,6 +113,14 @@ public class WorkOrder {
 			throw new IKException(new IKMessage(IKConstants.DEFAULT_ERROR_CODE, IKMessageType.WARNING.getCode(), "Excessive discount"));
 		}
 		return value.setScale(2, RoundingMode.HALF_UP);
+	}
+
+	public BigDecimal getFinalValue() {
+		if (Objects.nonNull(this.discount) && this.discount.compareTo(BigDecimal.ZERO) > 0) {
+			return this.getFinalValueDeprecated();
+		}
+
+		return this.amount.subtract(this.discountValue).setScale(2, RoundingMode.HALF_UP);
 	}
 
 	public static BigDecimal calculateFinalValue(BigDecimal discount, BigDecimal amount, boolean isFinalValueRounded) {

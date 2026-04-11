@@ -23,6 +23,7 @@ public class WorkOrderResponseDTO {
 	private Long km;
 	private Integer workOrderStatus;
 	private String amount;
+	private String discountValue;
 	private String discount;
 	private Boolean isFinalValueRounded;
 	private String finalValue;
