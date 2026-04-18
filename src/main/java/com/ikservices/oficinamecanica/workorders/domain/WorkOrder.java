@@ -132,4 +132,12 @@ public class WorkOrder {
 		}
 		return value.setScale(2, RoundingMode.HALF_UP);
 	}
+
+	public BigDecimal getMonetaryFormatDiscount() {
+		if (null != this.discount && this.discount.compareTo(BigDecimal.ZERO) > 0) {
+			return this.discount.divide(BigDecimal.valueOf(100)).multiply(this.amount).setScale(2, RoundingMode.HALF_UP);
+		}
+
+		return this.discountValue.setScale(2, RoundingMode.HALF_UP);
+	}
 }

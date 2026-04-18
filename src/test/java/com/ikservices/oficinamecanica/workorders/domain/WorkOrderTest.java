@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 
 public class WorkOrderTest {
@@ -43,6 +44,21 @@ public class WorkOrderTest {
         this.setupSubject(new BigDecimal("15100.00"), BigDecimal.ZERO, new BigDecimal("0.6623"), true);
         BigDecimal expected = new BigDecimal("15000.00");
         Assertions.assertEquals(expected, subject.getFinalValue());
+    }
+
+    @Test
+    public void testGetMonetaryFormatDiscount() {
+        this.setupSubject(BigDecimal.valueOf(1150), BigDecimal.ZERO, BigDecimal.TEN, false);
+        Assertions.assertEquals(BigDecimal.valueOf(115).setScale(2, RoundingMode.HALF_UP), this.subject.getMonetaryFormatDiscount());
+
+        this.setupSubject(BigDecimal.valueOf(1150), BigDecimal.valueOf(115), BigDecimal.ZERO, false);
+        Assertions.assertEquals(BigDecimal.valueOf(115).setScale(2, RoundingMode.HALF_UP), this.subject.getMonetaryFormatDiscount());
+
+        this.setupSubject(BigDecimal.valueOf(500), BigDecimal.ZERO, BigDecimal.valueOf(5.11), false);
+        Assertions.assertEquals(BigDecimal.valueOf(25.55).setScale(2, RoundingMode.HALF_UP), this.subject.getMonetaryFormatDiscount());
+
+        this.setupSubject(BigDecimal.valueOf(500), BigDecimal.valueOf(25.55), BigDecimal.ZERO, false);
+        Assertions.assertEquals(BigDecimal.valueOf(25.55).setScale(2, RoundingMode.HALF_UP), this.subject.getMonetaryFormatDiscount());
     }
 
     private void setupSubject(BigDecimal itemValue, BigDecimal generalDiscountValue, BigDecimal generalDiscount, boolean isFinalValueRounded) {
