@@ -43,6 +43,7 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         domain.setQuantity(request.getQuantity());
         domain.setValue(request.getCost());
         domain.getPart().setCost(request.getCost());
+        domain.setDiscountValue(request.getDiscountValue());
         domain.setDiscount(request.getDiscount());
         domain.setServiceCost(request.getServiceCost());
 
@@ -59,6 +60,7 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         entity.setPart(part);
         entity.setQuantity(domain.getQuantity());
         entity.setCost(domain.getValue());
+        entity.setDiscountValue(domain.getDiscountValue());
         entity.setDiscount(domain.getDiscount());
         entity.setServiceCost(domain.getServiceCost());
         return entity;
@@ -72,6 +74,7 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         domain.setPart(part);
         domain.setQuantity(entity.getQuantity());
         domain.setValue(entity.getCost());
+        domain.setDiscountValue(entity.getDiscountValue());
         domain.setDiscount(entity.getDiscount());
         domain.setServiceCost(entity.getServiceCost());
         return domain;
@@ -87,6 +90,7 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         dto.setCost(NumberUtil.parseStringLocalMoney(domain.getValue()));
         dto.setServiceCost(NumberUtil.parseStringLocalMoney(domain.getServiceCost()));
         dto.setPartAndServiceValue(NumberUtil.parseStringLocalMoney(domain.getValue().add(domain.getServiceCost())));
+        dto.setDiscountValue(NumberUtil.parseStringLocalMoney(domain.getDiscountValue()));
         dto.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
         dto.setAmount(NumberUtil.parseStringLocalMoney(domain.getTotal()));
         return dto;
@@ -100,6 +104,7 @@ public class BudgetItemPartConverter extends IKConverter<BudgetItemPartRequestDT
         target.setPart(source.getPart());
         target.setQuantity(source.getQuantity());
         target.setItemValue(source.getCost());
+        target.setDiscountValue(source.getDiscountValue());
         target.setDiscount(source.getDiscount());
         target.setServiceCost(source.getServiceCost());
         return target;

@@ -66,20 +66,16 @@ public class NumberUtilTest {
 
     @Test
     public void testCalcPrice() {
-        BigDecimal expected = BigDecimal.valueOf(350).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal tested = BigDecimal.ZERO;
-        tested = NumberUtil.calcPrice(4, BigDecimal.valueOf(50), BigDecimal.ZERO);
-        tested = tested.add(NumberUtil.calcPrice(1, BigDecimal.valueOf(50), BigDecimal.ZERO));
-        tested = tested.add(NumberUtil.calcPrice(1, BigDecimal.valueOf(200), BigDecimal.valueOf(50)));
-
-        Assertions.assertEquals(expected, tested);
+        Assertions.assertEquals(BigDecimal.valueOf(300.00).setScale(2, RoundingMode.HALF_UP), NumberUtil.calcServicePrice(3, BigDecimal.valueOf(100), BigDecimal.ZERO, BigDecimal.ZERO));
+        Assertions.assertEquals(BigDecimal.valueOf(270.00).setScale(2, RoundingMode.HALF_UP), NumberUtil.calcServicePrice(3, BigDecimal.valueOf(100), BigDecimal.valueOf(10), BigDecimal.ZERO));
+        Assertions.assertEquals(BigDecimal.valueOf(810.00).setScale(2, RoundingMode.HALF_UP), NumberUtil.calcServicePrice(3, BigDecimal.valueOf(300), BigDecimal.ZERO, BigDecimal.valueOf(10)));
     }
 
     @Test
     public void testCalcPriceWithPartAndServiceCost() {
-        BigDecimal expected = BigDecimal.valueOf(190).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal actual = NumberUtil.calcPrice(5,BigDecimal.valueOf(20), BigDecimal.valueOf(20), BigDecimal.valueOf(5));
-        Assertions.assertEquals(expected, actual);
+        Assertions.assertEquals(BigDecimal.valueOf(50.00).setScale(2, RoundingMode.HALF_UP), NumberUtil.calcPartPrice(5,BigDecimal.valueOf(20), BigDecimal.valueOf(20), BigDecimal.valueOf(30), BigDecimal.ZERO));
+        Assertions.assertEquals(BigDecimal.valueOf(170.00).setScale(2, RoundingMode.HALF_UP), NumberUtil.calcPartPrice(5,BigDecimal.valueOf(20), BigDecimal.valueOf(20), BigDecimal.ZERO, BigDecimal.valueOf(15)));
+        Assertions.assertEquals(BigDecimal.valueOf(260.00).setScale(2, RoundingMode.HALF_UP), NumberUtil.calcPartPrice(4,BigDecimal.valueOf(50), BigDecimal.valueOf(20), BigDecimal.valueOf(5), BigDecimal.ZERO));
     }
 
     @Test

@@ -153,3 +153,19 @@ ADD COLUMN discountvalue DECIMAL(12,2) NULL DEFAULT 0 COMMENT 'Discount value in
 --2026-04-11 01:48 - Portugal - Isaias Lima - Modify the discount column data type in the work_orders table.
 ALTER TABLE work_orders
 MODIFY COLUMN discount DECIMAL(11,8) NULL DEFAULT 0 COMMENT 'The percentage discount applied to the total amount';
+
+--2026-04-12 00:42 - Portugal - Isaias Lima - Add the new DISCOUNTVALUE column to the WO_SERVICE_ITEMS.
+ALTER TABLE WO_SERVICE_ITEMS
+ADD COLUMN discountvalue DECIMAL(12,2) NULL DEFAULT 0 COMMENT 'The discount value in monetary format';
+
+--2026-04-12 00:42 - Portugal - Isaias Lima - Add the new DISCOUNTVALUE column to the WO_PARTS_ITEMS.
+ALTER TABLE WO_PARTS_ITEMS
+ADD COLUMN discountvalue DECIMAL(12,2) NULL DEFAULT 0 COMMENT 'The discount value in monetary format' AFTER itemValue;
+
+--2026-04-18 16:21 - Portugal - Isaias Lima - Add a CHECK CONSTRAINT to ensure discount integrity.
+ALTER TABLE WO_SERVICE_ITEMS
+ADD CONSTRAINT chk_WOServDiscIntegrity CHECK (NOT (discountvalue > 0 AND discount > 0));
+
+--2026-04-18 16:21 - Portugal - Isaias Lima - Add a CHECK CONSTRAINT to ensure discount integrity.
+ALTER TABLE WO_PARTS_ITEMS
+ADD CONSTRAINT chk_WOPartDiscIntegrity CHECK (NOT (discountvalue > 0 AND discount > 0));

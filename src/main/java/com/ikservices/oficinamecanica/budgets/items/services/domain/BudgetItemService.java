@@ -23,9 +23,17 @@ public class BudgetItemService {
 	private Service service;
 	private Budget budget;
 	private Integer quantity;
+	private BigDecimal discountValue;
 	private BigDecimal discount;
 	
 	public BigDecimal getTotal() {
-		return NumberUtil.calcPrice(quantity, service.getCost(), discount);
+		return NumberUtil.calcServicePrice(quantity, service.getCost(), discountValue, discount);
+	}
+
+	public BigDecimal getRealDiscount() {
+		if (null != this.discount && this.discount.compareTo(BigDecimal.ZERO) > 0) {
+			return this.discount.divide(BigDecimal.valueOf(100)).multiply(service.getCost()).setScale(2, RoundingMode.HALF_UP);
+		}
+		return this.discountValue.setScale(2, RoundingMode.HALF_UP);
 	}
 }

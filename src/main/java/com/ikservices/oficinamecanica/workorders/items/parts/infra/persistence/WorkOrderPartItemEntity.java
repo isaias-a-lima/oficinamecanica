@@ -48,6 +48,9 @@ public class WorkOrderPartItemEntity {
     @Column(name = "ITEMVALUE")
     private BigDecimal itemValue;
 
+    @Column(name = "DISCOUNTVALUE")
+    private BigDecimal discountValue;
+
     @Column(name = "DISCOUNT")
     private BigDecimal discount;
 
@@ -59,21 +62,16 @@ public class WorkOrderPartItemEntity {
             this.partId = newItem.getPartId();
             this.part.getId().setId(newItem.getPartId());
         }
-        if(Objects.nonNull(newItem.getQuantity())) {
-            this.quantity = newItem.getQuantity();
-        }
-        if(Objects.nonNull(newItem.getItemValue())) {
-            this.itemValue = newItem.getItemValue();
-        }
-        if(Objects.nonNull(newItem.getDiscount())) {
-            this.discount = newItem.getDiscount();
-        }
-        if(Objects.nonNull(newItem.getServiceCost())) {
-            this.serviceCost = newItem.getServiceCost();
-        }
+
+        this.quantity = Objects.isNull(newItem.getQuantity()) ? 0 : newItem.getQuantity();
+        this.serviceCost = Objects.isNull(newItem.getServiceCost()) ? BigDecimal.ZERO : newItem.getServiceCost();
+        this.itemValue = Objects.isNull(newItem.getItemValue()) ? BigDecimal.ZERO : newItem.getItemValue();
+        this.discountValue = Objects.isNull(newItem.getDiscountValue()) ? BigDecimal.ZERO : newItem.getDiscountValue();
+        //This field has been deprecated and will be replaced for the discountValue field
+        this.discount = Objects.isNull(newItem.getDiscount()) ? BigDecimal.ZERO : newItem.getDiscount();
     }
 
     public BigDecimal getTotal() {
-        return NumberUtil.calcPrice(quantity, itemValue, serviceCost, discount);
+        return NumberUtil.calcPartPrice(quantity, itemValue, serviceCost, discountValue, discount);
     }
 }

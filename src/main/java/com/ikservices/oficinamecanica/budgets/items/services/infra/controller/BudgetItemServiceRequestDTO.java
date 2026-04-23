@@ -19,5 +19,6 @@ public class BudgetItemServiceRequestDTO {
 	private Long workshopId;
 	private Integer quantity;
 	private BigDecimal cost;
+	private BigDecimal discountValue;
 	private BigDecimal discount;
 }

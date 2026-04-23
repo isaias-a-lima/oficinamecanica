@@ -66,6 +66,7 @@ public class WorkOrderTest {
         partItem.setId(new WorkOrderPartItemId(1L, 1L, 1L));
         partItem.setItemValue(itemValue);
         partItem.setServiceCost(BigDecimal.ZERO);
+        partItem.setDiscountValue(BigDecimal.ZERO);
         partItem.setDiscount(BigDecimal.ZERO);
         partItem.setQuantity(1);
         subject.setPartItems(Collections.singletonList(partItem));

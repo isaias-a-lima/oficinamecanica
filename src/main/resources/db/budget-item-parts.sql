@@ -15,3 +15,11 @@ CONSTRAINT fk_part2_budget_item_part FOREIGN KEY (workshop_id) REFERENCES parts(
 --2025-06-03 23:12 - Portugal - Isaias Lima - Add SERVICE_COST column.
 ALTER TABLE BUDGET_ITEM_PART
 ADD COLUMN service_cost DECIMAL(12,2) DEFAULT 0 COMMENT 'Service Cost' AFTER cost;
+
+--2026-04-12 00:42 - Portugal - Isaias Lima - Add the new DISCOUNTVALUE column to the BUDGET_ITEM_PART.
+ALTER TABLE BUDGET_ITEM_PART
+ADD COLUMN discountvalue DECIMAL(12,2) NOT NULL DEFAULT 0 COMMENT 'The discount value in monetary format' AFTER service_cost;
+
+--2026-04-18 14:46 - Portugal - Isaias Lima - Add a CHECK CONSTRAINT to ensure discount integrity.
+ALTER TABLE BUDGET_ITEM_PART
+ADD CONSTRAINT chk_BudgPartDiscIntegrity CHECK (NOT (discountvalue > 0 AND discount > 0));

@@ -45,6 +45,9 @@ public class BudgetItemServiceEntity {
 	
 	@Column(name = "COST")
 	private BigDecimal cost;
+
+	@Column(name = "DISCOUNTVALUE")
+	private BigDecimal discountValue;
 	
 	@Column(name = "DISCOUNT")
 	private BigDecimal discount;
@@ -54,18 +57,17 @@ public class BudgetItemServiceEntity {
 			this.serviceId = entity.getServiceId();
 			this.serviceEntity.getId().setId(entity.getServiceId());
 		}
-		if(Objects.nonNull(entity.getQuantity())) {
-			this.quantity = entity.getQuantity();
-		}
-		if(Objects.nonNull(entity.getCost())) {
-			this.cost = entity.getCost();
-		}
-		if(Objects.nonNull(entity.getDiscount())) {
-			this.discount = entity.getDiscount();
-		}
+
+		this.quantity = Objects.isNull(entity.getQuantity()) ? 0 : entity.getQuantity();
+
+		this.cost = Objects.isNull(entity.getCost()) ? BigDecimal.ZERO : entity.getCost();
+
+		this.discountValue = Objects.isNull(entity.getDiscountValue()) ? BigDecimal.ZERO : entity.getDiscountValue();
+
+		this.discount = Objects.isNull(entity.getDiscount()) ? BigDecimal.ZERO : entity.getDiscount();
 	}
 
 	public BigDecimal getTotal() {
-		return NumberUtil.calcPrice(quantity, cost, discount).setScale(2, RoundingMode.HALF_UP);
+		return NumberUtil.calcServicePrice(quantity, cost, discountValue, discount);
 	}
 }

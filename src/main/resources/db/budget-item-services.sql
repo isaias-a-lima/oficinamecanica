@@ -36,3 +36,11 @@ VALUES(1, 2, 2, 1, 1, 90, 10);
 --2024-11-30 11:26 - Brazil - Mateus Lima - Insert into budget-item-services table.
 INSERT INTO BUDG_ITEM_SERV(serviceitemid, budgetid, serviceid_part1, serviceid_part2,  quantity, cost, discount)
 VALUES(2, 2, 1, 1, 1, 100, 10);
+
+--2026-04-12 00:42 - Portugal - Isaias Lima - Add the new DISCOUNTVALUE column to the BUDG_ITEM_SERV.
+ALTER TABLE BUDG_ITEM_SERV
+ADD COLUMN discountvalue DECIMAL(12,2) NOT NULL DEFAULT 0 COMMENT 'The discount value in monetary format' AFTER cost;
+
+--2026-04-18 14:46 - Portugal - Isaias Lima - Add a CHECK CONSTRAINT to ensure discount integrity.
+ALTER TABLE BUDG_ITEM_SERV
+ADD CONSTRAINT chk_BudgServDiscIntegrity CHECK (NOT (discountvalue > 0 AND discount > 0));

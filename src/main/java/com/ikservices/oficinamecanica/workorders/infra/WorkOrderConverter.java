@@ -66,8 +66,8 @@ public class WorkOrderConverter {
 		workOrder.setOpeningDate(entity.getOpeningDate());
 		workOrder.setKm(entity.getKm());
 		workOrder.setWorkOrderStatus(entity.getWoStatus());
-		workOrder.setDiscountValue(entity.getDiscountValue());
-		workOrder.setDiscount(entity.getDiscount());
+		workOrder.setDiscountValue(Objects.nonNull(entity.getDiscountValue()) ? entity.getDiscountValue() : BigDecimal.ZERO);
+		workOrder.setDiscount(Objects.nonNull(entity.getDiscount()) ? entity.getDiscount() : BigDecimal.ZERO);
 		workOrder.setIsFinalValueRounded(entity.getIsFinalValueRounded());
 		workOrder.setPayQty(entity.getPayQty());
 		workOrder.setPaid(Objects.nonNull(entity.getPaid()) ? entity.getPaid() : false);

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +39,7 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
             domain.setQuantity(request.getQuantity());
             domain.setItemValue(request.getItemValue());
             domain.setServiceCost(request.getServiceCost());
+            domain.setDiscountValue(request.getDiscountValue());
             domain.setDiscount(request.getDiscount());
         }
 
@@ -57,6 +59,7 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
             entity.setQuantity(domain.getQuantity());
             entity.setItemValue(domain.getItemValue());
             entity.setServiceCost(domain.getServiceCost());
+            entity.setDiscountValue(domain.getDiscountValue());
             entity.setDiscount(domain.getDiscount());
         }
 
@@ -74,6 +77,7 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
             domain.setQuantity(entity.getQuantity());
             domain.setItemValue(entity.getItemValue());
             domain.setServiceCost(entity.getServiceCost());
+            domain.setDiscountValue(Objects.nonNull(entity.getDiscountValue()) ? entity.getDiscountValue() : BigDecimal.ZERO);
             domain.setDiscount(entity.getDiscount());
         }
 
@@ -94,7 +98,8 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
             response.setItemValue(NumberUtil.parseStringLocalMoney(domain.getItemValue()));
             response.setServiceCost(NumberUtil.parseStringLocalMoney(domain.getServiceCost()));
             response.setPartAndServiceValue(NumberUtil.parseStringLocalMoney(domain.getItemValue().add(domain.getServiceCost())));
-            response.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
+            response.setDiscountValue(NumberUtil.parseStringLocalMoney(domain.getDiscountValue()));
+            response.setDiscount(domain.getDiscount().toPlainString());
             response.setAmount(NumberUtil.parseStringLocalMoney(domain.getTotal()));
         }
 
@@ -124,6 +129,7 @@ public class WorkOrderPartItemConverter extends IKConverter<WorkOrderPartItemReq
         request.setQuantity(response.getQuantity());
         request.setItemValue(NumberUtil.parseBigDecimal(response.getItemValue()));
         request.setServiceCost(NumberUtil.parseBigDecimal(response.getServiceCost()));
+        request.setDiscountValue(NumberUtil.parseBigDecimal(response.getDiscountValue()));
         request.setDiscount(NumberUtil.parseBigDecimal(response.getDiscount()));
         return request;
     }
