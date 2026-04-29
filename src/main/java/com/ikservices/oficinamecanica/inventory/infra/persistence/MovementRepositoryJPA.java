@@ -20,4 +20,22 @@ public interface MovementRepositoryJPA extends JpaRepository<MovementEntity, Mov
 	public List<MovementEntity> listMovementByPartAndType(@Param("partId") Integer partId, 
 			@Param("workshopId") Long workshopId, @Param("startDate")  LocalDate startDate, 
 			@Param("endDate") LocalDate endDate, @Param("movementType") String movementType);
+	
+	@Query("SELECT MAX(m.movementDate) FROM MovementEntity m WHERE m.partId = :partId AND "
+			+ "m.id.workshopId = :workshopId AND m.movementType = 2")
+	public LocalDate getLastFinalBalanceDateByPart(@Param("partId") Integer partId, @Param("workshopId") 
+	Long workshopId);
+	
+	@Query("SELECT m.quantity FROM MovementEntity m WHERE m.partId = :partId "
+			+ "AND m.id.workshopId = :workshopId AND m.movementType = 2 AND m.movementDate = :basedate")
+	public Integer getLastFinalBalanceValueByPart(@Param("partId") Integer partId, 
+			@Param("workshopId") Long workshopId, @Param("basedate") LocalDate basedate);
+	
+	@Query("SELECT COALESCE(SUM(CASE WHEN m.movementType = 1 THEN m.quantity "
+			+ "WHEN m.movementType = 0 THEN -m.quantity "
+			+ "ELSE 0 END"
+			+ "), 0) FROM MovementEntity m WHERE m.partId = :partId AND "
+			+ "m.id.workshopId = :workshopId AND m.movementDate > :lastFinalBalanceDate")
+	public Integer getMovementQuantityByPart(@Param("partId") Integer partId, 
+			@Param("workshopId") Long workshopId, @Param("lastFinalBalanceDate") LocalDate lastFinalBalanceDate);
 }

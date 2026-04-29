@@ -9,7 +9,7 @@ public class GetBalanceByPart {
 		this.repository = repository;
 	}
 	
-	public Integer execute(Integer partId) {
-		return repository.getBalanceByPart(partId);
+	public Integer execute(Integer partId, Long workshopId) {
+		return repository.getBalanceByPart(partId, workshopId);
 	}
 }

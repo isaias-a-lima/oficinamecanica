@@ -3,9 +3,9 @@ package com.ikservices.oficinamecanica.inventory.domain.enumerates;
 import java.util.Objects;
 
 public enum MovementTypeEnum {
-	NONE,
-	CREDIT,
-	DEBIT;
+	OUTPUT,
+	INPUT,
+	FINAL_BALANCE;
 	
 	public static MovementTypeEnum findByIndex(Integer index) {
 		if(Objects.nonNull(index)) {
@@ -16,6 +16,6 @@ public enum MovementTypeEnum {
 			}
 		}
 		
-		return NONE;
+		return null;
 	}
 }

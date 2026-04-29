@@ -11,6 +11,11 @@ public interface MovementRepository {
 	public InventoryMovement getMovement(Long workshopId, Long inventoryId);
 	public List<InventoryMovement> ListMovementByPartAndType(Integer partId, Long workshopId, LocalDate startDate, 
 			LocalDate endDate, MovementTypeEnum movementTypeEnum);
-	public Integer getBalanceByPart(Integer partId);
+	public LocalDate getLastFinalBalanceDateByPart(Integer partId, Long workshopId);
+	public Integer getLastFinalBalanceValueByPart(Integer partId, Long workshopId, 
+			LocalDate basedate);
+	public Integer getMovementQuantityByPart(Integer partId, Long workshopId, 
+			LocalDate lastFinalBalanceDate);
+	public Integer getBalanceByPart(Integer partId, Long workshopId);
 	public InventoryMovement updateMovement(InventoryMovement movement);
 }

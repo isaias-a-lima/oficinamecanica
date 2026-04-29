@@ -3,10 +3,10 @@ package com.ikservices.oficinamecanica.inventory.domain.enumerates;
 import java.util.Objects;
 
 public enum SourceEnum {
-	service,
-	purchase,
-	adjustment,
-	NONE;
+	WORK_ORDER,
+	PURCHASE,
+	RETURN,
+	ADJUSTMENT;
 	
 	public static SourceEnum findByIndex(Integer index) {
 		if(Objects.nonNull(index)) {
@@ -17,6 +17,6 @@ public enum SourceEnum {
 			}
 		}
 		
-		return NONE;
+		return null;
 	}
 }

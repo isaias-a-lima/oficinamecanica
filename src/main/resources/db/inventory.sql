@@ -35,17 +35,21 @@ CONSTRAINT fk_suppliers_inventory_mov FOREIGN KEY(supplierid, workshopid) REFERE
 CONSTRAINT fk_parts_inventory_mov FOREIGN KEY(partid, workshopid) REFERENCES parts(partid, workshopid)
 )COMMENT = "INVENTORY_MOV";
 
---2026-03-25 12:13 - Brazil - Insert into inventory_mov.
-INSERT INTO inventory_mov(workshopid, inventoryid, movdate, movtype, docnumber,
-supplierid, partid, qty, source)
-values(1, 1, "2026-03-25", 1, "11122233344", 1, 1, 1, 1);
+--2026-04-10 11:57 - Brazil - Mateus Lima - Insert into inventory_mov table.
+insert into inventory_mov (workshopid, inventoryid, movdate, movtype, docnumber, supplierid, partid, qty, source)
+values (1, 1, date('2026-03-10'), 1, 1001, 1, 1, 50, 1);
 
---2026-03-25 12:15 - Brazil - Insert into inventory_mov.
-INSERT INTO inventory_mov(workshopid, inventoryid, movdate, movtype, docnumber,
-supplierid, partid, qty, source)
-values(1, 2, "2026-03-25", 2, "22233344455", 1, 2, 1, 2);
+insert into inventory_mov (workshopid, inventoryid, movdate, movtype, docnumber, supplierid, partid, qty, source)
+values (1, 2, date('2026-03-10'), 1, 1001, 1, 1, 100, 1);
 
---2026-03-25 23:07 - Brazil - Insert into inventory_mov.
-INSERT INTO inventory_mov(workshopid, inventoryid, movdate, movtype, docnumber,
-supplierid, partid, qty, source)
-values(1, 3, "2026-03-19", 2, "33344455566", 1, 2, 1, 2);
+insert into inventory_mov (workshopid, inventoryid, movdate, movtype, partid, qty, source)
+values (1, 3, date('2026-03-11'), 2, 1, 150, 3);
+
+insert into inventory_mov (workshopid, inventoryid, movdate, movtype, docnumber, supplierid, partid, qty, source)
+values (1, 4, date('2026-03-12'), 1, 1001, 1, 1, 150, 1);
+
+insert into inventory_mov (workshopid, inventoryid, movdate, movtype, docnumber, supplierid, partid, qty, source)
+values (1, 5, date('2026-03-13'), 1, 1001, 1, 1, 150, 1);
+
+insert into inventory_mov (workshopid, inventoryid, movdate, movtype, docnumber, partid, qty, source)
+values (1, 6, date('2026-04-29'), 0, 1001, 1, 500, 0);

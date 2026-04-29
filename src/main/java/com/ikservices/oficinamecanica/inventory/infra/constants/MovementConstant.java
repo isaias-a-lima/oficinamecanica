@@ -7,4 +7,5 @@ public class MovementConstant {
 	public static final String SAVE_ERROR_MESSAGE = "inventory.save.error.message";
 	public static final String UPDATE_SUCCESS_MESSAGE = "inventory.update.success.message";
 	public static final String UPDATE_ERROR_MESSAGE = "inventory.update.error.message";
+	public static final String SAVE_ALREADY_MESSAGE = "inventory.save.already.message";
 }

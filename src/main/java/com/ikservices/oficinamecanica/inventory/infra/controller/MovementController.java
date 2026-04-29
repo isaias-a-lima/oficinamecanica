@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.inventory.infra.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.validator.internal.util.stereotypes.Lazy;
@@ -21,7 +22,11 @@ import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.commons.utils.DateUtil;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
 import com.ikservices.oficinamecanica.inventory.MovementConverter;
+import com.ikservices.oficinamecanica.inventory.application.usecases.GetBalanceByPart;
+import com.ikservices.oficinamecanica.inventory.application.usecases.GetLastFinalBalanceDateByPart;
+import com.ikservices.oficinamecanica.inventory.application.usecases.GetLastFinalBalanceValueByPart;
 import com.ikservices.oficinamecanica.inventory.application.usecases.GetMovement;
+import com.ikservices.oficinamecanica.inventory.application.usecases.GetMovementQuantityByPart;
 import com.ikservices.oficinamecanica.inventory.application.usecases.ListMovementByPartAndType;
 import com.ikservices.oficinamecanica.inventory.application.usecases.SaveMovement;
 import com.ikservices.oficinamecanica.inventory.application.usecases.UpdateMovement;
@@ -46,13 +51,15 @@ public class MovementController {
 	GetMovement getMovement;
 	SaveMovement saveMovement;
 	UpdateMovement updateMovement;
+	GetBalanceByPart getBalanceByPart;
 	
 	public MovementController(ListMovementByPartAndType listMovementByPartAndType, GetMovement getMovement,
-			SaveMovement saveMovement, UpdateMovement updateMovement) {
+			SaveMovement saveMovement, UpdateMovement updateMovement, GetBalanceByPart getBalanceByPart) {
 		this.listMovementByPartAndType = listMovementByPartAndType;
 		this.getMovement = getMovement;
 		this.saveMovement = saveMovement;
 		this.updateMovement = updateMovement;
+		this.getBalanceByPart = getBalanceByPart;
 	}
 	
 	@GetMapping("list")
@@ -97,6 +104,27 @@ public class MovementController {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
 					body(IKResponse.<MovementDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, 
+							IKMessageType.ERROR, environment.getProperty(MovementConstant.GET_ERROR_MESSAGE)));
+		}
+	}
+	
+	@GetMapping("get/balance/{partId}/{workshopId}")
+	public ResponseEntity<IKResponse<Integer>> getBalanceByPart(@PathVariable Integer partId, 
+			@PathVariable Long workshopId) {
+		try {
+			Integer balance = getBalanceByPart.execute(partId, workshopId);
+			
+			return ResponseEntity.ok(IKResponse.<Integer>build().body(balance));			
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).
+					body(IKResponse.<Integer>build().addMessage(ike.getIkMessage().getCode(), 
+							IKMessageType.getByCode(ike.getIkMessage().getType()), 
+							ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
+					body(IKResponse.<Integer>build().addMessage(Constants.DEFAULT_ERROR_CODE, 
 							IKMessageType.ERROR, environment.getProperty(MovementConstant.GET_ERROR_MESSAGE)));
 		}
 	}
