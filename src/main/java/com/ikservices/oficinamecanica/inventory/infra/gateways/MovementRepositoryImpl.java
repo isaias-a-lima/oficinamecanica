@@ -16,22 +16,26 @@ import com.ikservices.oficinamecanica.inventory.infra.constants.MovementConstant
 import com.ikservices.oficinamecanica.inventory.infra.persistence.MovementEntity;
 import com.ikservices.oficinamecanica.inventory.infra.persistence.MovementEntityId;
 import com.ikservices.oficinamecanica.inventory.infra.persistence.MovementRepositoryJPA;
+import com.ikservices.oficinamecanica.parts.domain.Part;
+import com.ikservices.oficinamecanica.parts.infra.persistence.PartEntity;
+import com.ikservices.oficinamecanica.parts.infra.persistence.PartEntityId;
 import com.ikservices.oficinamecanica.parts.infra.persistence.PartRepositoryJPA;
 
 public class MovementRepositoryImpl implements MovementRepository {
 	private final MovementConverter converter;
 	private final MovementRepositoryJPA repositoryJPA;
+	private final PartRepositoryJPA partRepositoryJPA;
 	
 	public MovementRepositoryImpl(MovementConverter converter, MovementRepositoryJPA repositoryJPA,
 			PartRepositoryJPA partRepositoryJPA) {
 		this.converter = converter;
 		this.repositoryJPA = repositoryJPA;
+		this.partRepositoryJPA = partRepositoryJPA;
 	}
 	
 	@Override
 	public InventoryMovement saveMovement(InventoryMovement movement) {
 		InventoryMovement savedMovement = converter.parseEntityToDomain(repositoryJPA.save(converter.parseDomainToEntity(movement)));
-		
 		return savedMovement;
 	}
 
@@ -49,16 +53,7 @@ public class MovementRepositoryImpl implements MovementRepository {
 	
 	@Override
 	public Integer getBalanceByPart(Integer partId, Long workshopId) {
-		LocalDate lastFinalBalanceDate = repositoryJPA.getLastFinalBalanceDateByPart(partId, workshopId);
-		Integer lastFinalBalanceValue = repositoryJPA.getLastFinalBalanceValueByPart(partId, workshopId, lastFinalBalanceDate);
-		
-		Integer movementQuantity = repositoryJPA.getMovementQuantityByPart(partId, workshopId, lastFinalBalanceDate);
-		
-		if(lastFinalBalanceDate == null || lastFinalBalanceValue == null) {
-			throw new NullPointerException("Null object.");
-		}
-		
-		return lastFinalBalanceValue + movementQuantity;
+		return null;
 	}
 
 	@Override
