@@ -113,7 +113,7 @@ public class CreateWorkOrderPDF extends PDFTemplateBuilder {
                     serviceItems[x][3] = "0";
                     serviceItems[x][4] = serviceItem.getQuantity().toString();
                     serviceItems[x][5] = "0";
-                    serviceItems[x][6] = NumberUtil.parseStringLocalMoney(serviceItem.getService().getCost());
+                    serviceItems[x][6] = NumberUtil.parseStringLocalMoney(serviceItem.getItemValue());
                     serviceItems[x][7] = "0";
                     serviceItems[x][8] = NumberUtil.parseStringLocalMoney(serviceItem.getRealDiscount());
                     serviceItems[x][9] = "0";
