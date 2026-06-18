@@ -15,4 +15,6 @@ public interface CustomerRepository {
     List<Customer> getCustomerList(Long workshopId, SearchCriteria criteria, String search);
 
     List<Customer> getCustomerByVehicles(Long workshopId, String plate);
+
+    List<Customer> findByWorkshopIdAndVehicleModel(Long workshopId, String model);
 }

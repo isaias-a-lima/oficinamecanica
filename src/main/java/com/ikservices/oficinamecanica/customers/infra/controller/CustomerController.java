@@ -156,4 +156,23 @@ public class CustomerController {
                     IKResponse.<CustomerDTO>build().addMessage(CustomerBusinessConstants.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(CustomerConstants.CUSTOMER_UNEXPECTED_ERROR_MESSAGE)));
         }
     }
+
+    @GetMapping("vehicles/workshop/{workshopId}/model/{model}")
+    public ResponseEntity<IKResponse<CustomerDTO>> getCustomerByVehicleModel(@PathVariable("workshopId") Long workshopId, @PathVariable("model") String model) {
+        String logID = IKLoggerUtil.getLoggerID();
+        try {
+            List<Customer> customers = getCustomerByVeclicle.executeGetByVehicleModel(workshopId, model);
+            return ResponseEntity.ok(IKResponse.<CustomerDTO>build().body(converter.parseCustomerDTOList(customers)));
+        } catch (IKException ike) {
+            String logMsg = String.format("ID: %s - getCustomerByVeclicle.executeGetByVehicleModel - workshopId: %d, plate: %s", logID, workshopId, model);
+            LOGGER.error(logMsg, ike);
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+                    IKResponse.<CustomerDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+        } catch (Exception e) {
+            String logMsg = String.format("ID: %s - getCustomerByVeclicle.executeGetByVehicleModel - workshopId: %d, plate: %s", logID, workshopId, model);
+            LOGGER.error(logMsg, e);
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    IKResponse.<CustomerDTO>build().addMessage(CustomerBusinessConstants.ERROR_CODE, IKMessageType.ERROR, environment.getProperty(CustomerConstants.CUSTOMER_UNEXPECTED_ERROR_MESSAGE)));
+        }
+    }
 }
