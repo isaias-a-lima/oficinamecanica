@@ -48,6 +48,9 @@ public class WorkOrderServiceItemEntity {
 	
 	@Column(name = "ITEMVALUE")
 	private BigDecimal itemValue;
+
+	@Column(name = "DISCOUNTVALUE")
+	private BigDecimal discountValue;
 	
 	@Column(name = "DISCOUNT")
 	private BigDecimal discount;
@@ -57,18 +60,18 @@ public class WorkOrderServiceItemEntity {
 			this.serviceId = entity.getServiceId();
 			this.service.getId().setId(entity.getServiceId());
 		}
-		if(Objects.nonNull(entity.getQuantity())) {
-			this.quantity = entity.getQuantity();
-		}
-		if(Objects.nonNull(entity.getItemValue())) {
-			this.itemValue = entity.getItemValue();
-		}
-		if(Objects.nonNull(entity.getDiscount())) {
-			this.discount = entity.getDiscount();
-		}
+
+		this.quantity = Objects.isNull(entity.getQuantity()) ? 0 : entity.getQuantity();
+
+		this.itemValue = Objects.isNull(entity.getItemValue()) ? BigDecimal.ZERO : entity.getItemValue();
+
+		this.discountValue = Objects.isNull(entity.getDiscountValue()) ? BigDecimal.ZERO : entity.getDiscountValue();
+
+		//This field has been deprecated and will be replaced for the discountValue field
+		this.discount = Objects.isNull(entity.getDiscount()) ? BigDecimal.ZERO : entity.getDiscount();
 	}
 	
 	public BigDecimal getTotal() {
-		return NumberUtil.calcPrice(quantity, itemValue, discount).setScale(2, RoundingMode.HALF_UP);
+		return NumberUtil.calcServicePrice(quantity, itemValue, discountValue, discount);
 	}
 }

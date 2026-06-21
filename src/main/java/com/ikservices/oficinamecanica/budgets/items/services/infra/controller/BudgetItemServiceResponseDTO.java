@@ -23,6 +23,7 @@ public class BudgetItemServiceResponseDTO {
 	private ServiceDTO service;
 	private Integer quantity;
 	private BigDecimal cost;
+	private BigDecimal discountValue;
 	private BigDecimal discount;
 	private BigDecimal totalAmount;
 }

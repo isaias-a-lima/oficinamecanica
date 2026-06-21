@@ -188,6 +188,7 @@ public class BudgetConverter {
 		workOrderEntity.setKm(budgetEntity.getKm());
 		workOrderEntity.setWoStatus(WorkOrderStatusEnum.QUEUE);
 		workOrderEntity.setAmount(budgetEntity.getAmount());
+		workOrderEntity.setDiscountValue(BigDecimal.ZERO);
 		workOrderEntity.setDiscount(BigDecimal.ZERO);
 		workOrderEntity.setServiceItems(budgetItemServiceConverter.parseToWorkOrderServiceItemList(budgetEntity.getServiceItems(), workOrderId));
 		workOrderEntity.setPartItems(budgetItemPartConverter.parseToWorkOrderPartItemEntityList(budgetEntity.getPartItems(), workOrderId));

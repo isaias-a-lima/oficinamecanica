@@ -22,6 +22,7 @@ public class WorkOrderServiceItemResponseDTO {
 	private ServiceDTO service;
 	private Integer quantity;
 	private String itemValue;
+	private String discountValue;
 	private String discount;
 	private String amount;
 }

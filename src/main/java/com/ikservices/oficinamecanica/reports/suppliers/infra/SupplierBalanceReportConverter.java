@@ -3,7 +3,6 @@ package com.ikservices.oficinamecanica.reports.suppliers.infra;
 import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.generics.IKConverter;
 import com.ikservices.oficinamecanica.commons.utils.NumberUtil;
-import com.ikservices.oficinamecanica.commons.utils.StringUtil;
 import com.ikservices.oficinamecanica.reports.suppliers.domain.SupplierBalanceReport;
 import com.ikservices.oficinamecanica.reports.suppliers.domain.SupplierBalanceReportId;
 

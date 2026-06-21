@@ -47,6 +47,7 @@ public class BudgetItemServiceConverter {
 			item.setService(serviceConverter.parseService(entity.getServiceEntity()));
 			item.getService().setCost(entity.getCost());
 		}
+		item.setDiscountValue(entity.getDiscountValue());
 		item.setDiscount(entity.getDiscount());
 		item.setQuantity(entity.getQuantity());
 		
@@ -72,6 +73,7 @@ public class BudgetItemServiceConverter {
 		
 		entity.setQuantity(item.getQuantity());
 		entity.setCost(item.getService().getCost());
+		entity.setDiscountValue(item.getDiscountValue());
 		entity.setDiscount(item.getDiscount());
 		
 		return entity;
@@ -116,7 +118,8 @@ public class BudgetItemServiceConverter {
 		item.setService(service);
 		
 		item.setQuantity(requestDTO.getQuantity());
-		
+
+		item.setDiscountValue(requestDTO.getDiscountValue());
 		item.setDiscount(requestDTO.getDiscount());
 		
 		return item;
@@ -134,10 +137,10 @@ public class BudgetItemServiceConverter {
 			responseDTO.setService(serviceConverter.parseDTO(item.getService()));
 			responseDTO.setCost(item.getService().getCost());
 		}
+		responseDTO.setDiscountValue(item.getDiscountValue());
 		responseDTO.setDiscount(item.getDiscount());
 		responseDTO.setQuantity(item.getQuantity());
 		responseDTO.setTotalAmount(item.getTotal());
-
 		
 		return responseDTO;
 	}
@@ -177,6 +180,7 @@ public class BudgetItemServiceConverter {
 		target.setService(source.getServiceEntity());
 		target.setQuantity(source.getQuantity());
 		target.setItemValue(source.getCost());
+		target.setDiscountValue(source.getDiscountValue());
 		target.setDiscount(source.getDiscount());
 		return target;
 	}

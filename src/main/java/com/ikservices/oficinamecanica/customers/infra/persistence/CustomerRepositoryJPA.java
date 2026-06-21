@@ -1,5 +1,6 @@
 package com.ikservices.oficinamecanica.customers.infra.persistence;
 
+import com.ikservices.oficinamecanica.vehicles.infra.persistence.VehicleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +22,7 @@ public interface CustomerRepositoryJPA extends JpaRepository<CustomerEntity, Cus
                     "AND REGEXP_REPLACE(v.plate, '[^A-Za-z0-9]', '') = REGEXP_REPLACE(:plate, '[^A-Za-z0-9]', '')"
     )
     public List<CustomerEntity> findByVehicles(@Param("workshopId") Long workshopId, @Param("plate") String plate);
+
+    @Query("SELECT DISTINCT c FROM CustomerEntity c JOIN c.vehicles v WHERE c.id.workshopId = :workshopId AND v.model like %:model% ORDER BY c.name")
+    public List<CustomerEntity> findByWorkshopIdAndVehicleModel(@Param("workshopId") Long workshopId, @Param("model") String model);
 }

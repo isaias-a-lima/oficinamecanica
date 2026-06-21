@@ -152,7 +152,7 @@ public class WorkOrderController {
 	}
 
 	@GetMapping("workorder/pdf/{workOrderId}/{budgetId}")
-	public ResponseEntity<byte[]> createBudgetPDF(@PathVariable Long workOrderId, @PathVariable Long budgetId, HttpServletResponse response) {
+	public ResponseEntity<byte[]> createWorkOrderPDF(@PathVariable Long workOrderId, @PathVariable Long budgetId, HttpServletResponse response) {
 		try {
 			WorkOrder execute = getWorkOrder.execute(new WorkOrderId(workOrderId, budgetId));
 

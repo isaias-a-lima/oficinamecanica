@@ -107,7 +107,7 @@ public class CreateBudgetPDF extends PDFTemplateBuilder {
                     serviceItems[x][5] = "0";
                     serviceItems[x][6] = NumberUtil.parseStringLocalMoney(serviceItem.getService().getCost());
                     serviceItems[x][7] = "0";
-                    serviceItems[x][8] = NumberUtil.parseStringPercent(serviceItem.getDiscount());
+                    serviceItems[x][8] = NumberUtil.parseStringLocalMoney(serviceItem.getRealDiscount());
                     serviceItems[x][9] = "0";
                     serviceItems[x][10] = NumberUtil.parseStringLocalMoney(serviceItem.getTotal());
                     serviceItems[x][11] = "0";
@@ -134,7 +134,7 @@ public class CreateBudgetPDF extends PDFTemplateBuilder {
                     partItems[y][5] = "0";
                     partItems[y][6] = NumberUtil.parseStringLocalMoney(partItem.getValue().add(partItem.getServiceCost()));
                     partItems[y][7] = "0";
-                    partItems[y][8] = NumberUtil.parseStringPercent(partItem.getDiscount());
+                    partItems[y][8] = NumberUtil.parseStringLocalMoney(partItem.getRealDiscount());
                     partItems[y][9] = "0";
                     partItems[y][10] = NumberUtil.parseStringLocalMoney(partItem.getTotal());
                     partItems[y][11] = "0";

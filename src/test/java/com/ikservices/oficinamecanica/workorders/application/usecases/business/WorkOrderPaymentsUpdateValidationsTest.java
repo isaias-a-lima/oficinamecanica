@@ -98,6 +98,8 @@ public class WorkOrderPaymentsUpdateValidationsTest {
         workOrder.setServiceItems(new ArrayList<>());
         workOrder.setPartItems(new ArrayList<>());
         workOrder.setPayments(new ArrayList<>());
+        workOrder.setDiscountValue(BigDecimal.ZERO);
+        workOrder.setDiscount(BigDecimal.ZERO);
         return workOrder;
     }
 
@@ -107,6 +109,7 @@ public class WorkOrderPaymentsUpdateValidationsTest {
         serviceItem.setService(new Service(new ServiceId(1L, WORKSHOP_ID)));
         serviceItem.setQuantity(1);
         serviceItem.setItemValue(itemValue);
+        serviceItem.setDiscountValue(BigDecimal.ZERO);
         serviceItem.setDiscount(BigDecimal.ZERO);
         return serviceItem;
     }
@@ -118,6 +121,7 @@ public class WorkOrderPaymentsUpdateValidationsTest {
         partItem.setQuantity(1);
         partItem.setItemValue(itemValue);
         partItem.setServiceCost(serviceCost);
+        partItem.setDiscountValue(BigDecimal.ZERO);
         partItem.setDiscount(BigDecimal.ZERO);
         return partItem;
     }

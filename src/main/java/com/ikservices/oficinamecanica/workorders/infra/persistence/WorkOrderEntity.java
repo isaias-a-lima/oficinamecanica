@@ -44,6 +44,9 @@ public class WorkOrderEntity {
 	@Column(name = "AMOUNT")
 	private BigDecimal amount;
 
+	@Column(name = "DISCOUNTVALUE")
+	private BigDecimal discountValue;
+
 	@Column(name = "DISCOUNT")
 	private BigDecimal discount;
 
@@ -83,6 +86,7 @@ public class WorkOrderEntity {
 			this.payQty = entity.getPayQty();
 		}
 
+		this.discountValue = entity.getDiscountValue();
 		this.discount = entity.getDiscount();
 		this.isFinalValueRounded = entity.getIsFinalValueRounded();
 
@@ -203,28 +207,6 @@ public class WorkOrderEntity {
 			}
 
 		}
-
-
-		/*
-		this.payments.removeIf(existingItem ->
-				newEntityList.stream().noneMatch(newEntity -> newEntity.equals(existingItem))
-		);
-
-		for (PaymentEntity newEntity : newEntityList) {
-
-			Optional<PaymentEntity> existingItemOptional = this.payments.stream()
-					.filter(existingItem -> existingItem.equals(newEntity))
-					.findFirst();
-
-			if (existingItemOptional.isPresent()) {
-				PaymentEntity existingItem = existingItemOptional.get();
-				existingItem.update(newEntity);
-			} else {
-				this.setNextPaymentNumberId(newEntity);
-			}
-		}
-
-		 */
 
 	}
 

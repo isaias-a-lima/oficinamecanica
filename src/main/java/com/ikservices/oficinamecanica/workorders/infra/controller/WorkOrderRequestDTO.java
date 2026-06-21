@@ -23,6 +23,7 @@ public class WorkOrderRequestDTO {
 	private Long km;
 	private WorkOrderStatusEnum workOrderStatus;
 	private BigDecimal amount;
+	private BigDecimal discountValue;
 	private BigDecimal discount;
 	private Boolean isFinalValueRounded;
 	private Integer payQty;

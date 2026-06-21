@@ -21,5 +21,6 @@ public class WorkOrderServiceItemRequestDTO {
 	private Long workshopId;
 	private Integer quantity;
 	private BigDecimal itemValue;
+	private BigDecimal discountValue;
 	private BigDecimal discount;
 }

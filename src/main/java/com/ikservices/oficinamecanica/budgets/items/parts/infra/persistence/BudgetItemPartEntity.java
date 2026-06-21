@@ -49,6 +49,9 @@ public class BudgetItemPartEntity {
     @Column(name = "SERVICE_COST")
     private BigDecimal serviceCost;
 
+    @Column(name = "DISCOUNTVALUE")
+    private BigDecimal discountValue;
+
     @Column(name = "DISCOUNT")
     private BigDecimal discount;
 
@@ -57,21 +60,16 @@ public class BudgetItemPartEntity {
             this.partId = entity.getPartId();
             this.part.getId().setId(entity.getPartId());
         }
-        if(Objects.nonNull(entity.getQuantity())) {
-            this.quantity = entity.getQuantity();
-        }
-        if(Objects.nonNull(entity.getCost())) {
-            this.cost = entity.getCost();
-        }
-        if(Objects.nonNull(entity.getDiscount())) {
-            this.discount = entity.getDiscount();
-        }
-        if(Objects.nonNull(entity.getServiceCost())) {
-            this.serviceCost = entity.getServiceCost();
-        }
+
+        this.quantity = Objects.isNull(entity.getQuantity()) ? 0 : entity.getQuantity();
+        this.cost = Objects.isNull(entity.getCost()) ? BigDecimal.ZERO : entity.getCost();
+        this.serviceCost = Objects.isNull(entity.getServiceCost()) ? BigDecimal.ZERO : entity.getServiceCost();
+        this.discountValue = Objects.isNull(entity.getDiscountValue()) ? BigDecimal.ZERO : entity.getDiscountValue();
+        //This field has been deprecated and will be replaced for the discountValue field
+        this.discount = Objects.isNull(entity.getDiscount()) ? BigDecimal.ZERO : entity.getDiscount();
     }
 
     public BigDecimal getTotal() {
-        return NumberUtil.calcPrice(quantity, cost, serviceCost, discount);
+        return NumberUtil.calcPartPrice(quantity, cost, serviceCost, discountValue, discount);
     }
 }

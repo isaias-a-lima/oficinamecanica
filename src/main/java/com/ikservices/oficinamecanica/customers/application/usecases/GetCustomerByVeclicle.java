@@ -16,4 +16,8 @@ public class GetCustomerByVeclicle {
     public List<Customer> execute(Long workshopId, String plate) {
         return repository.getCustomerByVehicles(workshopId, plate);
     }
+
+    public List<Customer> executeGetByVehicleModel(Long workshopId, String model) {
+        return repository.findByWorkshopIdAndVehicleModel(workshopId, model);
+    }
 }

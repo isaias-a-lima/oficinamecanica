@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -40,6 +41,7 @@ WorkOrderServiceItem, WorkOrderServiceItemEntity, WorkOrderServiceItemResponseDT
 			domain.setService(new Service(new ServiceId(request.getServiceId(), request.getWorkshopId())));
 			domain.setQuantity(request.getQuantity());
 			domain.setItemValue(request.getItemValue());
+			domain.setDiscountValue(request.getDiscountValue());
 			domain.setDiscount(request.getDiscount());
 		}
 		
@@ -61,6 +63,7 @@ WorkOrderServiceItem, WorkOrderServiceItemEntity, WorkOrderServiceItemResponseDT
 			entity.setService(serviceConverter.parseEntity(domain.getService()));
 			entity.setQuantity(domain.getQuantity());
 			entity.setItemValue(domain.getItemValue());
+			entity.setDiscountValue(domain.getDiscountValue());
 			entity.setDiscount(domain.getDiscount());
 		}
 		
@@ -79,6 +82,7 @@ WorkOrderServiceItem, WorkOrderServiceItemEntity, WorkOrderServiceItemResponseDT
 			domain.setService(serviceConverter.parseService(entity.getService()));
 			domain.setQuantity(entity.getQuantity());
 			domain.setItemValue(entity.getItemValue());
+			domain.setDiscountValue(Objects.nonNull(entity.getDiscountValue()) ? entity.getDiscountValue() : BigDecimal.ZERO);
 			domain.setDiscount(entity.getDiscount());
 		}
 		
@@ -98,6 +102,7 @@ WorkOrderServiceItem, WorkOrderServiceItemEntity, WorkOrderServiceItemResponseDT
 			dto.setService(serviceConverter.parseDTO(domain.getService()));
 			dto.setQuantity(domain.getQuantity());
 			dto.setItemValue(NumberUtil.parseStringLocalMoney(domain.getItemValue()));
+			dto.setDiscountValue(NumberUtil.parseStringLocalMoney(domain.getDiscountValue()));
 			dto.setDiscount(NumberUtil.parseStringPercent(domain.getDiscount()));
 			dto.setAmount(NumberUtil.parseStringLocalMoney(domain.getTotal()));
 		}
@@ -127,6 +132,7 @@ WorkOrderServiceItem, WorkOrderServiceItemEntity, WorkOrderServiceItemResponseDT
 		request.setWorkshopId(response.getService().getWorkshopId());
 		request.setQuantity(response.getQuantity());
 		request.setItemValue(NumberUtil.parseBigDecimal(response.getItemValue()));
+		request.setDiscountValue(NumberUtil.parseBigDecimal(response.getDiscountValue()));
 		request.setDiscount(NumberUtil.parseBigDecimal(response.getDiscount()));
 		return request;
 	}

@@ -109,7 +109,7 @@ public class NumberUtil {
         return parseStringPercentWithScale(value, 2);
     }
 
-    public static BigDecimal calcPrice(Integer quantity, BigDecimal cost, BigDecimal discount) {
+    public static BigDecimal calcServicePriceDeprecated(Integer quantity, BigDecimal cost, BigDecimal discount) {
         BigDecimal percentage = discount.divide(BigDecimal.valueOf(100.0));
         BigDecimal discountValue = cost.multiply(percentage);
         BigDecimal costValue = cost.subtract(discountValue);
@@ -117,20 +117,37 @@ public class NumberUtil {
         return costValue.multiply(BigDecimal.valueOf(quantity.doubleValue())).setScale(2, RoundingMode.HALF_UP);
     }
 
-    /**
-     *
-     * @param quantity Part quantity
-     * @param partCost Part cost value
-     * @param discount discount value
-     * @param serviceCost Service cost value
-     * @return Formula = ((partCost + serviceCost) * quantity) * ((100-discount) / 100)
-     */
-    public static BigDecimal calcPrice(Integer quantity, BigDecimal partCost, BigDecimal serviceCost, BigDecimal discount) {
+    public static BigDecimal calcServicePrice(Integer quantity, BigDecimal cost, BigDecimal discountValue, BigDecimal discount) {
+        if (Objects.nonNull(discount) && discount.compareTo(BigDecimal.ZERO) > 0) {
+            return calcServicePriceDeprecated(quantity, cost, discount);
+        }
+
+        quantity = Objects.isNull(quantity) ? 0 : quantity;
+        cost = Objects.isNull(cost) ? BigDecimal.ZERO : cost;
+        discountValue = Objects.isNull(discountValue) ? BigDecimal.ZERO : discountValue;
+
+        return (cost.subtract(discountValue)).multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
+    }
+
+
+    public static BigDecimal calcPartPriceDeprecated(Integer quantity, BigDecimal partCost, BigDecimal serviceCost, BigDecimal discount) {
 
         BigDecimal discountPercentage = (BigDecimal.valueOf(100).subtract(discount)).divide(BigDecimal.valueOf(100));
         BigDecimal costValue = partCost.add(serviceCost);
         costValue = costValue.multiply(BigDecimal.valueOf(quantity));
         costValue = costValue.multiply(discountPercentage);
+
+        return costValue.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public static BigDecimal calcPartPrice(Integer quantity, BigDecimal partCost, BigDecimal serviceCost, BigDecimal discountValue, BigDecimal discount) {
+        if (Objects.nonNull(discount) && discount.compareTo(BigDecimal.ZERO) > 0) {
+            return calcPartPriceDeprecated(quantity, partCost, serviceCost, discount);
+        }
+
+        BigDecimal costValue = partCost.add(serviceCost);
+        costValue = costValue.multiply(BigDecimal.valueOf(quantity));
+        costValue = costValue.subtract(discountValue.multiply(BigDecimal.valueOf(quantity)));
 
         return costValue.setScale(2, RoundingMode.HALF_UP);
     }
