@@ -23,6 +23,6 @@ public interface CustomerRepositoryJPA extends JpaRepository<CustomerEntity, Cus
     )
     public List<CustomerEntity> findByVehicles(@Param("workshopId") Long workshopId, @Param("plate") String plate);
 
-    @Query("SELECT c FROM CustomerEntity c JOIN c.vehicles v WHERE c.id.workshopId = :workshopId AND v.model like %:model% ORDER BY c.name")
+    @Query("SELECT DISTINCT c FROM CustomerEntity c JOIN c.vehicles v WHERE c.id.workshopId = :workshopId AND v.model like %:model% ORDER BY c.name")
     public List<CustomerEntity> findByWorkshopIdAndVehicleModel(@Param("workshopId") Long workshopId, @Param("model") String model);
 }
