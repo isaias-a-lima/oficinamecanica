@@ -3,6 +3,7 @@ package com.ikservices.oficinamecanica.workorders.payments.infra.persistence;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,6 +37,18 @@ public interface PaymentRepositoryJPA extends JpaRepository<PaymentEntity, Payme
 			+ "AND ((:paymentState = 'PAID' AND p.payDate IS NOT NULL) OR "
 			+ "(:paymentState = 'UNPAID' AND p.payDate IS NULL) OR "
 			+ "(:paymentState = 'NONE')) "
+			+ "AND p.payDate BETWEEN :startDate AND :endDate "
+			+ "AND p.isOutsourcePay = FALSE "
+			+ "ORDER BY p.payDate, p.id.workOrderId, p.id.number")
+	public List<PaymentEntity> listPaymentsByPaidPeriod(@Param("workshopId") Long workshopId,
+													   @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,
+													   @Param("paymentState") String paymentState);
+
+	@Query("SELECT p FROM PaymentEntity p WHERE "
+			+ "p.workOrder.budget.vehicle.workshopId = :workshopId "
+			+ "AND ((:paymentState = 'PAID' AND p.payDate IS NOT NULL) OR "
+			+ "(:paymentState = 'UNPAID' AND p.payDate IS NULL) OR "
+			+ "(:paymentState = 'NONE')) "
 			+ "AND p.dueDate BETWEEN :startDate AND :endDate "
 			+ "AND p.isOutsourcePay = TRUE "
 			+ "ORDER BY p.dueDate, p.id.workOrderId, p.id.number")
@@ -47,4 +60,7 @@ public interface PaymentRepositoryJPA extends JpaRepository<PaymentEntity, Payme
 			+ "AND p.payDate BETWEEN :startDate AND :endDate "
 			+ "ORDER BY p.payDate")
 	public List<PaymentEntity> listPaymentsBySupplierAndPayDate(@Param("workshopId") Long workshopId, @Param("supplierId") Integer supplierId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+	@Query("SELECT p FROM PaymentEntity p WHERE p.workOrder.budget.vehicle.workshopId = :workshopId AND p.payDate IS NULL ORDER BY p.dueDate")
+	public List<PaymentEntity> listOutstandingPayments(@Param("workshopId") Long workShopId);
 }

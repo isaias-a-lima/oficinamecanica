@@ -51,4 +51,9 @@ public class PayableConfig {
 	public ListPayableBySupplier listPayableBySupplier(PayableRepository repository) {
 		return new ListPayableBySupplier(repository);
 	}
+
+	@Bean
+	public ListOutstandingPayables getListOutstandingPayables(PayableRepository repository) {
+		return new ListOutstandingPayables(repository);
+	}
 }

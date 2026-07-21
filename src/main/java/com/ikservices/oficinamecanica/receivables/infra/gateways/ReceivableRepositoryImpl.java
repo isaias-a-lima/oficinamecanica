@@ -102,4 +102,14 @@ public class ReceivableRepositoryImpl implements ReceivableRepository {
     public List<Receivable> listReceivableBySupplierAndPayDate(Long workshopId, Integer supplierId, LocalDate startDate, LocalDate endDate) {
         return converter.parseEntityToDomainList(jpa.listReceivableBySupplierAndPayDate(workshopId, supplierId, startDate, endDate));
     }
+
+    @Override
+    public List<Receivable> listOutstandingReceivables(Long workshopId) {
+        return converter.parseEntityToDomainList(jpa.listOutstandingReceivables(workshopId));
+    }
+
+    @Override
+    public List<Receivable> listReceivablesByPaidPeriod(Long workshopId, LocalDate startDate, LocalDate endDate) {
+        return converter.parseEntityToDomainList(jpa.listReceivableByPaidPeriod(workshopId, startDate, endDate));
+    }
 }

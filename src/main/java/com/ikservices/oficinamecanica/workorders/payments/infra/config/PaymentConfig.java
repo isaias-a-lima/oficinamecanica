@@ -65,9 +65,20 @@ public class PaymentConfig {
 		return new ListPaymentsBySupplier(repository);
 	}
 
+	@Bean
+	public ListOutstandingPayments getListOutstandingPayments(PaymentRepository repository) {
+		return new ListOutstandingPayments(repository);
+	}
+
+	@Bean
+	public ListPaymentsByPaidPeriod getListPaymentsByPaidPeriod(PaymentRepository repository) {
+		return new ListPaymentsByPaidPeriod(repository);
+	}
+
 	@PostConstruct
 	public void setupConstants() {
 		PaymentConstant.LIST_ERROR_MESSAGE = environment.getProperty(PaymentConstant.LIST_ERROR_KEY, PaymentConstant.LIST_ERROR_ALT);
 		PaymentConstant.GET_NOT_FOUND_MESSAGE = environment.getProperty(PaymentConstant.GET_NOT_FOUND_KEY, PaymentConstant.GET_NOT_FOUND_ALT);
 	}
+
 }

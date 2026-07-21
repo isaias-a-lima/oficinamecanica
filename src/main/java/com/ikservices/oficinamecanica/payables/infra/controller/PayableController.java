@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.ikservices.oficinamecanica.commons.utils.DateUtil;
 import com.ikservices.oficinamecanica.payables.application.enumerates.PayableStateEnum;
+import com.ikservices.oficinamecanica.payables.application.usecases.*;
 import com.ikservices.oficinamecanica.workorders.payments.application.enumerates.PaymentStateEnum;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,6 @@ import com.ikservices.oficinamecanica.commons.exception.IKException;
 import com.ikservices.oficinamecanica.commons.response.IKMessageType;
 import com.ikservices.oficinamecanica.commons.response.IKResponse;
 import com.ikservices.oficinamecanica.commons.utils.IKLoggerUtil;
-import com.ikservices.oficinamecanica.payables.application.usecases.GetNextPayableId;
-import com.ikservices.oficinamecanica.payables.application.usecases.GetPayable;
-import com.ikservices.oficinamecanica.payables.application.usecases.ListPayable;
-import com.ikservices.oficinamecanica.payables.application.usecases.SavePayable;
-import com.ikservices.oficinamecanica.payables.application.usecases.UpdatePayable;
 import com.ikservices.oficinamecanica.payables.domain.Payable;
 import com.ikservices.oficinamecanica.payables.domain.PayableId;
 import com.ikservices.oficinamecanica.payables.infra.PayableConstant;
@@ -50,16 +46,18 @@ public class PayableController {
 	private final SavePayable savePayable;
 	private final GetNextPayableId getNextPayableId;
 	private final UpdatePayable updatePayable;
+	private final ListOutstandingPayables listOutstandingPayables;
 	
 	public PayableController(ListPayable listPayable, GetPayable getPayable,
-			SavePayable savePayable, GetNextPayableId getNextPayableId, 
-			UpdatePayable updatePayable) {
+                             SavePayable savePayable, GetNextPayableId getNextPayableId,
+                             UpdatePayable updatePayable, ListOutstandingPayables listOutstandingPayables) {
 		this.listPayable = listPayable;
 		this.getPayable = getPayable;
 		this.savePayable = savePayable;
 		this.getNextPayableId = getNextPayableId;
 		this.updatePayable = updatePayable;
-	}
+        this.listOutstandingPayables = listOutstandingPayables;
+    }
 	
 	@GetMapping("list/{workshopId}")
 	public ResponseEntity<IKResponse<PayableDTO>> listPayable(@PathVariable Long workshopId, @RequestParam(name = "startDate") String startDate, @RequestParam(name = "endDate") String endDate,
@@ -78,6 +76,25 @@ public class PayableController {
 			LOGGER.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
 					body(IKResponse.<PayableDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE, 
+							IKMessageType.ERROR, environment.getProperty(PayableConstant.LIST_ERROR_MESSAGE)));
+		}
+	}
+
+	@GetMapping("list/outstanding")
+	public ResponseEntity<IKResponse<PayableDTO>> getListOutstandingPayables(@RequestParam(name = "workshopId")  Long workshopId) {
+		try {
+			List<PayableDTO> payableDTOList = converter.parseDomainToResponseList(listOutstandingPayables.execute(workshopId));
+
+			return ResponseEntity.ok(IKResponse.<PayableDTO>build().body(payableDTOList));
+		}catch(IKException ike) {
+			LOGGER.error(ike.getMessage(), ike);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).
+					body(IKResponse.<PayableDTO>build().addMessage(ike.getIkMessage().getCode(),
+							IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage()));
+		}catch(Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
+					body(IKResponse.<PayableDTO>build().addMessage(Constants.DEFAULT_ERROR_CODE,
 							IKMessageType.ERROR, environment.getProperty(PayableConstant.LIST_ERROR_MESSAGE)));
 		}
 	}

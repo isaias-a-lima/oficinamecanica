@@ -59,6 +59,11 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 	}
 
 	@Override
+	public List<Payment> listPaymentsByPaidPeriod(Long workshopId, LocalDate dueDateBegin, LocalDate dueDateEnd, PaymentStateEnum paymentState) {
+		return this.converter.parseEntityToDomainList(repositoryJPA.listPaymentsByPaidPeriod(workshopId, dueDateBegin, dueDateEnd, paymentState.toString()));
+	}
+
+	@Override
 	public List<Payment> listOutsourcePayments(Long workshopId, LocalDate dueDateBegin, LocalDate dueDateEnd, PaymentStateEnum paymentState) {
 		return this.converter.parseEntityToDomainList(repositoryJPA.listOutsourcePayments(workshopId, dueDateBegin, dueDateEnd, paymentState.toString()));
 	}
@@ -156,5 +161,10 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 	@Override
 	public List<Payment> listPaymentsBySupplierAndPayDate(Long workshopId, Integer supplierId, LocalDate startDate, LocalDate endDate) {
 		return converter.parseEntityToDomainList(repositoryJPA.listPaymentsBySupplierAndPayDate(workshopId, supplierId, startDate, endDate));
+	}
+
+	@Override
+	public List<Payment> listOutStandingPayments(Long workShopId) {
+		return converter.parseEntityToDomainList(repositoryJPA.listOutstandingPayments(workShopId));
 	}
 }

@@ -13,7 +13,6 @@ import com.ikservices.oficinamecanica.receivables.infra.ReceivableConstant;
 import com.ikservices.oficinamecanica.receivables.infra.ReceivableConverter;
 import com.ikservices.oficinamecanica.workorders.payments.application.enumerates.PaymentStateEnum;
 import com.ikservices.oficinamecanica.workorders.payments.application.usecases.ListOutsourcePayments;
-import com.ikservices.oficinamecanica.workorders.payments.domain.Payment;
 import org.slf4j.Logger;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -41,8 +40,10 @@ public class ReceivableController {
     private final ListReceivable listReceivable;
     private final ListOutsourceReceivables listOutsourceReceivables;
     private final ListOutsourcePayments listOutsourcePayments;
+    private final ListOutstandingReceivables listOutstandingReceivables;
+    private final ListReceivablesByPaidPeriod listReceivablesByPaidPeriod;
 
-    public ReceivableController(ReceivableConverter converter, SaveReceivable saveReceivable, GetReceivable getReceivable, UpdateReceivable updateReceivable, ListReceivable listReceivable, ListOutsourceReceivables listOutsourceReceivables, ListOutsourcePayments listOutsourcePayments) {
+    public ReceivableController(ReceivableConverter converter, SaveReceivable saveReceivable, GetReceivable getReceivable, UpdateReceivable updateReceivable, ListReceivable listReceivable, ListOutsourceReceivables listOutsourceReceivables, ListOutsourcePayments listOutsourcePayments, ListOutstandingReceivables listOutstandingReceivables, ListReceivablesByPaidPeriod listReceivablesByPaidPeriod) {
         this.converter = converter;
         this.saveReceivable = saveReceivable;
         this.getReceivable = getReceivable;
@@ -50,6 +51,8 @@ public class ReceivableController {
         this.listReceivable = listReceivable;
         this.listOutsourceReceivables = listOutsourceReceivables;
         this.listOutsourcePayments = listOutsourcePayments;
+        this.listOutstandingReceivables = listOutstandingReceivables;
+        this.listReceivablesByPaidPeriod = listReceivablesByPaidPeriod;
     }
 
     @GetMapping("get/{workshopId}/{receivableId}")
@@ -175,6 +178,49 @@ public class ReceivableController {
             finalList.sort(Comparator.comparing(ReceivableDTO::getDueDate));
 
             return ResponseEntity.ok(IKResponse.<ReceivableDTO>build().body(finalList));
+        } catch (IKException ike) {
+            LOGGER.error(ike.getMessage(), ike.getCause());
+            int cod = Integer.parseInt(ike.getIkMessage().getCode()) > 99 ? Integer.parseInt(ike.getIkMessage().getCode()) : HttpStatus.EXPECTATION_FAILED.value();
+            return ResponseEntity.status(HttpStatus.valueOf(cod)).body(
+                    IKResponse.<ReceivableDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage())
+            );
+        } catch (Exception e) {
+            LOGGER.info(e.getMessage(), e);
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    IKResponse.<ReceivableDTO>build().addMessage(IKConstants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, ReceivableConstant.RECEIVABLE_LIST_ERROR_MESSAGE)
+            );
+        }
+    }
+
+    @GetMapping("list/outstanding")
+    public ResponseEntity<IKResponse<ReceivableDTO>> getListOutstandingReceivable(@RequestParam(name = "workshopId") Long workshopId) {
+
+        try {
+            List<Receivable> receivableList = listOutstandingReceivables.execute(workshopId);
+            return ResponseEntity.ok(IKResponse.<ReceivableDTO>build().body(converter.parseDomainToResponseList(receivableList)));
+        } catch (IKException ike) {
+            LOGGER.error(ike.getMessage(), ike.getCause());
+            int cod = Integer.parseInt(ike.getIkMessage().getCode()) > 99 ? Integer.parseInt(ike.getIkMessage().getCode()) : HttpStatus.EXPECTATION_FAILED.value();
+            return ResponseEntity.status(HttpStatus.valueOf(cod)).body(
+                    IKResponse.<ReceivableDTO>build().addMessage(ike.getIkMessage().getCode(), IKMessageType.getByCode(ike.getIkMessage().getType()), ike.getIkMessage().getMessage())
+            );
+        } catch (Exception e) {
+            LOGGER.info(e.getMessage(), e);
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    IKResponse.<ReceivableDTO>build().addMessage(IKConstants.DEFAULT_ERROR_CODE, IKMessageType.ERROR, ReceivableConstant.RECEIVABLE_LIST_ERROR_MESSAGE)
+            );
+        }
+    }
+
+    @GetMapping("list/bypaidperiod")
+    public ResponseEntity<IKResponse<ReceivableDTO>> listReceivable(
+            @RequestParam(name = "workshopId") Long workshopId,
+            @RequestParam(name = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(name = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+
+        try {
+            List<Receivable> receivableList = listReceivablesByPaidPeriod.execute(workshopId, startDate, endDate);
+            return ResponseEntity.ok(IKResponse.<ReceivableDTO>build().body(converter.parseDomainToResponseList(receivableList)));
         } catch (IKException ike) {
             LOGGER.error(ike.getMessage(), ike.getCause());
             int cod = Integer.parseInt(ike.getIkMessage().getCode()) > 99 ? Integer.parseInt(ike.getIkMessage().getCode()) : HttpStatus.EXPECTATION_FAILED.value();

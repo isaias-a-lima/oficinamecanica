@@ -43,4 +43,16 @@ public interface ReceivableRepositoryJPA extends JpaRepository<ReceivableEntity,
             + "AND r.payDate BETWEEN :startDate AND :endDate "
             + "ORDER BY r.payDate")
     public List<ReceivableEntity> listReceivableBySupplierAndPayDate(@Param("workshopId") Long workshopId, @Param("supplierId") Integer supplierId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT r FROM ReceivableEntity r WHERE r.id.workshopId = :workshopId AND r.payDate IS NULL ORDER BY r.dueDate")
+    public List<ReceivableEntity> listOutstandingReceivables(@Param("workshopId") Long workshopId);
+
+    @Query("SELECT r FROM ReceivableEntity r WHERE "
+            + "r.id.workshopId = :workshopId "
+            + "AND r.payDate IS NOT NULL "
+            + "AND r.payDate BETWEEN :startDate AND :endDate "
+            + "AND r.isOutsourcePay = FALSE "
+            + "ORDER BY r.payDate, r.id.orderNumber")
+    public List<ReceivableEntity> listReceivableByPaidPeriod(@Param("workshopId") Long workshopId,
+                                                            @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

@@ -14,4 +14,5 @@ public interface PayableRepository {
 	Payable updatePayable(Payable payable);
 	Integer getNextPayableId(Long workshopId);
 	List<Payable> listPayableBySuppliers(Long workshopId, Integer supplierId, LocalDate startDate, LocalDate endDate);
+	List<Payable> findOutstandingPayables(Long workshopId);
 }

@@ -26,4 +26,7 @@ public interface PayableRepositoryJPA extends JpaRepository<PayableEntity, Payab
 			+ "AND p.dueDate BETWEEN :startDate AND :endDate "
 			+ "ORDER BY p.dueDate")
 	public List<PayableEntity> findAllBySupplierAndDueDate(@Param("workshopId") Long workshopId, @Param("supplierId") Integer supplierId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+	@Query("SELECT p FROM PayableEntity p WHERE p.id.workshopId = :workshopId AND p.payDate IS NULL ORDER BY p.dueDate")
+	public List<PayableEntity> findOutstandingPayables(@Param("workshopId") Long workshopId);
 }

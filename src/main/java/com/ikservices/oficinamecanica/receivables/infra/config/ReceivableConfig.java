@@ -59,6 +59,15 @@ public class ReceivableConfig {
     public ListReceivableBySupplier getListReceivableBySupplier(ReceivableRepository repository) {
         return new ListReceivableBySupplier(repository);
     }
+    @Bean
+    public ListOutstandingReceivables getListOutstandingReceivables(ReceivableRepository repository) {
+        return new ListOutstandingReceivables(repository);
+    }
+
+    @Bean
+    public ListReceivablesByPaidPeriod getListReceivableByPaidPeriod(ReceivableRepository repository) {
+        return new ListReceivablesByPaidPeriod(repository);
+    }
 
     @PostConstruct
     private void setupConstants() {
